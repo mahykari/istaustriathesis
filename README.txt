@@ -81,6 +81,9 @@ istaustriathesis.dtx  The documented source code and documentation file of the
                         istaustriathesis document class.
 istaustriathesis.ins  The installer file of the istaustriathesis document class.
 
+tests/texlive.profile  TeX Live installation profile for GitLab CI.
+.gitlab-ci.yml         Configuration file for GitLab CI.
+
 graphics/*.*       Corporate identity graphics of IST Austria.
 
 
