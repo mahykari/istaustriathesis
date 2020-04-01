@@ -1,0 +1,188 @@
+% Copyright (C) 2020 by Thomas Auzinger <thomas@auzinger.name>
+
+\documentclass[draft,final]{istaustriathesis}
+
+% Extended LaTeX functionality is enables by including packages with \usepackage{...}.
+\usepackage[english]{babel} % The language of the thesis. Use 'british' for British English.
+\usepackage{natbib}     % Extend bibliography management.
+\usepackage{bibentry}   % Provide full citation support for single references.
+\usepackage{amsmath}    % Extended typesetting of mathematical expression.
+\usepackage{amssymb}    % Provides a multitude of mathematical symbols.
+\usepackage{mathtools}  % Further extensions of mathematical typesetting.
+\usepackage{microtype}  % Small-scale typographic enhancements.
+\usepackage[inline]{enumitem} % User control over the layout of lists (itemize, enumerate, description).
+\usepackage{multirow}   % Allows table elements to span several rows.
+\usepackage{booktabs}   % Improves the typesettings of tables.
+\usepackage{subcaption} % Allows the use of subfigures and enables their referencing.
+\usepackage[ruled,linesnumbered,algochapter]{algorithm2e} % Enables the writing of pseudo code.
+\usepackage[usenames,dvipsnames,table]{xcolor} % Allows the definition and use of colors. This package has to be included before TikZ.
+\usepackage{nag}       % Issues warnings when best practices in writing LaTeX documents are violated.
+\usepackage{todonotes} % Provides tooltip-like todo notes.
+\usepackage{hyperref}  % Enables cross linking in the electronic document version. This package has to be included second to last.
+\usepackage[acronym,toc]{glossaries} % Enables the generation of glossaries and lists fo acronyms. This package has to be included last.
+
+% Define convenience functions to use the author name and the thesis title in the PDF document properties.
+\newcommand{\authorname}{Forename Surname} % The author name without titles.
+\newcommand{\thesistitle}{Title of the Thesis} % The title of the thesis.
+
+% Set PDF document properties
+\hypersetup{
+	pdfpagelayout   = TwoPageRight,           % How the document is shown in PDF viewers (optional).
+	linkbordercolor = {Melon},                % The color of the borders of boxes around crosslinks (optional).
+	pdfauthor       = {\authorname},          % The author's name in the document properties (optional).
+	pdftitle        = {\thesistitle},         % The document's title in the document properties (optional).
+	pdfsubject      = {Subject},              % The document's subject in the document properties (optional).
+	pdfkeywords     = {a, list, of, keywords} % The document's keywords in the document properties (optional).
+}
+
+\setpnumwidth{2.5em}        % Avoid overfull hboxes in the table of contents (see memoir manual).
+\setsecnumdepth{subsection} % Enumerate subsections.
+
+\nonzeroparskip             % Create space between paragraphs (optional).
+\setlength{\parindent}{0pt} % Remove paragraph identation (optional).
+
+\nobibliography* % Allow the use of full citation in the list of publications.
+
+\makeindex      % Use an optional index.
+\makeglossaries % Use an optional glossary.
+%\glstocfalse   % Remove the glossaries from the table of contents.
+
+\renewcommand{\familydefault}{\sfdefault} % Switch document to sans serif font.
+
+% Set the page numbers to bottom centered.
+\makeevenfoot{plain}{}{\thepage}{} % For front and back matter.
+\makeoddfoot{plain}{}{\thepage}{} % For front and back matter.
+\makeevenfoot{Ruled}{}{\thepage}{} % For main matter.
+\makeoddfoot{Ruled}{}{\thepage}{} % For main matter.
+
+% Required data.
+\settitle{\thesistitle}
+\setsubtitle{Optional Subtitle} % Comment this line if no subtitle is used.
+% If your subtitle contains commas, enclose it with additional curvy brackets (i.e., \setsubtitle{{subtitle text}}) or define it as a macro as done with \thesistitle.
+\setdate{2020}{03}{10} % Set signing date with 3 arguments: {day}{month}{year}.
+\setisbn{978-0-00000-000-0} % Comment this line if no ISBN is used.
+% Please contact IST Library library@ist.ac.at if you want to register an ISBN for your thesis.
+
+% Define convenience function for an IST Austria affiliation.
+\newcommand{\istaustriaaffiliation}{IST Austria, Klosterneuburg, Austria}
+
+% Set persons with 4 arguments:
+%  {title(s) before name}{name}{title(s) after name}{affiliation}
+%  where both titles are optional (i.e. can be given as empty brackets {}).
+\setauthor{}{\authorname}{}{\istaustriaaffiliation}
+\setsupervisor{}{Name Surname}{}{\istaustriaaffiliation}
+\setcosupervisor{}{Name Surname}{}{Institution, Place, Country} % Comment this line if no cosupervisor.
+\setcommitteememberI{}{Name Surname}{}{\istaustriaaffiliation}
+\setcommitteememberII{}{Name Surname}{}{Institution, Place, Country}
+\setcommitteememberIII{}{Name Surname}{}{Institution, Place, Country} % Comment this line if no third committee member.
+\setcommitteememberIIII{}{Name Surname}{}{Institution, Place, Country} % Comment this line if no fourth committee member.
+\setdefensechair{}{Name Surname}{}{\istaustriaaffiliation}
+
+\begin{document}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%% FRONT MATTER %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\frontmatter % Switch to roman page numbering and prevent chapter numbering.
+\pagestyle{plain} % Set simple page numbering.
+% The structure of the thesis has to conform to the guidelines at
+%  https://phd.pages.ist.ac.at/student-resources/.
+
+\addtitlepage
+\addcommitteepage
+\addstatementpage
+
+\begin{abstract}
+\todo[inline]{
+	Summarize the gist of your thesis in one page.}
+\end{abstract}
+
+% The Acknowledgement chapter is optional and can be removed.
+\begin{acknowledgements}
+\todo[inline]{
+	Mention grants if you were funded.
+	Consider Scientific Service Units (SSUs) at IST Austria and other staff if you got their support.}
+\end{acknowledgements}
+
+\begin{aboutauthor}
+\todo[inline]{
+	Include paragraph of text summarizing your educational background, your academic profile (e.g. relevant research projects or work experience, list of publications), to give readers a snapshot idea of you as a person/academic.
+	It is not meant to be a CV in the sense that it is not intended for job applications.
+	This means things like your email address, your nationality, your current address, etc., should be left out.}
+\todo[inline,color=white]{
+	The following is an entirely fictional blurb to give you an idea:\\
+	Jane Doe completed a BSc in Natural Sciences at the University of Cambridge and an MSc in Cell Biology at the University of Edinburgh before joining IST Austria in September 2016.
+	Her main research interests include evolution of genetic traits and environmental pressures on evolution.
+	She worked on the research project ``Mathematical Modeling of Evolutionary Constraints'' with the 
+	Abel group at the University of Vienna in the summer of 2014, and published these results in the high-impact journal Evolutionary Biology.
+	During her PhD studies, Jane also presented her research results at the EvoBIO conference in Parma in 2018 and helped develop the tool EVOBOT for modeling evolutionary constraints, currently hosted by IST Austria.}
+\end{aboutauthor}
+
+\begin{publicationlist}
+\todo[inline]{
+	List all publications that appear in this thesis.
+	Specify co-author and collaborator contributions.
+}
+\todo[inline,color=white]{
+	Use the \texttt{\textbackslash bibentry} command to produce a full citation:
+}
+\bibentry{Turing1936} % Examplary full citation.
+\end{publicationlist}
+
+\cleardoublepage
+\renewcommand{\contentsname}{Table of Contents} % Specify chapter heading for table of contents.
+\tableofcontents
+\listoffigures
+
+
+% Create a group and deactivate all page breaks and blank pages.
+% This puts the lists of figures, tables, etc. and the same pages.
+% To reintroduce page breaks or blank pages, take the lists out of the group.
+\begingroup % Starting a group keeps the deactivations restricted to the group.
+\let\newpage\relax
+\let\clearpage\relax
+\let\cleardoublepage\relax
+
+\listoftables
+\listofalgorithms\addcontentsline{toc}{chapter}{List of Algorithms}
+\printglossary[title={List of Terms}]
+\printglossary[type=\acronymtype,title={List of Abbreviations}]
+\endgroup % End the deactivation group.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%% MAIN MATTER %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\mainmatter % Switch to arabic page and chapter numbering.
+\pagestyle{Ruled} % Show chapter and section name at the top of the page.
+%\pagestyle{plain} % Alternative page style without the names at the top.
+
+\chapter{Introduction}
+\todo{Enter your text here.}
+
+\chapter{Additional Chapter}
+\todo{Enter your text here.}
+
+% REMOVE THE FOLLOWING LINE IN THE FINAL VERSION OF THE THESIS.
+\input{intro.tex} % A short introduction to LaTeX.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%% BACK MATTER %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\backmatter
+\pagestyle{plain}
+
+\bibliographystyle{alpha} % Define the citation style.
+\bibliography{intro} % Add the bibliography file (intro.bib in this case).
+
+\mainmatter* % Remove this line to prevent numbering of appendix chapters.
+\appendix % Number appendix chapters with letters instead of numbers.
+
+\chapter{Example Appendix Chapter}
+
+\backmatter
+% REMOVE THE FOLLOWING THREE LINES IN THE FINAL VERSION OF THE THESIS.
+\makeatletter\@todonotes@SetTodoListName{List of Todos}\makeatother % Set name of list of todos.
+\todototoc % Add the list of todos to the table of contents.
+\listoftodos % Add a list of all todos.
+
+\end{document}

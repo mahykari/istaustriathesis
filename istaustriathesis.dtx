@@ -1,0 +1,971 @@
+% \iffalse meta-comment
+%
+%% istaustriathesis.dtx
+%% Copyright (C) 2020 by Thomas Auzinger <thomas@auzinger.name>
+%
+% This work may be distributed and/or modified under the
+% conditions of the LaTeX Project Public License, either version 1.3
+% of this license or (at your option) any later version.
+% The latest version of this license is in
+%   http://www.latex-project.org/lppl.txt
+% and version 1.3 or later is part of all distributions of LaTeX
+% version 2005/12/01 or later.
+%
+% This work has the LPPL maintenance status `maintained'.
+%
+% The Current Maintainer of this work is Thomas Auzinger.
+%
+% This work consists of the files istaustriathesis.dtx and istaustriathesis.ins
+% and the derived file istaustriathesis.cls.
+% This work also consists of the file intro.tex.
+%
+% \fi
+%
+% \iffalse
+%<*driver>
+\ProvidesFile{istaustriathesis.dtx}
+%</driver>
+%<class>\NeedsTeXFormat{LaTeX2e}[1999/12/01]
+%<class>\ProvidesClass{istaustriathesis}
+%<*class>
+    [2020/04/01 v0.1 IST Austria thesis template]
+%</class>
+%
+%<*driver>
+\documentclass{ltxdoc}
+\usepackage[parfill]{parskip}
+\usepackage{multirow}
+\usepackage{booktabs}
+\usepackage[columns=1,totoc=true]{idxlayout}
+\usepackage{hypdoc}
+\EnableCrossrefs
+\CodelineIndex
+\RecordChanges
+\begin{document}
+  \DocInput{istaustriathesis.dtx}
+  \PrintChanges
+  \PrintIndex
+\end{document}
+%</driver>
+% \fi
+%
+% \CheckSum{422}
+%
+% \CharacterTable
+%  {Upper-case    \A\B\C\D\E\F\G\H\I\J\K\L\M\N\O\P\Q\R\S\T\U\V\W\X\Y\Z
+%   Lower-case    \a\b\c\d\e\f\g\h\i\j\k\l\m\n\o\p\q\r\s\t\u\v\w\x\y\z
+%   Digits        \0\1\2\3\4\5\6\7\8\9
+%   Exclamation   \!     Double quote  \"     Hash (number) \#
+%   Dollar        \$     Percent       \%     Ampersand     \&
+%   Acute accent  \'     Left paren    \(     Right paren   \)
+%   Asterisk      \*     Plus          \+     Comma         \,
+%   Minus         \-     Point         \.     Solidus       \/
+%   Colon         \:     Semicolon     \;     Less than     \<
+%   Equals        \=     Greater than  \>     Question mark \?
+%   Commercial at \@     Left bracket  \[     Backslash     \\
+%   Right bracket \]     Circumflex    \^     Underscore    \_
+%   Grave accent  \`     Left brace    \{     Vertical bar  \|
+%   Right brace   \}     Tilde         \~}
+%
+% \newcommand{\issue}[1]{\href{https://gitlab.com/ThomasAUZINGER/istaustriathesis/issues/#1}{Issue \#{}#1}}
+%
+% \changes{v0.1}{2020/04/01}{Pre-release version}
+%
+% \GetFileInfo{istaustriathesis.dtx}
+%
+% ^^A\DoNotIndex{\DeclareOption,\LoadClass,\PassOptionsToClass,\ProcessOptions,\RequirePackage}
+% ^^A\DoNotIndex{\f@family}
+% ^^A\DoNotIndex{\newcommand,\newenvironment,\edef,\let,\renewcommand,\renewenvironment,\set,\xdef}
+% ^^A\DoNotIndex{\begin,\begingroup,\end,\endgroup}
+% ^^A\DoNotIndex{\@empty,\@namedef,\@namelet,\@nameuse,\csname,\endcsname}
+% ^^A\DoNotIndex{\",\\}
+% ^^A\DoNotIndex{\else,\fi,\ifcsempty,\ifcsstring,\ifdefstrequal,\ifdefstring,\ifdraftdoc,\ifstrempty,\ifstrequal,\ifundef}
+% ^^A\DoNotIndex{\baselineskip,\bfseries,\bigskip,\centering,\chapter,\chapterstyle,\cleardoublepage,\displaydate,\expandafter,\fontsize,\footruleskip,\global,\graphicspath,\hfill,\hspace,\includegraphics,\languagename,\makeevenfoot,\makeevenhead,\makefootrule,\makeheadposition,\makeoddfoot,\makeoddhead,\makepagestyle,\makerunningwidth,\newdata,\newgeometry,\newlength,\pagestyle,\par,\parindent,\parskip,\raisebox,\relax,\restoregeometry,\rule,\selectfont,\selectlanguage,\setkeys,\setlength,\sfdefault,\sffamily,\smallskip,\space,\ss,\string,\textwidth,\thispagestyle,\vfill,\vspace}
+%
+% \title{The \textsf{istaustriathesis} class\thanks{This document
+%   corresponds to \textsf{istaustriathesis}~\fileversion, dated \filedate.}}
+% \author{Thomas Auzinger \\ \texttt{thomas@auzinger.name}}
+%
+% \maketitle
+%
+% \begin{abstract}
+% This class provides a \LaTeXe\ template for theses at IST Austria.
+% \end{abstract}
+%
+% \clearpage
+% \tableofcontents
+% \clearpage
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% \section{Introduction}
+%
+% This class provides a \LaTeXe\ template for theses at IST Austria.
+% Further information on the document class and accompanying support can be found at \url{https://gitlab.com/ThomasAUZINGER/istaustriathesis}.
+% Further guidelines may apply to both the format and structure of certain theses.
+% These can be found at \url{https://phd.pages.ist.ac.at/student-resources/}.
+% Thesis authors are advised to consult Section~\ref{sec:user} for a documentation of all relevant commands.
+% Information for class developers is provided in Section~\ref{sec:class}.
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% \section{Known Issues}
+%
+% This class is incompatible with the |minitoc| package as of version 60, due to the incompatibility of the underlying |memoir| class.
+% Use the |titletoc| package as a replacement.
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% \section{Related Work}
+%
+% This document class was developed on the basis of the |vutinfth| document class for all theses at the Faculty of Informations at the TU Wien.
+% See \url{https://gitlab.com/ThomasAUZINGER/vutinfth} for details.
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% \section{Usage for Document Authors}
+% \label{sec:user}
+%
+% This section contains relevant information for authors of theses that are based on the |istaustriathesis| document class.
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% \subsection{Data}
+% \label{sec:user:data}
+%
+% To allow the generation of the title pages, signature fields, statements, etc., several pieces of information have to be set by the author using the commands in the subsequent sections.
+% We discern several categories of data: \textit{(i)} textual data, which is given by a simple text string, \textit{(ii)} persons, which are defined by their names, optional titles, and their gender, as well as, \textit{(iii)} dates and \textit{(iv)} list data, which allow the selection of one argument from a list of permissible arguments.
+%
+% \subsubsection{Textual Data}
+% \label{sec:user:data:text}
+%
+% \DescribeMacro{\settitle}
+% \DescribeMacro{\setsubtitle}
+% \DescribeMacro{\setisbn}
+% All commands in this section are called with one mandatory argument, e.g., as |\command|\marg{text}, where \meta{text} defines the content of the commands.
+% \begin{center}
+% \begin{tabular}{lllc}
+%   \toprule
+%   Command & Role & Optional\\
+%   \midrule
+%   |\settitle|    & Title of the thesis & No \\
+%   |\setsubtitle| & Subtitle of the thesis & Yes \\
+%   |\setisbn|     & Name of the curriculum & Yes \\
+%   \bottomrule
+% \end{tabular}
+% \end{center}
+%
+% \subsubsection{Persons}
+% \label{sec:user:data:person}
+%
+% \DescribeMacro{\setauthor}
+% \DescribeMacro{\setsupervisor}
+% \DescribeMacro{\setcosupervisor}
+% \DescribeMacro{\setcommitteememberI}
+% \DescribeMacro{\setcommitteememberII}
+% \DescribeMacro{\setcommitteememberIII}
+% \DescribeMacro{\setcommitteememberIIII}
+% \DescribeMacro{\setdefensechair}
+% All commands in this section are called with four mandatory arguments, e.g., as |\command|\marg{pretitle}\marg{name}\marg{posttitle}\marg{affiliation}, where \meta{name} defines both the first name(s) and family name(s) of the person. A title that is placed before the name is assigned with \meta{pretitle}, while a trailing title is given with \meta{posttitle}. Both \meta{pretitle} and \meta{posttitle} can be left empty, to indicate an absence of such a title; the insertion of appropriate glue between titles and names is handled by the |istaustriathesis| class. The declaration of the person's affiliation via \meta{affiliation} usually contains the institution, its city, and its country. The following persons can be set:
+% \begin{center}
+% \begin{tabular}{lllc}
+%   \toprule
+%   Command & Role & Optional\\
+%   \midrule
+%   |\setauthor| & Author of the thesis & No \\
+%   |\setsupervisor| & Main supervisor of the thesis & No \\
+%   |\setcosupervisor| & Cosupervisor of the thesis & Yes \\
+%   |\setcommitteememberI| & First committee member & No \\
+%   |\setcommitteememberII| & Second committee member & No \\
+%   |\setcommitteememberIII| & Third committee member & Yes \\
+%   |\setcommitteememberIIII| & Fourth committee member & Yes \\
+%   |\setdefensechair| & Chair of the committee & No \\
+%   \bottomrule
+% \end{tabular}
+% \end{center}
+%
+% \subsubsection{Dates}
+%
+% \DescribeMacro{\setdate}
+% All commands in this section are called with three madatory arguments, e.g., as |\command|\marg{day}\marg{month}\marg{year}. The syntax is identical to the last three arguments of the |\newdate| command of the |datetime| package, from which these commands derive. The following dates can be set:
+% \begin{center}
+% \begin{tabular}{lllc}
+%   \toprule
+%   Command & Role & Optional\\
+%   \midrule
+%   |\setdate| & Signing date & No \\
+%   \bottomrule
+% \end{tabular}
+% \end{center}
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% \subsection{Layout}
+% \label{sec:user:layout}
+%
+% Most of the data that is supplied with the commands of the previous sections is used to generate the front matter of the thesis.
+% It consists of obligatory items such as the title page(s) and the statement of originality as well as optional items such as the acknowledgements or the abstract in different languages.
+% In the remainder of this section, the available items of the front matter are given.
+%
+% \DescribeMacro{\addtitlepage}
+% Used as |\addtitlepage|, it generates the title page. The necessary pieces of information have to be set beforehand (as described in Section~\ref{sec:user:data}). This command is usually used directly after |\begin{document}\frontmatter|.
+%
+% \DescribeMacro{\committeepage}
+% Used as |\addstatementpage|, it generates the signature page of the committee. The necessary pieces of information have to be set beforehand (as described in Section~\ref{sec:user:data}). This command is usually used directly after |\addtitlepage|.
+%
+% \DescribeMacro{\addstatementpage}
+% Used as |\addstatementpage|, it generates a page with the statement of originality and the copyright notice as well as the signature field of the author. The necessary pieces of information have to be set beforehand (as described in Section~\ref{sec:user:data}). This command is usually used directly after |\addcommitteepage|.
+%
+% \DescribeEnv{abstract}
+% \DescribeEnv{abstract*}
+% Used as |\begin{abstract}|\meta{text}|\end{abstract}|, this environment generates a chapter with the abstract. Use the starred version, i.e., |abstract*|, to remove the table of content entry of this environment.
+%
+% \DescribeEnv{acknowledgements}
+% \DescribeEnv{acknowledgements*}
+% Used as |\begin{acknowledgements}|\meta{text}|\end{acknowledgements}|, this environment generates a chapter with the acknowledgements. Use the starred version, i.e., |acknowledgements*|, to remove the table of content entry of this environment.
+%
+% \DescribeEnv{aboutauthor}
+% \DescribeEnv{aboutauthor*}
+% Used as |\begin{aboutauthor}|\meta{text}|\end{aboutauthor}|, this environment generates a chapter with information about the author. Use the starred version, i.e., |aboutauthor*|, to remove the table of content entry of this environment.
+%
+% \DescribeEnv{publicationlist}
+% \DescribeEnv{publicationlist*}
+% Used as |\begin{publicationlist}|\meta{text}|\end{publicationlist}|, this environment generates a chapter with the publication list used in the thesis as well as a description of the author's contributions to them. Use the starred version, i.e., |publicationlist*|, to remove the table of content entry of this environment. Individual citations of the publications can be added using the |\bibentry|\marg{bibid} command.
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% \section{Usage for Class Writers}
+% \label{sec:class}
+%
+% To accomodate shifting requirements, the |istaustriathesis| class provides various convenience functions that allow the modification and extension of its functionality.
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% \subsection{Data}
+%
+% To compose several parts of the thesis layout, input from the thesis author is required.
+% For the |istaustriathesis| class, this is realized by the commands provided in Section~\ref{sec:user:data}.
+% Additional data can be defined with the the commands in the remainder of this section.
+%
+% \DescribeMacro{\CreateData}
+% Used as |\CreateData|\marg{name}, it generates a command |\set|\meta{name}.
+% Used as |\set|\meta{name}\marg{string}, the newly created command assigns the value \meta{string} to the internal variable |\istaustriathesis@data@|\meta{name}.
+% The variable is initialized with an error value to alert the user of the fact that \meta{string} was not supplied via the |\set|\meta{name} command.
+% Furthermore, a command |\istaustriathesis@data@|\meta{name}|@def| is created, to increase source code readability when verifying the existence of a specific data item.
+% See Section~\ref{sec:impl:data:declarations} for examples.
+%
+% \DescribeMacro{\CreatePerson}
+% Used as |\CreatePerson|\marg{name}, it generates a command |\set|\meta{name}.
+% Used as |\set|\meta{name}\marg{pretitle}\marg{personname}\marg{posttitle}\marg{affiliation}, the newly created command assigns the supplied values to the corresponding internal variables |\istaustriathesis@person@|\meta{name}|@|\textellipsis as given in the table below.
+% \begin{center}
+% \begin{tabular}{lllc}
+%   \toprule
+%   Argument & Internal Variable\\
+%   \midrule
+%                      & |\istaustriathesis@person@|\meta{name}|@def|         \\
+%   \meta{pretitle}    & |\istaustriathesis@person@|\meta{name}|@pretitle|    \\
+%   \meta{personname}  & |\istaustriathesis@person@|\meta{name}|@name|        \\
+%   \meta{posttitle}   & |\istaustriathesis@person@|\meta{name}|@posttitle|   \\
+%   \meta{affiliation} & |\istaustriathesis@person@|\meta{name}|@affiliation| \\
+%   \bottomrule
+% \end{tabular}
+% \end{center}
+% The command |\istaustriathesis@person@|\meta{name}|@def| is created to increase source code readability when verifying the existence of a specific person.
+% Furthermore, the command |\istaustriathesis@person@|\meta{name}|@name| returns the person's name.
+% The name can be extended by the person's titles using |\istaustriathesis@person@|\meta{name}|@fullname| and -- even further -- with the person's affilition using |\textellipsis|\meta{name}|@fullnameaffiliation|.
+% See Section~\ref{sec:impl:data:declarations} for examples.
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% \subsection{Layout}
+%
+% Several key elements in the layout of the frontmatter are encapsulated to allow a convenient extension of this functionality.
+%
+% \DescribeMacro{\CommitteeSummaryBlock}
+% Used as |\CommitteeSummaryBlock|, it generates a list of the names of all committee members.
+%
+% \DescribeMacro{\ApprovalBlock}
+% Used as |\ApprovalBlock|, it generates a description of the thesis that is approved.
+%
+% \DescribeMacro{\SignatureBlock}
+% Used as |\SignatureBlock|\marg{role}\marg{name}, it generates a signature field for the given person stating the person's role in the committee and the person's name.
+%
+% \DescribeMacro{\CommitteeBlock}
+% Used as |\CommitteeBlock|, it generates a list of signature fields for all committee members.
+%
+% \DescribeMacro{\CopyrightBlock}
+% Used as |\CopyrightBlock|, it generates the copyright statement.
+%
+% \DescribeMacro{\ISBNBlock}
+% Used as |\ISBNBlock|, it generates the ISBN information.
+%
+% \DescribeMacro{\StatementBlock}
+% Used as |\StatementBlock|, it generates the statement of originality.
+%
+% \DescribeMacro{\AddTitlePage}
+% Used as |\AddTitlePage|, it generates the title page containing the appropriate blocks and the logo.
+%
+% \DescribeMacro{\AddCommitteePage}
+% Used as |\AddCommitteePage|, it generates the approval and signing page containing the appropriate blocks.
+%
+% \DescribeMacro{\AddStatementPage}
+% Used as |\AddStatementPage|, it generates the copyright and statement page containing the appropriate blocks.
+%
+% \DescribeEnv{SFFont}
+% Alters the sans serif font inside the environment. Called with one mandatory argument as |\begin{SFFont}|\marg{family}, which determines the sans serif font family that should be used, e.g., |phv| for Helvetica.
+%
+% \StopEventually{}
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% \section{Implementation}
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% \subsection{Initialization}
+%
+% \subsubsection{Class Options}
+%
+% Pass the options to the underlying memoir class.
+%
+%    \begin{macrocode}
+\DeclareOption*{%
+  \PassOptionsToClass{\CurrentOption}{memoir}%
+}%
+\ProcessOptions\relax
+%    \end{macrocode}
+%
+% \subsubsection{Loaded Class and Packages}
+%
+% The |istaustriathesis| class is based on the |memoir| class.
+%    \begin{macrocode}
+\LoadClass[a4paper,12pt]{memoir}%
+\chapterstyle{veelo}%
+%    \end{macrocode}
+% The following packages are required for the functionality and style of the document class.
+%    \begin{macrocode}
+\RequirePackage[scaled]{helvet}%
+\RequirePackage{lmodern}%
+\RequirePackage{courier}%
+\RequirePackage{textcomp}%
+\RequirePackage[T1]{fontenc}%
+\RequirePackage[english]{babel}%
+\RequirePackage{datetime2,datetime2-calc}%
+\RequirePackage{calc}%
+\RequirePackage{etoolbox}%
+\RequirePackage{graphicx}%
+\graphicspath{{graphics/}}%
+%    \end{macrocode}
+%
+% \subsubsection{Page Layout}
+%
+% Set the margin to one inch on all sides.
+%    \begin{macrocode}
+\setlrmarginsandblock{1in}{1in}{*}%
+\setulmarginsandblock{1in}{1in}{*}%
+\checkandfixthelayout
+%    \end{macrocode}
+%
+% \subsubsection{Fonts}
+%
+% \begin{macro}{\istaustriathesis@HUGE}
+% \begin{macro}{\istaustriathesis@huge}
+% \begin{macro}{\istaustriathesis@LARGE}
+% \begin{macro}{\istaustriathesis@Large}
+% \begin{macro}{\istaustriathesis@large}
+% \begin{macro}{\istaustriathesis@normalsize}
+% \begin{macro}{\istaustriathesis@small}
+% \begin{macro}{\istaustriathesis@footnotesize}
+% \begin{macro}{\istaustriathesis@scriptsize}
+% \begin{macro}{\istaustriathesis@tiny}
+% Initializes the font sizes.
+%    \begin{macrocode}
+\newcommand{\istaustriathesis@Huge}{\Huge}%
+\newcommand{\istaustriathesis@huge}{\huge}%
+\newcommand{\istaustriathesis@LARGE}{\LARGE}%
+\newcommand{\istaustriathesis@Large}{\Large}%
+\newcommand{\istaustriathesis@large}{\large}%
+\newcommand{\istaustriathesis@normalsize}{\normalsize}%
+\newcommand{\istaustriathesis@small}{\small}%
+\newcommand{\istaustriathesis@footnotesize}{\footnotesize}%
+\newcommand{\istaustriathesis@scriptsize}{\scriptsize}%
+\newcommand{\istaustriathesis@tiny}{\tiny}%
+%    \end{macrocode}
+% \end{macro}
+% \end{macro}
+% \end{macro}
+% \end{macro}
+% \end{macro}
+% \end{macro}
+% \end{macro}
+% \end{macro}
+% \end{macro}
+% \end{macro}
+%
+% \begin{environment}{SFFont}
+% Selects the given font family as sans serif font.
+%    \begin{macrocode}
+\newenvironment{SFFont}[1]{%
+%    \end{macrocode}
+% Stores the current sans serif font in |\istaustriathesis@f@family@tmp| and changes to the given sans serif font.
+%    \begin{macrocode}
+  \begingroup
+    \sffamily
+    \global\let\istaustriathesis@f@family@tmp=\f@family
+  \endgroup
+  \renewcommand{\sfdefault}{#1}%
+%    \end{macrocode}
+% In case the outer scope is already sans serif, the new font has to be activated.
+%    \begin{macrocode}
+  \ifdefstrequal{\f@family}{\istaustriathesis@f@family@tmp}{%
+    \sffamily}{}%
+}{%
+%    \end{macrocode}
+% The scope of the font change is the environment itself. Thus, no cleanup code is required in case the outer scope was already sans serif.
+%    \begin{macrocode}
+  \renewcommand{\sfdefault}{\istaustriathesis@f@family@tmp}%
+}%
+%    \end{macrocode}
+% \end{environment}
+%
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% \subsection{Data}
+%
+% \subsubsection{Dates}
+%
+% \begin{macro}{\setdate}
+% Creates the internal storage for the signing date.
+%    \begin{macrocode}
+\newcommand{\setdate}[3]{%
+  \DTMsavenoparsedate{istaustriathesis@date@signing}{#1}{#2}{#3}{-1}%
+}%
+%    \end{macrocode}
+% \end{macro}
+%
+% \subsubsection{Textual Data}
+%
+% \begin{macro}{\istaustriathesis@def@data}
+% Creates the internal storage for simple data entries.
+%    \begin{macrocode}
+\newcommand{\istaustriathesis@def@data}[2]{%
+  \@namedef{istaustriathesis@data@#1@def}{}%
+  \@namedef{istaustriathesis@data@#1}{#2}%
+}%
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\istaustriathesis@def@data@invalid}
+% Initializes the internal storage with error messages.
+%    \begin{macrocode}
+\newcommand{\istaustriathesis@def@data@invalid}[2]{%
+  \@namedef{istaustriathesis@data@#1@error}{%
+    \ClassError{istaustriathesis}{No #2 issued}{Set #1 with #2.}%
+  }%
+  \@namedef{istaustriathesis@data@#1}{%
+    \@nameuse{istaustriathesis@data@#1@error}}%
+}%
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\CreateData}
+% Issues the construction of a setter function for a |data| entry given by |\setdata|.
+%    \begin{macrocode}
+\newcommand{\CreateData}[1]{%
+  \@namedef{set#1}##1{%
+    \istaustriathesis@def@data{#1}{##1}%
+  }%
+  \istaustriathesis@def@data@invalid{#1}{\string\set#1}%
+}%
+%    \end{macrocode}
+% \end{macro}
+%
+% \subsubsection{Persons}
+%
+% \begin{macro}{\istaustriathesis@def@person}
+% Creates the internal storage for a person's name, titles and affiliation.
+%    \begin{macrocode}
+\newcommand{\istaustriathesis@def@person}[5]{%
+  \@namedef{istaustriathesis@person@#1@def}{}%
+  \@namedef{istaustriathesis@person@#1@pretitle}{#2}%
+  \@namedef{istaustriathesis@person@#1@name}{#3}%
+  \@namedef{istaustriathesis@person@#1@posttitle}{#4}%
+  \@namedef{istaustriathesis@person@#1@affiliation}{#5}%
+%    \end{macrocode}
+% For the full name, additional spaces have to be inserted depending on the presence of pre- or posttitles.
+%    \begin{macrocode}
+  \ifstrempty{#3}{%
+    \ifstrempty{#2}{%
+      \@namedef{istaustriathesis@person@#1@fullname}{#4}%
+      \@namedef{istaustriathesis@person@#1@fullnameaffiliation}{%
+        #4, #5}%
+    }{%
+      \ifstrempty{#4}{%
+        \@namedef{istaustriathesis@person@#1@fullname}{#2}%
+        \@namedef{istaustriathesis@person@#1@fullnameaffiliation}{%
+          #2, #5}%
+      }{%
+        \@namedef{istaustriathesis@person@#1@fullname}{#2 #4}%
+        \@namedef{istaustriathesis@person@#1@fullnameaffiliation}{%
+          #2 #4, #5}%
+      }%
+    }%
+  }{%
+    \ifstrempty{#2}{%
+      \ifstrempty{#4}{%
+        \@namedef{istaustriathesis@person@#1@fullname}{#3}%
+        \@namedef{istaustriathesis@person@#1@fullnameaffiliation}{%
+          #3, #5}%
+      }{%
+        \@namedef{istaustriathesis@person@#1@fullname}{#3, #4}%
+        \@namedef{istaustriathesis@person@#1@fullnameaffiliation}{%
+          #3, #4, #5}%
+      }%
+    }{%
+      \ifstrempty{#4}{%
+        \@namedef{istaustriathesis@person@#1@fullname}{#2 #3}%
+        \@namedef{istaustriathesis@person@#1@fullnameaffiliation}{%
+          #2 #3, #5}%
+      }{%
+        \@namedef{istaustriathesis@person@#1@fullname}{#2 #3, #4}%
+        \@namedef{istaustriathesis@person@#1@fullnameaffiliation}{%
+          #2 #3, #4, #5}%
+      }%
+    }%
+  }%
+}%
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\istaustriathesis@def@person@invalid}
+% Initializes the internal storage with error messages.
+%    \begin{macrocode}
+\newcommand{\istaustriathesis@def@person@invalid}[2]{%
+  \@namedef{istaustriathesis@person@#1@error}{%
+    \ClassError{istaustriathesis}{No #2 issued}{Set #1 with #2.}%
+  }%
+  \@namedef{istaustriathesis@person@#1@name}{%
+    \@nameuse{istaustriathesis@person@#1@error}}%
+  \@namedef{istaustriathesis@person@#1@pretitle}{%
+    \@nameuse{istaustriathesis@person@#1@error}}%
+  \@namedef{istaustriathesis@person@#1@posttitle}{%
+    \@nameuse{istaustriathesis@person@#1@error}}%
+  \@namedef{istaustriathesis@person@#1@affiliation}{%
+    \@nameuse{istaustriathesis@person@#1@error}}%
+  \@namedef{istaustriathesis@person@#1@fullname}{%
+    \@nameuse{istaustriathesis@person@#1@error}}%
+  \@namedef{istaustriathesis@person@#1@fullnameaffiliation}{%
+    \@nameuse{istaustriathesis@person@#1@error}}%
+}%
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\CreatePerson}
+% Issues the construction of a setter function for a |person| given by |\setperson|.
+%    \begin{macrocode}
+\newcommand{\CreatePerson}[1]{%
+  \@namedef{set#1}##1##2##3##4{%
+    \istaustriathesis@def@person{#1}{##1}{##2}{##3}{##4}%
+  }%
+  \istaustriathesis@def@person@invalid{#1}{\string\set#1}%
+}%
+%    \end{macrocode}
+% \end{macro}
+%
+%
+% \subsubsection{Declarations}
+%\label{sec:impl:data:declarations}
+%
+% \begin{macro}{Textual Data}
+% Creates the required textual data entries.
+%    \begin{macrocode}
+\CreateData{title}%
+\CreateData{subtitle}%
+\CreateData{isbn}%
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{Persons}
+% Creates the required person entries.
+%    \begin{macrocode}
+\CreatePerson{author}%
+\CreatePerson{supervisor}%
+\CreatePerson{cosupervisor}%
+\CreatePerson{committeememberI}%
+\CreatePerson{committeememberII}%
+\CreatePerson{committeememberIII}%
+\CreatePerson{committeememberIIII}%
+\CreatePerson{defensechair}%
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\istaustriathesis@by}
+% \begin{macro}{\istaustriathesis@submission}
+% \begin{macro}{\istaustriathesis@committee}
+% \begin{macro}{\istaustriathesis@onfile}
+% Define literals.
+%    \begin{macrocode}
+\newcommand{\istaustriathesis@by}{by}%
+\newcommand{\istaustriathesis@submission}{%
+\emph{A thesis submitted to the\\Graduate School\\of the\\
+Institute of Science and Technology Austria\\
+in partial fulfillment of the requirements\\
+for the degree of\\Doctor of Philosophy}}%
+\newcommand{\istaustriathesis@committee}{Committee in charge:}%
+\newcommand{\istaustriathesis@onfile}{Signed page is on file}%
+%    \end{macrocode}
+% \end{macro}
+% \end{macro}
+% \end{macro}
+% \end{macro}
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% \subsection{Layout}
+%
+% \subsubsection{Setup}
+%
+% \begin{macro}{\newsetlength}
+% Set internal convenience macros.
+%    \begin{macrocode}
+\newcommand{\newsetlength}[2]{%
+  \newlength{#1}%
+  \setlength{#1}{#2}%
+}%
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\istaustriathesis@skip}
+% \begin{macro}{\istaustriathesis@medskip}
+% \begin{macro}{\istaustriathesis@bigskip}
+% Set style element specifications.
+%    \begin{macrocode}
+\newsetlength{\istaustriathesis@skipamount}{1ex}%
+\newsetlength{\istaustriathesis@medskipamount}{3ex}%
+\newsetlength{\istaustriathesis@bigskipamount}{6ex}%
+%    \end{macrocode}
+% Helper functions.
+%    \begin{macrocode}
+\newcommand{\istaustriathesis@skip}{%
+  \vspace*{\istaustriathesis@skipamount}}%
+\newcommand{\istaustriathesis@medskip}{%
+  \vspace*{\istaustriathesis@medskipamount}}%
+\newcommand{\istaustriathesis@bigskip}{%
+  \vspace*{\istaustriathesis@bigskipamount}}%
+%    \end{macrocode}
+% \end{macro}
+% \end{macro}
+% \end{macro}
+%
+% \subsubsection{Title Page}
+%
+% \begin{macro}{istaustriathesis@pagestyle@titlepage}
+% Generate the title page style.
+%    \begin{macrocode}
+\copypagestyle{istaustriathesis@pagestyle@titlepage}{empty}%
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\CommitteeSummaryBlock}
+%    \begin{macrocode}
+\newcommand{\CommitteeSummaryBlock}{%
+  \istaustriathesis@committee
+  \istaustriathesis@skip
+  \\\istaustriathesis@person@defensechair@name, Chair
+  \\\istaustriathesis@person@supervisor@name
+  \ifdef{\istaustriathesis@person@cosupervisor@def}{%
+    \\\istaustriathesis@person@cosupervisor@name
+  }{}%
+  \\\istaustriathesis@person@committeememberI@name
+  \\\istaustriathesis@person@committeememberII@name
+  \ifdef{\istaustriathesis@person@committeememberIII@def}{%
+    \\\istaustriathesis@person@committeememberIII@name
+  }{}%
+  \ifdef{\istaustriathesis@person@committeememberIIII@def}{%
+    \\\istaustriathesis@person@committeememberIIII@name
+  }{}%
+}%
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\istaustriathesis@graphics@logo}
+% Define logo.
+%    \begin{macrocode}
+\newcommand{\istaustriathesis@graphics@logo}{%
+  \includegraphics[width=5cm]{IST_logo_cmyk.pdf}}%
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\AddTitlePage}
+%   Generates the title page. Multiline title and subtitle are supported.
+%    \begin{macrocode}
+\newcommand{\AddTitlePage}{%
+  \thispagestyle{istaustriathesis@pagestyle@titlepage}%
+  \begingroup\centering
+  \null\vfill
+  {\istaustriathesis@Huge\bfseries\istaustriathesis@data@title}\par
+  {\istaustriathesis@LARGE\bfseries
+    \ifdef{\istaustriathesis@data@subtitle}{%
+      \istaustriathesis@data@subtitle}{%
+    }%
+  }\par
+  \istaustriathesis@skip
+  {\istaustriathesis@large\istaustriathesis@by}\par
+  \istaustriathesis@skip
+  {\istaustriathesis@Large
+    \bfseries\istaustriathesis@person@author@fullname}\par
+  \istaustriathesis@skip
+  {\istaustriathesis@large
+    \DTMmonthname{\DTMfetchmonth{istaustriathesis@date@signing}}, %
+    \DTMfetchyear{istaustriathesis@date@signing}%
+  }\par
+  \vfill
+  {\istaustriathesis@large\istaustriathesis@submission}\par
+  \istaustriathesis@bigskip
+  {\istaustriathesis@large\CommitteeSummaryBlock}\par
+  \istaustriathesis@bigskip
+  \istaustriathesis@graphics@logo\par
+  \endgroup
+  \cleardoublepage
+}%
+%    \end{macrocode}
+% \end{macro}
+%
+% \subsubsection{Committee Page}
+%
+% \begin{macro}{istaustriathesis@pagestyle@committeepage}
+% Generate the committee page style.
+%    \begin{macrocode}
+\copypagestyle{istaustriathesis@pagestyle@committeepage}{empty}%
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\ApprovalBlock}
+%    \begin{macrocode}
+\newcommand{\ApprovalBlock}{%
+  The thesis of \istaustriathesis@person@author@name, %
+  titled \emph{\istaustriathesis@data@title}, is approved by:%
+}%
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\SignatureBlock}
+%    \begin{macrocode}
+\newcommand{\SignatureBlock}[2]{%
+    {\bfseries #1}: #2\par
+  \begingroup\centering
+    \istaustriathesis@bigskip
+    Signature: \rule{8cm}{0.4pt}\par
+  \endgroup
+}%
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\CommitteeBlock}
+%    \begin{macrocode}
+\newcommand{\CommitteeBlock}{%
+  \SignatureBlock{Supervisor}{%
+    \istaustriathesis@person@supervisor@fullnameaffiliation}\par
+  \istaustriathesis@medskip
+  \ifdef{\istaustriathesis@person@cosupervisor@def}{%
+    \SignatureBlock{Co-supervisor}{%
+      \istaustriathesis@person@cosupervisor@fullnameaffiliation}\par
+    \istaustriathesis@medskip
+  }{}%
+  \SignatureBlock{Committee Member}{%
+    \istaustriathesis@person@committeememberI@fullnameaffiliation}\par
+  \istaustriathesis@medskip
+  \SignatureBlock{Committee Member}{%
+    \istaustriathesis@person@committeememberII@fullnameaffiliation}\par
+  \istaustriathesis@medskip
+  \ifdef{\istaustriathesis@person@committeememberIII@def}{%
+    \SignatureBlock{Committee Member}{%
+      \istaustriathesis@person@committeememberIII@fullnameaffiliation}\par
+    \istaustriathesis@medskip
+  }{}%
+  \ifdef{\istaustriathesis@person@committeememberIIII@def}{%
+    \SignatureBlock{Committee Member}{%
+      \istaustriathesis@person@committeememberIIII@fullnameaffiliation}\par
+    \istaustriathesis@medskip
+  }{}%
+  \SignatureBlock{Defense Chair}{%
+    \istaustriathesis@person@defensechair@fullnameaffiliation}\par
+}%
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\AddCommitteePage}
+%   Generates the committee page with signature fields.
+%    \begin{macrocode}
+\newcommand{\AddCommitteePage}{%
+  \thispagestyle{istaustriathesis@pagestyle@committeepage}%
+  \ApprovalBlock\par
+  \vfill
+  \CommitteeBlock\par
+  \istaustriathesis@medskip
+  \begingroup\centering
+  {\istaustriathesis@small\istaustriathesis@onfile}\par
+  \endgroup
+  \cleardoublepage
+}%
+%    \end{macrocode}
+% \end{macro}
+%
+% \subsubsection{Statement Page}
+%
+% \begin{macro}{istaustriathesis@pagestyle@statementpage}
+% Generate the statement page style.
+%    \begin{macrocode}
+\copypagestyle{istaustriathesis@pagestyle@statementpage}{empty}%
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\CopyrightBlock}
+%    \begin{macrocode}
+\newcommand{\CopyrightBlock}{%
+  \textcopyright\ by \istaustriathesis@person@author@name, %
+  \DTMmonthname{\DTMfetchmonth{istaustriathesis@date@signing}}, %
+  \DTMfetchyear{istaustriathesis@date@signing}\\
+  All Rights Reserved%
+}%
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\ISBNBlock}
+%    \begin{macrocode}
+\newcommand{\ISBNBlock}{%
+  IST Austria Thesis, ISSN: 2663-337X\par
+  \ifdef{\istaustriathesis@data@isbn@def}{%
+    \istaustriathesis@medskip
+    ISBN: \istaustriathesis@data@isbn\par
+  }{}%
+}%
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\StatementBlock}
+%    \begin{macrocode}
+\newcommand{\StatementBlock}{%
+  \noindent I hereby declare that this thesis is my own work and that %
+  it does not contain other people's work without this being so %
+  stated; this thesis does not contain my previous work without this %
+  being stated, and the bibliography contains all the literature that %
+  I used in writing the dissertation.\par
+  \istaustriathesis@medskip
+  \noindent I declare that this is a true copy of my thesis, including %
+  any final revisions, as approved by my thesis committee, and that %
+  this thesis has not been submitted for a higher degree to any other %
+  university or institution.\par
+  \istaustriathesis@medskip
+  \noindent I certify that any republication of materials presented in %
+  this thesis has been approved by the relevant publishers and %
+  co-authors.%
+}%
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\AddStatementPage}
+%   Generates the statement and copyright page with signature field.
+%    \begin{macrocode}
+\newcommand{\AddStatementPage}{%
+  \thispagestyle{istaustriathesis@pagestyle@statementpage}%
+  \begingroup\centering
+  \CopyrightBlock\par
+  \istaustriathesis@bigskip
+  \ISBNBlock
+  \endgroup
+  \istaustriathesis@bigskip
+  \StatementBlock\par
+  \istaustriathesis@bigskip
+  \begingroup\centering
+  Signature: \rule{6cm}{0.4pt}\par
+  \istaustriathesis@skip
+  \istaustriathesis@person@author@name\\
+  \DTMmonthname{\DTMfetchmonth{istaustriathesis@date@signing}}, %
+  \DTMfetchyear{istaustriathesis@date@signing}\par
+  \vfill
+  {\istaustriathesis@small\istaustriathesis@onfile}\par
+  \endgroup
+  \cleardoublepage
+}%
+%    \end{macrocode}
+% \end{macro}
+%
+% \subsubsection{Front Matter Material}
+%
+% \begin{macro}{\addtitlepage}
+% Generates the titlepage.
+%    \begin{macrocode}
+\newcommand{\addtitlepage}{%
+  \AddTitlePage}%
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\addcommitteepage}
+% Generates the committee page.
+%    \begin{macrocode}
+\newcommand{\addcommitteepage}{%
+  \AddCommitteePage}%
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\addstatementpage}
+% Generates the statemet page.
+%    \begin{macrocode}
+\newcommand{\addstatementpage}{%
+  \AddStatementPage}%
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{environment}{abstract}
+% Generates the abstract page.
+%    \begin{macrocode}
+\renewenvironment{abstract}{%
+  \chapter{Abstract}%
+}{}%
+%    \end{macrocode}
+% \end{environment}
+%
+% \begin{environment}{acknowledgements}
+% Generates the acknowledgements page.
+%    \begin{macrocode}
+\newenvironment{acknowledgements}{%
+  \openany% Start on next page
+  \chapter{Acknowledgements}%
+}{%
+  \openright% Reactivate standard behavior
+}%
+%    \end{macrocode}
+% \end{environment}
+%
+% \begin{environment}{aboutauthor}
+% Generates the about the author page.
+%    \begin{macrocode}
+\newenvironment{aboutauthor}{%
+  \openany% Start on next page
+  \chapter{About the Author}%
+}{%
+  \openright% Reactivate standard behavior
+}%
+%    \end{macrocode}
+% \end{environment}
+%
+% \begin{environment}{publicationlist}
+% Generates the list of publications page.
+%    \begin{macrocode}
+\newenvironment{publicationlist}{%
+  \openany% Start on next page
+  \chapter{List of Publications}%
+}{%
+  \openright% Reactivate standard behavior
+}%
+%    \end{macrocode}
+% \end{environment}
+%
+% \Finale
+%
+% ^^A chapter numbering has to be activated for the glossary
+% \makeatletter\HD@numberedtrue\makeatother
+%
+% \PrintChanges ^^A compile glossary with `makeindex.exe -s gglo.ist -o %.gls %.glo'
+%
+% ^^A chapter numbering has to be deactivated for the index
+% \makeatletter\HD@numberedfalse\makeatother
+%
+% \PrintIndex ^^A compile index with `makeindex.exe -s gind.ist %.idx'
+%
+\endinput
