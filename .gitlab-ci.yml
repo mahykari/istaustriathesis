@@ -25,6 +25,8 @@ compile_example:
       glossaries glossaries-english idxlayout ifoddpage mfirstuc multirow nag
       relsize supertabular todonotes tracklang xfor
     - sh ./build-all.sh # Build document class and example file.
+  rules:
+    - when: always
   artifacts:
     paths:
       - example.pdf # Output the compiled example file.
@@ -62,6 +64,10 @@ compare_with_reference:
       else
         printf '%s\n' "Generated example file matches reference" >&2;
       fi
+  rules:
+    - if: $CI_COMMIT_BRANCH == "develop"
+      when: manual
+    - when: always
   artifacts:
     paths:
       - tests/*.png # Output the difference images for debugging.
