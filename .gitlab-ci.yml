@@ -19,12 +19,14 @@ compile_example:
     # Install TeX Live using predefine installation profile.
     - perl install/install-tl*/install-tl --profile=tests/texlive.profile
     # Add folder of TeX-related executables to system path.
-    - export PATH=$PATH:/usr/local/texlive/2019/bin/x86_64-linuxmusl
+    - export PATH=$PATH:/usr/local/texlive/2020/bin/x86_64-linuxmusl
     # Install additional TeX packages.
     - tlmgr install datatool datetime2 datetime2-english enumitem
       glossaries glossaries-english idxlayout ifoddpage mfirstuc multirow nag
       relsize supertabular todonotes tracklang xfor
     - sh ./build-all.sh # Build document class and example file.
+  rules:
+    - when: always
   artifacts:
     paths:
       - example.pdf # Output the compiled example file.
@@ -62,6 +64,10 @@ compare_with_reference:
       else
         printf '%s\n' "Generated example file matches reference" >&2;
       fi
+  rules:
+    - if: $CI_COMMIT_BRANCH == "develop"
+      when: manual
+    - when: always
   artifacts:
     paths:
       - tests/*.png # Output the difference images for debugging.
