@@ -692,32 +692,32 @@ for the degree of\\Doctor of Philosophy}}%
 % \end{macro}
 %
 % \begin{macro}{\AddTitlePage}
-%   Generates the title page. Multiline title and subtitle are supported.
+% Generates the title page. Multiline title and subtitle are supported.
 %    \begin{macrocode}
 \newcommand{\AddTitlePage}{%
   \thispagestyle{istaustriathesis@pagestyle@titlepage}%
   \begingroup\centering
   \null\vfill
-  {\istaustriathesis@Huge\bfseries\istaustriathesis@data@title}\par
+  {\istaustriathesis@Huge\bfseries\istaustriathesis@data@title\par}
   {\istaustriathesis@LARGE\bfseries
     \ifdef{\istaustriathesis@data@subtitle}{%
       \istaustriathesis@data@subtitle}{%
     }%
-  }\par
+  \par}
   \istaustriathesis@skip
-  {\istaustriathesis@large\istaustriathesis@by}\par
+  {\istaustriathesis@large\istaustriathesis@by\par}
   \istaustriathesis@skip
   {\istaustriathesis@Large
-    \bfseries\istaustriathesis@person@author@fullname}\par
+    \bfseries\istaustriathesis@person@author@fullname\par}
   \istaustriathesis@skip
   {\istaustriathesis@large
     \DTMmonthname{\DTMfetchmonth{istaustriathesis@date@signing}}, %
     \DTMfetchyear{istaustriathesis@date@signing}%
-  }\par
+  \par}
   \vfill
-  {\istaustriathesis@large\istaustriathesis@submission}\par
+  {\istaustriathesis@large\istaustriathesis@submission\par}
   \istaustriathesis@bigskip
-  {\istaustriathesis@large\CommitteeSummaryBlock}\par
+  {\istaustriathesis@large\CommitteeSummaryBlock\par}
   \istaustriathesis@bigskip
   \istaustriathesis@graphics@logo\par
   \endgroup
@@ -790,7 +790,7 @@ for the degree of\\Doctor of Philosophy}}%
 % \end{macro}
 %
 % \begin{macro}{\AddCommitteePage}
-%   Generates the committee page with signature fields.
+% Generates the committee page with signature fields.
 %    \begin{macrocode}
 \newcommand{\AddCommitteePage}{%
   \thispagestyle{istaustriathesis@pagestyle@committeepage}%
@@ -799,7 +799,7 @@ for the degree of\\Doctor of Philosophy}}%
   \CommitteeBlock\par
   \istaustriathesis@medskip
   \begingroup\centering
-  {\istaustriathesis@small\istaustriathesis@onfile}\par
+  {\istaustriathesis@small\istaustriathesis@onfile\par}
   \endgroup
   \cleardoublepage
 }%
@@ -860,7 +860,7 @@ for the degree of\\Doctor of Philosophy}}%
 % \end{macro}
 %
 % \begin{macro}{\AddStatementPage}
-%   Generates the statement and copyright page with signature field.
+% Generates the statement and copyright page with signature field.
 %    \begin{macrocode}
 \newcommand{\AddStatementPage}{%
   \thispagestyle{istaustriathesis@pagestyle@statementpage}%
@@ -879,7 +879,7 @@ for the degree of\\Doctor of Philosophy}}%
   \DTMmonthname{\DTMfetchmonth{istaustriathesis@date@signing}}, %
   \DTMfetchyear{istaustriathesis@date@signing}\par
   \vfill
-  {\istaustriathesis@small\istaustriathesis@onfile}\par
+  {\istaustriathesis@small\istaustriathesis@onfile\par}
   \endgroup
   \cleardoublepage
 }%
