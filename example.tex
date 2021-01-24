@@ -49,7 +49,10 @@
 \makeglossaries % Use an optional glossary.
 %\glstocfalse   % Remove the glossaries from the table of contents.
 
-\renewcommand{\familydefault}{\sfdefault} % Switch document to sans serif font.
+% Comment the following line to switch the document to a serif font, i.e., Latin Modern Roman
+% (see https://tug.org/FontCatalogue/latinmodernroman/)
+\renewcommand{\familydefault}{\sfdefault} % Switch document to sans serif font, i.e., Latin Modern Sans.
+% (see https://tug.org/FontCatalogue/latinmodernsans/)
 
 % Set the page numbers to bottom centered.
 \makeevenfoot{plain}{}{\thepage}{} % For front and back matter.
