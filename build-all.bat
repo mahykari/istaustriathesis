@@ -1,4 +1,4 @@
-rem Copyright (C) 2020 by Thomas Auzinger <thomas@auzinger.name>
+rem Copyright (C) 2020-2021 by Thomas Auzinger <thomas@auzinger.name>
 
 @echo off
 set CLASS=istaustriathesis
