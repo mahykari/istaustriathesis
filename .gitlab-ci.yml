@@ -21,9 +21,9 @@ compile_example:
     # Add folder of TeX-related executables to system path.
     - export PATH=$PATH:/usr/local/texlive/2020/bin/x86_64-linuxmusl
     # Install additional TeX packages.
-    - tlmgr install datatool datetime2 datetime2-english enumitem
-      glossaries glossaries-english idxlayout ifoddpage mfirstuc multirow nag
-      relsize supertabular todonotes tracklang xfor
+    - tlmgr install datatool datetime2 datetime2-english doclicense enumitem
+      glossaries glossaries-english hyperxmp idxlayout ifoddpage mfirstuc
+      multirow nag relsize supertabular todonotes totpages tracklang xfor
     - sh ./build-all.sh # Build document class and example file.
   rules:
     - when: always
