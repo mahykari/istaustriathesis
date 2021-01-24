@@ -1,4 +1,4 @@
-% Copyright (C) 2020 by Thomas Auzinger <thomas@auzinger.name>
+% Copyright (C) 2020-2021 by Thomas Auzinger <thomas@auzinger.name>
 
 \documentclass[draft,final]{istaustriathesis}
 
@@ -18,21 +18,37 @@
 \usepackage[usenames,dvipsnames,table]{xcolor} % Allows the definition and use of colors. This package has to be included before TikZ.
 \usepackage{nag}       % Issues warnings when best practices in writing LaTeX documents are violated.
 \usepackage{todonotes} % Provides tooltip-like todo notes.
+\usepackage{hyperxmp}  % Enables editing of PDF metadata.
+%\usepackage[type={CC},modifier={by-nc-nd},version={4.0}]{doclicense} % Sets the license metadata. See copyright licensing below.
 \usepackage{hyperref}  % Enables cross linking in the electronic document version. This package has to be included second to last.
 \usepackage[acronym,toc]{glossaries} % Enables the generation of glossaries and lists fo acronyms. This package has to be included last.
 
 % Define convenience functions to use the author name and the thesis title in the PDF document properties.
 \newcommand{\authorname}{Forename Surname} % The author name without titles.
 \newcommand{\thesistitle}{Title of the Thesis} % The title of the thesis.
+\newcommand{\issn}{2663-337X} % Standard ISSN of all IST Austria theses.
+\newcommand{\isbn}{978-0-00000-000-0} % Leave empty if no ISBN is used.
+% Please contact IST Library library@ist.ac.at if you want to register an ISBN for your thesis.
+
+% Set the copyright license. The possible choices are 'restricted' to reserve all rights or a Creative Commons license.
+% See https://creativecommons.org/choose/ for information on choosing a license.
+% The supported Creative Commons licenses are 'cc-by', 'cc-by-sa', 'cc-by-nd', 'cc-by-nc', 'cc-by-nc-sa', and 'cc-by-nc-nd'.
+\setlicense{restricted} % 'restricted' or any of the 'cc-by...'.
+% If a Creative Commons license is chosen, the corresponding license information can be added to the PDF metadata.
+% For this, the package 'doclicense' needs to be uncommented above.
+% Furthermore, the 'modifier' option of 'doclicense' needs to mirror the chosen Creative Commons license.
 
 % Set PDF document properties
 \hypersetup{
-	pdfpagelayout   = TwoPageRight,           % How the document is shown in PDF viewers (optional).
-	linkbordercolor = {Melon},                % The color of the borders of boxes around crosslinks (optional).
-	pdfauthor       = {\authorname},          % The author's name in the document properties (optional).
-	pdftitle        = {\thesistitle},         % The document's title in the document properties (optional).
-	pdfsubject      = {Subject},              % The document's subject in the document properties (optional).
-	pdfkeywords     = {a, list, of, keywords} % The document's keywords in the document properties (optional).
+	pdfpagelayout   = TwoPageRight,            % How the document is shown in PDF viewers (optional).
+	linkbordercolor = {Melon},                 % The color of the borders of boxes around crosslinks (optional).
+	pdfauthor       = {\authorname},           % The author's name in the document properties (optional).
+	pdftitle        = {\thesistitle},          % The document's title in the document properties (optional).
+	pdfsubject      = {Subject},               % The document's subject in the document properties (optional).
+	pdfkeywords     = {a, list, of, keywords}, % The document's keywords in the document properties (optional).
+	pdfissn         = {\issn},                 % The document's ISSN in the document properties (optional).
+	pdfisbn         = {\isbn},                 % The document's ISBN in the document properties (optional).
+	pdfpublisher    = {IST Austria}            % The document's publisher in the document properties (optional).
 }
 
 \setpnumwidth{2.5em}        % Avoid overfull hboxes in the table of contents (see memoir manual).
@@ -47,7 +63,10 @@
 \makeglossaries % Use an optional glossary.
 %\glstocfalse   % Remove the glossaries from the table of contents.
 
-\renewcommand{\familydefault}{\sfdefault} % Switch document to sans serif font.
+% Comment the following line to switch the document to a serif font, i.e., Latin Modern Roman
+% (see https://tug.org/FontCatalogue/latinmodernroman/)
+\renewcommand{\familydefault}{\sfdefault} % Switch document to sans serif font, i.e., Latin Modern Sans.
+% (see https://tug.org/FontCatalogue/latinmodernsans/)
 
 % Set the page numbers to bottom centered.
 \makeevenfoot{plain}{}{\thepage}{} % For front and back matter.
@@ -60,8 +79,8 @@
 \setsubtitle{Optional Subtitle} % Comment this line if no subtitle is used.
 % If your subtitle contains commas, enclose it with additional curvy brackets (i.e., \setsubtitle{{subtitle text}}) or define it as a macro as done with \thesistitle.
 \setdate{2020}{03}{10} % Set signing date with 3 arguments: {day}{month}{year}.
-\setisbn{978-0-00000-000-0} % Comment this line if no ISBN is used.
-% Please contact IST Library library@ist.ac.at if you want to register an ISBN for your thesis.
+\setissn{\issn}
+\setisbn{\isbn} % Comment this line if no ISBN is used.
 
 % Define convenience function for an IST Austria affiliation.
 \newcommand{\istaustriaaffiliation}{IST Austria, Klosterneuburg, Austria}
