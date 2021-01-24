@@ -19,6 +19,7 @@
 \usepackage{nag}       % Issues warnings when best practices in writing LaTeX documents are violated.
 \usepackage{todonotes} % Provides tooltip-like todo notes.
 \usepackage{hyperxmp}  % Enables editing of PDF metadata.
+%\usepackage[type={CC},modifier={by-nc-nd},version={4.0}]{doclicense} % Sets the license metadata. See copyright licensing below.
 \usepackage{hyperref}  % Enables cross linking in the electronic document version. This package has to be included second to last.
 \usepackage[acronym,toc]{glossaries} % Enables the generation of glossaries and lists fo acronyms. This package has to be included last.
 
@@ -28,6 +29,14 @@
 \newcommand{\issn}{2663-337X} % Standard ISSN of all IST Austria theses.
 \newcommand{\isbn}{978-0-00000-000-0} % Leave empty if no ISBN is used.
 % Please contact IST Library library@ist.ac.at if you want to register an ISBN for your thesis.
+
+% Set the copyright license. The possible choices are 'restricted' to reserve all rights or a Creative Commons license.
+% See https://creativecommons.org/choose/ for information on choosing a license.
+% The supported Creative Commons licenses are 'cc-by', 'cc-by-sa', 'cc-by-nd', 'cc-by-nc', 'cc-by-nc-sa', and 'cc-by-nc-nd'.
+\setlicense{restricted} % 'restricted' or any of the 'cc-by...'.
+% If a Creative Commons license is chosen, the corresponding license information can be added to the PDF metadata.
+% For this, the package 'doclicense' needs to be uncommented above.
+% Furthermore, the 'modifier' option of 'doclicense' needs to mirror the chosen Creative Commons license.
 
 % Set PDF document properties
 \hypersetup{

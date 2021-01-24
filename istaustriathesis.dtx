@@ -201,6 +201,29 @@
 % \end{tabular}
 % \end{center}
 %
+% \subsubsection{List Data}
+% \label{sec:user:data:list}
+%
+% All commands in this section are called with at least one madatory argument called \meta{list}, e.g., as |\command|\dots\marg{list}\dots, where \meta{list} is given one element from a set of possible arguments.
+%
+% \DescribeMacro{\setcopyright}
+% The type of copyright license can be chosen as restirictive or as one of the Creative Commons\index{Creative Commons} (CC) licenses (see \url{https://creativecommons.org/choose/} for further information on possible choices).
+% \begin{center}
+% \begin{tabular}{lllc}
+%   \toprule
+%   Command & Options & Description\\
+%   \midrule
+%   |\setlicense|\marg{list} & |restricted|  & Specifies that all rights are reseverd. \\
+%                            & |cc-by|       & Specifies the CC BY 4.0 License. \\
+%                            & |cc-by-sa|    & Specifies the CC BY-SA 4.0 License. \\
+%                            & |cc-by-nd|    & Specifies the CC BY-ND 4.0 License. \\
+%                            & |cc-by-nc|    & Specifies the CC BY-NC 4.0 License. \\
+%                            & |cc-by-nc-sa| & Specifies the CC BY-NC-SA 4.0 License. \\
+%                            & |cc-by-nc-nd| & Specifies the CC BY-NC-ND 4.0 License. \\
+%   \bottomrule
+% \end{tabular}
+% \end{center}
+%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % \subsection{Layout}
 % \label{sec:user:layout}
@@ -622,6 +645,153 @@ for the degree of\\Doctor of Philosophy}}%
 % \end{macro}
 % \end{macro}
 %
+% \subsubsection{License Types}
+%
+% \begin{macro}{\istaustriathesis@license@restricted}
+% \begin{macro}{\istaustriathesis@license@ccby}
+% \begin{macro}{\istaustriathesis@license@ccbysa}
+% \begin{macro}{\istaustriathesis@license@ccbynd}
+% \begin{macro}{\istaustriathesis@license@ccbync}
+% \begin{macro}{\istaustriathesis@license@ccbyncsa}
+% \begin{macro}{\istaustriathesis@license@ccbyncnd}
+% Seven license types are differentiated: |restricted| and six Creative Commons variants |ccby...|.
+%    \begin{macrocode}
+\newcommand{\istaustriathesis@license@restricted}{restricted}%
+\newcommand{\istaustriathesis@license@ccby}{cc-by}%
+\newcommand{\istaustriathesis@license@ccbysa}{cc-by-sa}%
+\newcommand{\istaustriathesis@license@ccbynd}{cc-by-nd}%
+\newcommand{\istaustriathesis@license@ccbync}{cc-by-nc}%
+\newcommand{\istaustriathesis@license@ccbyncsa}{cc-by-nc-sa}%
+\newcommand{\istaustriathesis@license@ccbyncnd}{cc-by-nc-nd}%
+%    \end{macrocode}
+% \end{macro}
+% \end{macro}
+% \end{macro}
+% \end{macro}
+% \end{macro}
+% \end{macro}
+% \end{macro}
+%
+% \begin{macro}{\istaustriathesis@restricted}
+% \begin{macro}{\istaustriathesis@ccby}
+% \begin{macro}{\istaustriathesis@ccbysa}
+% \begin{macro}{\istaustriathesis@ccbynd}
+% \begin{macro}{\istaustriathesis@ccbync}
+% \begin{macro}{\istaustriathesis@ccbyncsa}
+% \begin{macro}{\istaustriathesis@ccbyncnd}
+% Define literals.
+%    \begin{macrocode}
+\newcommand{\istaustriathesis@restricted}{All Rights Reserved}%
+\newcommand{\istaustriathesis@ccby}{%
+CC BY 4.0 The copyright of this thesis rests with the author. %
+Unless otherwise indicated, its contents are licensed under a %
+\href{https://creativecommons.org/licenses/by/4.0/}{%
+Creative Commons Attribution 4.0 International License}. %
+Under this license, you may copy and redistribute the material %
+in any medium or format. You may also create and distribute modified %
+versions of the work. This is on the condition that: you credit the %
+author.}%
+\newcommand{\istaustriathesis@ccbysa}{%
+CC BY-SA 4.0 The copyright of this thesis rests with the author. %
+Unless otherwise indicated, its contents are licensed under a %
+\href{https://creativecommons.org/licenses/by-sa/4.0/}{%
+Creative Commons Attribution-ShareAlike 4.0 International}. %
+Under this license, you may copy and redistribute the material %
+in any medium or format for both commercial and non-commercial %
+purposes. You may also create and distribute modified versions %
+of the work. This on the condition that: you credit the author %
+and share any derivative works under the same license.}%
+\newcommand{\istaustriathesis@ccbynd}{%
+CC BY-ND 4.0 The copyright of this thesis rests with the author. %
+Unless otherwise indicated, its contents are licensed under a %
+\href{https://creativecommons.org/licenses/by-nd/4.0/}{%
+Creative Commons Attribution-NoDerivatives 4.0 International License}. %
+Under this licence, you may copy and redistribute the material %
+in any medium or format for both commercial and non-commercial %
+purposes. This on the condition that: you credit the author and %
+do not distribute modified versions of the work.}%
+\newcommand{\istaustriathesis@ccbync}{%
+CC BY-NC 4.0 The copyright of this thesis rests with the author. %
+Unless otherwise indicated, its contents are licensed under a %
+\href{https://creativecommons.org/licenses/by-nc/4.0/}{%
+Creative Commons Attribution-NonCommercial 4.0 International License}. %
+Under this license, you may copy and redistribute the material %
+in any medium or format. You may also create and distribute %
+modified versions of the work. This is on the condition that: %
+you credit the author and do not use it, or any derivative %
+works, for a commercial purpose.}%
+\newcommand{\istaustriathesis@ccbyncsa}{%
+CC BY-NC-SA 4.0 The copyright of this thesis rests with the author. %
+Unless otherwise indicated, its contents are licensed under a %
+\href{https://creativecommons.org/licenses/by-nc-sa/4.0/}{%
+Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License}. %
+Under this license, you may copy and redistribute the material %
+in any medium or format. You may also create and distribute %
+modified versions of the work. This is on the condition that: %
+you credit the author, do not use it for commercial purposes %
+and share any derivative works under the same license.}%
+\newcommand{\istaustriathesis@ccbyncnd}{%
+CC BY-NC-ND 4.0 The copyright of this thesis rests with the author. %
+Unless otherwise indicated, its contents are licensed under a %
+\href{https://creativecommons.org/licenses/by-nc-nd/4.0/}{%
+Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International License}. %
+Under this license, you may copy and redistribute the material %
+in any medium or format. This is on the condition that: you %
+credit the author, do not use it for commercial purposes and do %
+not distribute modified versions of the work.}%
+%    \end{macrocode}
+% \end{macro}
+% \end{macro}
+% \end{macro}
+% \end{macro}
+% \end{macro}
+% \end{macro}
+% \end{macro}
+%
+% \begin{macro}{\istaustriathesis@license}
+%    \begin{macrocode}
+\newcommand{\istaustriathesis@license}{
+  \ClassError{istaustriathesis}{No license chosen}{Set license type with \string\setlicense.}%
+}%
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\setlicense}
+% Sets the copyright license.
+%    \begin{macrocode}
+\newcommand{\setlicense}[1]{
+  \ifdefstring{\istaustriathesis@license@restricted}{#1}{%
+    \renewcommand{\istaustriathesis@license}{%
+      \istaustriathesis@restricted}%
+  }{}%
+  \ifdefstring{\istaustriathesis@license@ccby}{#1}{%
+    \renewcommand{\istaustriathesis@license}{%
+      \istaustriathesis@ccby}%
+  }{}%
+  \ifdefstring{\istaustriathesis@license@ccbysa}{#1}{%
+    \renewcommand{\istaustriathesis@license}{%
+      \istaustriathesis@ccbysa}%
+  }{}%
+  \ifdefstring{\istaustriathesis@license@ccbynd}{#1}{%
+    \renewcommand{\istaustriathesis@license}{%
+      \istaustriathesis@ccbynd}%
+  }{}%
+  \ifdefstring{\istaustriathesis@license@ccbync}{#1}{%
+    \renewcommand{\istaustriathesis@license}{%
+      \istaustriathesis@ccbync}%
+  }{}%
+  \ifdefstring{\istaustriathesis@license@ccbyncsa}{#1}{%
+    \renewcommand{\istaustriathesis@license}{%
+      \istaustriathesis@ccbyncsa}%
+  }{}%
+  \ifdefstring{\istaustriathesis@license@ccbyncnd}{#1}{%
+    \renewcommand{\istaustriathesis@license}{%
+      \istaustriathesis@ccbyncnd}%
+  }{}%
+}%
+%    \end{macrocode}
+% \end{macro}
+%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % \subsection{Layout}
 %
@@ -827,10 +997,18 @@ for the degree of\\Doctor of Philosophy}}%
 % \begin{macro}{\CopyrightBlock}
 %    \begin{macrocode}
 \newcommand{\CopyrightBlock}{%
+  \begingroup\centering
   \textcopyright\ by \istaustriathesis@person@author@name, %
   \DTMmonthname{\DTMfetchmonth{istaustriathesis@date@signing}}, %
   \DTMfetchyear{istaustriathesis@date@signing}\\
-  All Rights Reserved%
+  \endgroup
+  \begingroup
+    \setlength{\parindent}{0pt}%
+    \setlength{\leftskip}{0pt plus 0.5fil}%
+    \setlength{\rightskip}{0pt plus -0.5fil}%
+    \istaustriathesis@license%
+    \par
+  \endgroup
 }%
 %    \end{macrocode}
 % \end{macro}
@@ -884,9 +1062,9 @@ for the degree of\\Doctor of Philosophy}}%
 %    \begin{macrocode}
 \newcommand{\AddStatementPage}{%
   \thispagestyle{istaustriathesis@pagestyle@statementpage}%
-  \begingroup\centering
   \CopyrightBlock\par
   \istaustriathesis@bigskip
+  \begingroup\centering
   \ISSNBlock
   \ISBNBlock
   \endgroup
