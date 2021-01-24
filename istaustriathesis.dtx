@@ -49,7 +49,7 @@
 %</driver>
 % \fi
 %
-% \CheckSum{422}
+% \CheckSum{0}
 %
 % \CharacterTable
 %  {Upper-case    \A\B\C\D\E\F\G\H\I\J\K\L\M\N\O\P\Q\R\S\T\U\V\W\X\Y\Z
@@ -142,6 +142,7 @@
 %
 % \DescribeMacro{\settitle}
 % \DescribeMacro{\setsubtitle}
+% \DescribeMacro{\setissn}
 % \DescribeMacro{\setisbn}
 % All commands in this section are called with one mandatory argument, e.g., as |\command|\marg{text}, where \meta{text} defines the content of the commands.
 % \begin{center}
@@ -151,7 +152,8 @@
 %   \midrule
 %   |\settitle|    & Title of the thesis & No \\
 %   |\setsubtitle| & Subtitle of the thesis & Yes \\
-%   |\setisbn|     & Name of the curriculum & Yes \\
+%   |\setissn|     & ISSN of the theses at IST Austria & No  \\
+%   |\setisbn|     & ISBN of the thesis & Yes \\
 %   \bottomrule
 % \end{tabular}
 % \end{center}
@@ -293,6 +295,9 @@
 %
 % \DescribeMacro{\CopyrightBlock}
 % Used as |\CopyrightBlock|, it generates the copyright statement.
+%
+% \DescribeMacro{\ISSNBlock}
+% Used as |\ISSNBlock|, it generates the ISSN information.
 %
 % \DescribeMacro{\ISBNBlock}
 % Used as |\ISBNBlock|, it generates the ISBN information.
@@ -578,6 +583,7 @@
 %    \begin{macrocode}
 \CreateData{title}%
 \CreateData{subtitle}%
+\CreateData{issn}%
 \CreateData{isbn}%
 %    \end{macrocode}
 % \end{macro}
@@ -829,10 +835,20 @@ for the degree of\\Doctor of Philosophy}}%
 %    \end{macrocode}
 % \end{macro}
 %
+% \begin{macro}{\ISSNBlock}
+%    \begin{macrocode}
+\newcommand{\ISSNBlock}{%
+  IST Austria Thesis%
+  \ifdef{\istaustriathesis@data@issn@def}{%
+    , ISSN: \istaustriathesis@data@issn
+  }{}\par
+}%
+%    \end{macrocode}
+% \end{macro}
+%
 % \begin{macro}{\ISBNBlock}
 %    \begin{macrocode}
 \newcommand{\ISBNBlock}{%
-  IST Austria Thesis, ISSN: 2663-337X\par
   \ifdef{\istaustriathesis@data@isbn@def}{%
     \istaustriathesis@medskip
     ISBN: \istaustriathesis@data@isbn\par
@@ -871,6 +887,7 @@ for the degree of\\Doctor of Philosophy}}%
   \begingroup\centering
   \CopyrightBlock\par
   \istaustriathesis@bigskip
+  \ISSNBlock
   \ISBNBlock
   \endgroup
   \istaustriathesis@bigskip

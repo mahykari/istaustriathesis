@@ -25,6 +25,9 @@
 % Define convenience functions to use the author name and the thesis title in the PDF document properties.
 \newcommand{\authorname}{Forename Surname} % The author name without titles.
 \newcommand{\thesistitle}{Title of the Thesis} % The title of the thesis.
+\newcommand{\issn}{2663-337X} % Standard ISSN of all IST Austria theses.
+\newcommand{\isbn}{978-0-00000-000-0} % Leave empty if no ISBN is used.
+% Please contact IST Library library@ist.ac.at if you want to register an ISBN for your thesis.
 
 % Set PDF document properties
 \hypersetup{
@@ -34,6 +37,8 @@
 	pdftitle        = {\thesistitle},          % The document's title in the document properties (optional).
 	pdfsubject      = {Subject},               % The document's subject in the document properties (optional).
 	pdfkeywords     = {a, list, of, keywords}, % The document's keywords in the document properties (optional).
+	pdfissn         = {\issn},                 % The document's ISSN in the document properties (optional).
+	pdfisbn         = {\isbn},                 % The document's ISBN in the document properties (optional).
 	pdfpublisher    = {IST Austria}            % The document's publisher in the document properties (optional).
 }
 
@@ -65,8 +70,8 @@
 \setsubtitle{Optional Subtitle} % Comment this line if no subtitle is used.
 % If your subtitle contains commas, enclose it with additional curvy brackets (i.e., \setsubtitle{{subtitle text}}) or define it as a macro as done with \thesistitle.
 \setdate{2020}{03}{10} % Set signing date with 3 arguments: {day}{month}{year}.
-\setisbn{978-0-00000-000-0} % Comment this line if no ISBN is used.
-% Please contact IST Library library@ist.ac.at if you want to register an ISBN for your thesis.
+\setissn{\issn}
+\setisbn{\isbn} % Comment this line if no ISBN is used.
 
 % Define convenience function for an IST Austria affiliation.
 \newcommand{\istaustriaaffiliation}{IST Austria, Klosterneuburg, Austria}
