@@ -105,7 +105,7 @@ for details.
 
 Copyright Notice
 ----------------
-Copyright (C) 2020 by Thomas Auzinger <thomas@auzinger.name>
+Copyright (C) 2020-2021 by Thomas Auzinger <thomas@auzinger.name>
 
 This work may be distributed and/or modified under the
 conditions of the LaTeX Project Public License, either version 1.3

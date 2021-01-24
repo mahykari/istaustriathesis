@@ -1,5 +1,5 @@
 #!/bin/sh
-# Copyright (C) 2020 by Thomas Auzinger <thomas@auzinger.name>
+# Copyright (C) 2020-2021 by Thomas Auzinger <thomas@auzinger.name>
 
 CLASS=istaustriathesis
 SOURCE=example
