@@ -28,7 +28,7 @@
 %<class>\NeedsTeXFormat{LaTeX2e}[1999/12/01]
 %<class>\ProvidesClass{istaustriathesis}
 %<*class>
-    [2020/05/26 v1.1 IST Austria thesis template]
+    [2021/01/24 v1.2 IST Austria thesis template]
 %</class>
 %
 %<*driver>
@@ -72,6 +72,7 @@
 % \changes{v0.1}{2020/04/01}{Pre-release version}
 % \changes{v1.0}{2020/04/15}{Release version}
 % \changes{v1.1}{2020/05/26}{Corrected line spacing}
+% \changes{v1.2}{2021/01/24}{Enable Creative Commons licenses and improve ISBN handling}
 %
 % \GetFileInfo{istaustriathesis.dtx}
 %
@@ -602,6 +603,7 @@
 %\label{sec:impl:data:declarations}
 %
 % \begin{macro}{Textual Data}
+% \changes{v1.2}{2021/01/24}{Improve ISBN handling}
 % Creates the required textual data entries.
 %    \begin{macrocode}
 \CreateData{title}%
@@ -654,6 +656,7 @@ for the degree of\\Doctor of Philosophy}}%
 % \begin{macro}{\istaustriathesis@license@ccbync}
 % \begin{macro}{\istaustriathesis@license@ccbyncsa}
 % \begin{macro}{\istaustriathesis@license@ccbyncnd}
+% \changes{v1.2}{2021/01/24}{Enable Creative Commons licenses}
 % Seven license types are differentiated: |restricted| and six Creative Commons variants |ccby...|.
 %    \begin{macrocode}
 \newcommand{\istaustriathesis@license@restricted}{restricted}%
@@ -679,6 +682,7 @@ for the degree of\\Doctor of Philosophy}}%
 % \begin{macro}{\istaustriathesis@ccbync}
 % \begin{macro}{\istaustriathesis@ccbyncsa}
 % \begin{macro}{\istaustriathesis@ccbyncnd}
+% \changes{v1.2}{2021/01/24}{Enable Creative Commons licenses}
 % Define literals.
 %    \begin{macrocode}
 \newcommand{\istaustriathesis@restricted}{All Rights Reserved}%
@@ -749,6 +753,7 @@ not distribute modified versions of the work.}%
 % \end{macro}
 %
 % \begin{macro}{\istaustriathesis@license}
+% \changes{v1.2}{2021/01/24}{Enable Creative Commons licenses}
 %    \begin{macrocode}
 \newcommand{\istaustriathesis@license}{
   \ClassError{istaustriathesis}{No license chosen}{Set license type with \string\setlicense.}%
@@ -757,6 +762,7 @@ not distribute modified versions of the work.}%
 % \end{macro}
 %
 % \begin{macro}{\setlicense}
+% \changes{v1.2}{2021/01/24}{Enable Creative Commons licenses}
 % Sets the copyright license.
 %    \begin{macrocode}
 \newcommand{\setlicense}[1]{
@@ -995,6 +1001,7 @@ not distribute modified versions of the work.}%
 % \end{macro}
 %
 % \begin{macro}{\CopyrightBlock}
+% \changes{v1.2}{2021/01/24}{Enable Creative Commons licenses}
 %    \begin{macrocode}
 \newcommand{\CopyrightBlock}{%
   \begingroup\centering
@@ -1014,6 +1021,7 @@ not distribute modified versions of the work.}%
 % \end{macro}
 %
 % \begin{macro}{\ISSNBlock}
+% \changes{v1.2}{2021/01/24}{Improve ISBN handling}
 %    \begin{macrocode}
 \newcommand{\ISSNBlock}{%
   IST Austria Thesis%
@@ -1025,6 +1033,7 @@ not distribute modified versions of the work.}%
 % \end{macro}
 %
 % \begin{macro}{\ISBNBlock}
+% \changes{v1.2}{2021/01/24}{Improve ISBN handling}
 %    \begin{macrocode}
 \newcommand{\ISBNBlock}{%
   \ifdef{\istaustriathesis@data@isbn@def}{%
@@ -1058,6 +1067,7 @@ not distribute modified versions of the work.}%
 %
 % \begin{macro}{\AddStatementPage}
 % \changes{v1.1}{2020/05/26}{Corrected line spacing}
+% \changes{v1.2}{2021/01/24}{Enable Creative Commons licenses and improve ISBN handling}
 % Generates the statement and copyright page with signature field.
 %    \begin{macrocode}
 \newcommand{\AddStatementPage}{%
