@@ -19,7 +19,7 @@ compile_example:
     # Install TeX Live using predefine installation profile.
     - perl install/install-tl*/install-tl --profile=tests/texlive.profile --repository=http://ctan.math.utah.edu/ctan/tex-archive/systems/texlive/tlnet/
     # Add folder of TeX-related executables to system path.
-    - export PATH=$PATH:/usr/local/texlive/2020/bin/x86_64-linuxmusl
+    - export PATH=$PATH:/usr/local/texlive/2021/bin/x86_64-linuxmusl
     # Install additional TeX packages.
     - tlmgr install datatool datetime2 datetime2-english doclicense enumitem
       glossaries glossaries-english hyperxmp idxlayout ifoddpage mfirstuc
