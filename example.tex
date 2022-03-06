@@ -12,7 +12,7 @@
 \usepackage{microtype}  % Small-scale typographic enhancements.
 \usepackage[inline]{enumitem} % User control over the layout of lists (itemize, enumerate, description).
 \usepackage{multirow}   % Allows table elements to span several rows.
-\usepackage{booktabs}   % Improves the typesettings of tables.
+\usepackage{booktabs}   % Improves the typesetting of tables.
 \usepackage{subcaption} % Allows the use of subfigures and enables their referencing.
 \usepackage[ruled,linesnumbered,algochapter]{algorithm2e} % Enables the writing of pseudo code.
 \usepackage[usenames,dvipsnames,table]{xcolor} % Allows the definition and use of colors. This package has to be included before TikZ.
@@ -20,8 +20,8 @@
 \usepackage{todonotes} % Provides tooltip-like todo notes.
 \usepackage{hyperxmp}  % Enables editing of PDF metadata.
 %\usepackage[type={CC},modifier={by-nc-nd},version={4.0}]{doclicense} % Sets the license metadata. See copyright licensing below.
-\usepackage{hyperref}  % Enables cross linking in the electronic document version. This package has to be included second to last.
-\usepackage[acronym,toc]{glossaries} % Enables the generation of glossaries and lists fo acronyms. This package has to be included last.
+\usepackage{hyperref}  % Enables hyperlinking in the electronic document version. This package has to be included second to last.
+\usepackage[acronym,toc]{glossaries} % Enables the generation of glossaries and lists of acronyms. This package has to be included last.
 
 % Define convenience functions to use the author name and the thesis title in the PDF document properties.
 \newcommand{\authorname}{Forename Surname} % The author name without titles.
@@ -41,7 +41,7 @@
 % Set PDF document properties
 \hypersetup{
 	pdfpagelayout   = TwoPageRight,            % How the document is shown in PDF viewers (optional).
-	linkbordercolor = {Melon},                 % The color of the borders of boxes around crosslinks (optional).
+	linkbordercolor = {Melon},                 % The color of the borders of boxes around hyperlinks (optional).
 	pdfauthor       = {\authorname},           % The author's name in the document properties (optional).
 	pdftitle        = {\thesistitle},          % The document's title in the document properties (optional).
 	pdfsubject      = {Subject},               % The document's subject in the document properties (optional).
@@ -55,7 +55,7 @@
 \setsecnumdepth{subsection} % Enumerate subsections.
 
 \nonzeroparskip             % Create space between paragraphs (optional).
-\setlength{\parindent}{0pt} % Remove paragraph identation (optional).
+\setlength{\parindent}{0pt} % Remove paragraph indentation (optional).
 
 \nobibliography* % Allow the use of full citation in the list of publications.
 
@@ -148,7 +148,7 @@
 \todo[inline,color=white]{
 	Use the \texttt{\textbackslash bibentry} command to produce a full citation:
 }
-\bibentry{Turing1936} % Examplary full citation.
+\bibentry{Turing1936} % Exemplary full citation.
 \end{publicationlist}
 
 \cleardoublepage
@@ -158,7 +158,7 @@
 
 
 % Create a group and deactivate all page breaks and blank pages.
-% This puts the lists of figures, tables, etc. and the same pages.
+% This puts the lists of figures, tables, etc. on the same pages.
 % To reintroduce page breaks or blank pages, take the lists out of the group.
 \begingroup % Starting a group keeps the deactivations restricted to the group.
 \let\newpage\relax
@@ -174,7 +174,7 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%% MAIN MATTER %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\mainmatter % Switch to arabic page and chapter numbering.
+\mainmatter % Switch to Arabic page and chapter numbering.
 \pagestyle{Ruled} % Show chapter and section name at the top of the page.
 %\pagestyle{plain} % Alternative page style without the names at the top.
 
