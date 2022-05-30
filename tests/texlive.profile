@@ -1,11 +1,11 @@
 selected_scheme scheme-custom
-TEXDIR /usr/local/texlive/2021
-TEXMFCONFIG ~/.texlive2021/texmf-config
+TEXDIR /usr/local/texlive/2022
+TEXMFCONFIG ~/.texlive2022/texmf-config
 TEXMFHOME ~/texmf
 TEXMFLOCAL /usr/local/texlive/texmf-local
-TEXMFSYSCONFIG /usr/local/texlive/2021/texmf-config
-TEXMFSYSVAR /usr/local/texlive/2021/texmf-var
-TEXMFVAR ~/.texlive2021/texmf-var
+TEXMFSYSCONFIG /usr/local/texlive/2022/texmf-config
+TEXMFSYSVAR /usr/local/texlive/2022/texmf-var
+TEXMFVAR ~/.texlive2022/texmf-var
 binary_x86_64-linuxmusl 1
 collection-basic 1
 collection-fontsrecommended 1
