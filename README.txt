@@ -7,7 +7,7 @@
 Description
 -----------
 The istaustriathesis document class is a LaTeX2e-based template for theses
-written at IST Austria. This package includes the document class and its
+written at ISTA. This package includes the document class and its
 documentation as well as an example document that includes a short introduction
 to LaTeX.
 
@@ -84,7 +84,7 @@ istaustriathesis.ins  The installer file of the istaustriathesis document class.
 tests/texlive.profile  TeX Live installation profile for GitLab CI.
 .gitlab-ci.yml         Configuration file for GitLab CI.
 
-graphics/*.*       Corporate identity graphics of IST Austria.
+graphics/*.*       Corporate identity graphics of ISTA.
 
 
 Known Issues
@@ -123,4 +123,4 @@ This work consists of the files istaustriathesis.dtx and istaustriathesis.ins
 and the derived file istaustriathesis.cls.
 This work also consists of the file intro.tex.
 
-The 'IST Austria' logo is copyright of IST Austria.
+The 'ISTA' logo is copyright of ISTA.
