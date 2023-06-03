@@ -17,7 +17,7 @@ compile_example:
     - mkdir install
     - wget -c http://mirror.ctan.org/systems/texlive/tlnet/install-tl-unx.tar.gz -O - | tar -xz -C install
     # Install TeX Live using predefine installation profile.
-    - perl install/install-tl*/install-tl --profile=tests/texlive.profile --repository=http://ctan.math.utah.edu/ctan/tex-archive/systems/texlive/tlnet/
+    - perl install/install-tl*/install-tl --profile=tests/texlive.profile --repository=https://ctan.net/systems/texlive/tlnet/
     # Add folder of TeX-related executables to system path.
     - export PATH=$PATH:/usr/local/texlive/2023/bin/x86_64-linuxmusl
     # Install additional TeX packages.
