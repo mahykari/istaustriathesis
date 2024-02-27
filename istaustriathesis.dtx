@@ -28,7 +28,7 @@
 %<class>\NeedsTeXFormat{LaTeX2e}[1999/12/01]
 %<class>\ProvidesClass{istaustriathesis}
 %<*class>
-    [2022/09/20 v1.5 ISTA thesis template]
+    [2024/02/20 v1.6 ISTA thesis template]
 %</class>
 %
 %<*driver>
@@ -76,6 +76,7 @@
 % \changes{v1.3}{2022/03/07}{Switch to new corporate design}
 % \changes{v1.4}{2022/05/30}{Switch to PDF/A ouput format}
 % \changes{v1.5}{2022/09/20}{Complete switch to new corporate design}
+% \changes{v1.6}{2024/02/20}{Add master thesis template}
 %
 % \GetFileInfo{istaustriathesis.dtx}
 %
@@ -95,7 +96,7 @@
 % \maketitle
 %
 % \begin{abstract}
-% This class provides a \LaTeXe\ template for theses at ISTA.
+% This class provides a \LaTeXe\ template for Master's and PhD theses at ISTA.
 % \end{abstract}
 %
 % \clearpage
@@ -405,6 +406,7 @@
 % This section provides low-level functionality for macro definitions and macro expansions.
 %
 % \begin{macro}{\ifestrequal}
+% \changes{v1.6}{2024/02/20}{Add master thesis template}
 % A variant of |\ifstrequal| that fully expands the first two arguments.
 %    \begin{macrocode}
 \newcommand{\ifestrequal}[4]{%
@@ -638,6 +640,7 @@
 % \begin{macro}{\istaustriathesis@thesis@type}
 % \begin{macro}{\istaustriathesis@degreename}
 % \begin{macro}{\istaustriathesis@thesisname}
+% \changes{v1.6}{2024/02/20}{Add master thesis template}
 % Initialize the thesis type and the degree with error messages.
 %    \begin{macrocode}
 \newcommand{\istaustriathesis@thesis@type}{%
@@ -660,6 +663,7 @@
 % \begin{macro}{\istaustriathesis@thesis@bachelor}
 % \begin{macro}{\istaustriathesis@thesis@master}
 % \begin{macro}{\istaustriathesis@thesis@doctor}
+% \changes{v1.6}{2024/02/20}{Add master thesis template}
 % Two thesis types are differentiated: |master| and |phd|.
 %    \begin{macrocode}
 \newcommand{\istaustriathesis@thesis@master}{master}%
@@ -671,6 +675,7 @@
 %
 % \begin{macro}{\ifmaster}
 % \begin{macro}{\ifphd}
+% \changes{v1.6}{2024/02/20}{Add master thesis template}
 % Convenience macros to determine the category of the selected thesis type.
 %    \begin{macrocode}
 \newcommand{\ifmaster}[1]{%
@@ -687,6 +692,7 @@
 % \end{macro}
 % \end{macro}
 % \begin{macro}{\setthesis}
+% \changes{v1.6}{2024/02/20}{Add master thesis template}
 % Sets the thesis type.
 %    \begin{macrocode}
 \newcommand{\setthesis}[1]{%
@@ -748,6 +754,7 @@
 % \begin{macro}{\istaustriathesis@submission}
 % \begin{macro}{\istaustriathesis@committee}
 % \begin{macro}{\istaustriathesis@onfile}
+% \changes{v1.6}{2024/02/20}{Add master thesis template}
 % Define literals.
 %    \begin{macrocode}
 \newcommand{\istaustriathesis@by}{by}%
@@ -962,6 +969,7 @@ not distribute modified versions of the work.}%
 % \end{macro}
 %
 % \begin{macro}{\CommitteeSummaryBlock}
+% \changes{v1.6}{2024/02/20}{Add master thesis template}
 %    \begin{macrocode}
 \newcommand{\CommitteeSummaryBlock}{%
   \istaustriathesis@committee
@@ -1078,6 +1086,7 @@ not distribute modified versions of the work.}%
 % \end{macro}
 %
 % \begin{macro}{\CommitteeBlock}
+% \changes{v1.6}{2024/02/20}{Add master thesis template}
 %    \begin{macrocode}
 \newcommand{\CommitteeBlock}{%
   \ifmaster{%
@@ -1190,6 +1199,7 @@ not distribute modified versions of the work.}%
 % \begin{macro}{\ISSNBlock}
 % \changes{v1.2}{2021/01/24}{Improve ISBN handling}
 % \changes{v1.5}{2022/09/20}{Update naming}
+% \changes{v1.6}{2024/02/20}{Add master thesis template}
 %    \begin{macrocode}
 \newcommand{\ISSNBlock}{%
   ISTA \istaustriathesis@thesisname%
@@ -1213,6 +1223,7 @@ not distribute modified versions of the work.}%
 % \end{macro}
 %
 % \begin{macro}{\StatementBlock}
+% \changes{v1.6}{2024/02/20}{Amend statement concerning AI use}
 %    \begin{macrocode}
 \newcommand{\StatementBlock}{%
   \noindent I hereby declare that this thesis is my own work and that %
