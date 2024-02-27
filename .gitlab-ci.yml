@@ -36,7 +36,7 @@ compile_example:
 compare_with_reference:
   stage: test
   script:
-    - apk add --no-cache poppler-utils imagemagick # Install comparison tools.
+    - apk add --no-cache poppler-utils imagemagick imagemagick-pdf # Install comparison tools.
     # Count the pages of the compiled example file and its reference.
     - pagecount=$(pdfinfo example.pdf | grep Pages | awk '{print $2}')
     - pagecount_ref=$(pdfinfo example-ref.pdf | grep Pages | awk '{print $2}')
