@@ -63,28 +63,33 @@ where additional documentation can be found.
 
 Files
 -----
-build-all.bat      The batch file to generate all necessary files on Windows
-                     systems.
-build-all.sh       The batch file to generate all necessary files on Unix-based
-                     systems.
-build-thesis.bat   The batch file to generate the thesis on Windows systems.
-build-thesis.sh    The batch file to generate the thesis on Unix-based systems.
-example-ref.pdf    The reference solution for the compiled example document.
-example.tex        An LaTeX source file showing the use of the istaustriathesis
-                     document class.
-intro.bib          The bibliography file of intro.tex.
-intro.tex          The LaTeX source file of a document that gives an
-                     introduction to LaTeX.
-lppl.txt           The LaTeX Project Pulic License v1.3c.
-README.txt         This file.
-istaustriathesis.dtx  The documented source code and documentation file of the
-                        istaustriathesis document class.
-istaustriathesis.ins  The installer file of the istaustriathesis document class.
+build-all.bat     The batch file to generate all necessary files on Windows
+                    systems.
+build-all.sh      The batch file to generate all necessary files on Unix-based
+                    systems.
+build-thesis.bat  The batch file to generate the thesis on Windows systems.
+build-thesis.sh   The batch file to generate the thesis on Unix-based systems.
+example-master-ref.pdf  The reference solution for the compiled example
+                          document.
+example-master.tex      An LaTeX source file showing the use of the
+                          istaustriathesis document class.
+example-phd-ref.pdf     The reference solution for the compiled example
+                          document.
+example-phd.tex         An LaTeX source file showing the use of the
+                          istaustriathesis document class.
+intro.bib   The bibliography file of intro.tex.
+intro.tex   The LaTeX source file of a document that gives an introduction to
+              LaTeX.
+lppl.txt    The LaTeX Project Pulic License v1.3c.
+README.txt  This file.
+istaustriathesis.dtx   The documented source code and documentation file of the
+                         istaustriathesis document class.
+istaustriathesis.ins   The installer file of the istaustriathesis document class.
 
 tests/texlive.profile  TeX Live installation profile for GitLab CI.
 .gitlab-ci.yml         Configuration file for GitLab CI.
 
-graphics/*.*       Corporate identity graphics of ISTA.
+graphics/*.*           Corporate identity graphics of ISTA.
 
 
 Known Issues
