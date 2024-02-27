@@ -1,7 +1,7 @@
 % \iffalse meta-comment
 %
 %% istaustriathesis.dtx
-%% Copyright (C) 2020-2023 by Thomas Auzinger <thomas@auzinger.name>
+%% Copyright (C) 2020-2024 by Thomas Auzinger <thomas@auzinger.name>
 %
 % This work may be distributed and/or modified under the
 % conditions of the LaTeX Project Public License, either version 1.3
@@ -28,7 +28,7 @@
 %<class>\NeedsTeXFormat{LaTeX2e}[1999/12/01]
 %<class>\ProvidesClass{istaustriathesis}
 %<*class>
-    [2022/09/20 v1.5 ISTA thesis template]
+    [2024/02/20 v1.6 ISTA thesis template]
 %</class>
 %
 %<*driver>
@@ -49,7 +49,7 @@
 %</driver>
 % \fi
 %
-% \CheckSum{518}
+% \CheckSum{658}
 %
 % \CharacterTable
 %  {Upper-case    \A\B\C\D\E\F\G\H\I\J\K\L\M\N\O\P\Q\R\S\T\U\V\W\X\Y\Z
@@ -76,6 +76,7 @@
 % \changes{v1.3}{2022/03/07}{Switch to new corporate design}
 % \changes{v1.4}{2022/05/30}{Switch to PDF/A ouput format}
 % \changes{v1.5}{2022/09/20}{Complete switch to new corporate design}
+% \changes{v1.6}{2024/02/20}{Add master thesis template}
 %
 % \GetFileInfo{istaustriathesis.dtx}
 %
@@ -95,7 +96,7 @@
 % \maketitle
 %
 % \begin{abstract}
-% This class provides a \LaTeXe\ template for theses at ISTA.
+% This class provides a \LaTeXe\ template for Master's and PhD theses at ISTA.
 % \end{abstract}
 %
 % \clearpage
@@ -150,7 +151,7 @@
 % \DescribeMacro{\setisbn}
 % All commands in this section are called with one mandatory argument, e.g., as |\command|\marg{text}, where \meta{text} defines the content of the commands.
 % \begin{center}
-% \begin{tabular}{lllc}
+% \begin{tabular}{llc}
 %   \toprule
 %   Command & Role & Optional\\
 %   \midrule
@@ -175,18 +176,19 @@
 % \DescribeMacro{\setdefensechair}
 % All commands in this section are called with four mandatory arguments, e.g., as |\command|\marg{pretitle}\marg{name}\marg{posttitle}\marg{affiliation}, where \meta{name} defines both the first name(s) and family name(s) of the person. A title that is placed before the name is assigned with \meta{pretitle}, while a trailing title is given with \meta{posttitle}. Both \meta{pretitle} and \meta{posttitle} can be left empty, to indicate an absence of such a title; the insertion of appropriate glue between titles and names is handled by the |istaustriathesis| class. The declaration of the person's affiliation via \meta{affiliation} usually contains the institution, its city, and its country. The following persons can be set:
 % \begin{center}
-% \begin{tabular}{lllc}
+% \begin{tabular}{llcc}
 %   \toprule
-%   Command & Role & Optional\\
+%           &      & |master| & |phd|    \\
+%   Command & Role & Optional & Optional \\
 %   \midrule
-%   |\setauthor| & Author of the thesis & No \\
-%   |\setsupervisor| & Main supervisor of the thesis & No \\
-%   |\setcosupervisor| & Cosupervisor of the thesis & Yes \\
-%   |\setcommitteememberI| & First committee member & No \\
-%   |\setcommitteememberII| & Second committee member & No \\
-%   |\setcommitteememberIII| & Third committee member & Yes \\
-%   |\setcommitteememberIIII| & Fourth committee member & Yes \\
-%   |\setdefensechair| & Chair of the committee & No \\
+%   |\setauthor| & Author of the thesis & No & No \\
+%   |\setsupervisor| & Main supervisor of the thesis & No & No \\
+%   |\setcosupervisor| & Cosupervisor of the thesis & Yes & Yes \\
+%   |\setcommitteememberI| & First committee member & No & No \\
+%   |\setcommitteememberII| & Second committee member & Yes & No \\
+%   |\setcommitteememberIII| & Third committee member & Yes & Yes \\
+%   |\setcommitteememberIIII| & Fourth committee member & Yes & Yes \\
+%   |\setdefensechair| & Chair of the committee & Yes & No \\
 %   \bottomrule
 % \end{tabular}
 % \end{center}
@@ -196,7 +198,7 @@
 % \DescribeMacro{\setdate}
 % All commands in this section are called with three madatory arguments, e.g., as |\command|\marg{day}\marg{month}\marg{year}. The syntax is identical to the last three arguments of the |\newdate| command of the |datetime| package, from which these commands derive. The following dates can be set:
 % \begin{center}
-% \begin{tabular}{lllc}
+% \begin{tabular}{llc}
 %   \toprule
 %   Command & Role & Optional\\
 %   \midrule
@@ -210,10 +212,23 @@
 %
 % All commands in this section are called with at least one madatory argument called \meta{list}, e.g., as |\command|\dots\marg{list}\dots, where \meta{list} is given one element from a set of possible arguments.
 %
+% \DescribeMacro{\setthesis}
+% The thesis type is selected from one of the supported types:
+% \begin{center}
+% \begin{tabular}{lll}
+%   \toprule
+%   Command & Options & Description\\
+%   \midrule
+%   |\setthesis|\marg{list} & |master| & Specifies a master's thesis. \\
+%                           & |phd| & Specifies a dissertation. \\
+%   \bottomrule
+% \end{tabular}
+% \end{center}
+%
 % \DescribeMacro{\setcopyright}
 % The type of copyright license can be chosen as restirictive or as one of the Creative Commons\index{Creative Commons} (CC) licenses (see \url{https://creativecommons.org/choose/} for further information on possible choices).
 % \begin{center}
-% \begin{tabular}{lllc}
+% \begin{tabular}{lll}
 %   \toprule
 %   Command & Options & Description\\
 %   \midrule
@@ -286,7 +301,7 @@
 % Used as |\CreatePerson|\marg{name}, it generates a command |\set|\meta{name}.
 % Used as |\set|\meta{name}\marg{pretitle}\marg{personname}\marg{posttitle}\marg{affiliation}, the newly created command assigns the supplied values to the corresponding internal variables |\istaustriathesis@person@|\meta{name}|@|\textellipsis as given in the table below.
 % \begin{center}
-% \begin{tabular}{lllc}
+% \begin{tabular}{ll}
 %   \toprule
 %   Argument & Internal Variable\\
 %   \midrule
@@ -385,6 +400,25 @@
 \RequirePackage{graphicx}%
 \graphicspath{{graphics/}}%
 %    \end{macrocode}
+%
+% \subsubsection{Low-Level Functionality}
+%
+% This section provides low-level functionality for macro definitions and macro expansions.
+%
+% \begin{macro}{\ifestrequal}
+% \changes{v1.6}{2024/02/20}{Add master thesis template}
+% A variant of |\ifstrequal| that fully expands the first two arguments.
+%    \begin{macrocode}
+\newcommand{\ifestrequal}[4]{%
+  \begingroup
+    \edef\vutinfth@tempa{{#1}}%
+    \edef\vutinfth@tempb{{#2}}%
+    \expandafter\expandafter\expandafter\ifstrequal
+      \expandafter\vutinfth@tempa\vutinfth@tempb{#3}{#4}%
+  \endgroup
+}%
+%    \end{macrocode}
+% \end{macro}
 %
 % \subsubsection{Page Layout}
 %
@@ -601,6 +635,92 @@
 %    \end{macrocode}
 % \end{macro}
 %
+% \subsubsection{Thesis Type}
+%
+% \begin{macro}{\istaustriathesis@thesis@type}
+% \begin{macro}{\istaustriathesis@degreename}
+% \begin{macro}{\istaustriathesis@thesisname}
+% \changes{v1.6}{2024/02/20}{Add master thesis template}
+% Initialize the thesis type and the degree with error messages.
+%    \begin{macrocode}
+\newcommand{\istaustriathesis@thesis@type}{%
+  \ClassError{istaustriathesis}{No \string\setthesis \space issued}{%
+    Set thesis type with \string\setthesis.}%
+}%
+\newcommand{\istaustriathesis@degreename}{%
+  \ClassError{istaustriathesis}{No \string\setthesis \space issued}{%
+    Set thesis type with \string\setthesis.}%
+}%
+\newcommand{\istaustriathesis@thesisname}{%
+  \ClassError{istaustriathesis}{No \string\setthesis \space issued}{%
+    Set thesis type with \string\setthesis.}%
+}%
+%    \end{macrocode}
+% \end{macro}
+% \end{macro}
+% \end{macro}
+%
+% \begin{macro}{\istaustriathesis@thesis@bachelor}
+% \begin{macro}{\istaustriathesis@thesis@master}
+% \begin{macro}{\istaustriathesis@thesis@doctor}
+% \changes{v1.6}{2024/02/20}{Add master thesis template}
+% Two thesis types are differentiated: |master| and |phd|.
+%    \begin{macrocode}
+\newcommand{\istaustriathesis@thesis@master}{master}%
+\newcommand{\istaustriathesis@thesis@phd}{phd}%
+%    \end{macrocode}
+% \end{macro}
+% \end{macro}
+% \end{macro}
+%
+% \begin{macro}{\ifmaster}
+% \begin{macro}{\ifphd}
+% \changes{v1.6}{2024/02/20}{Add master thesis template}
+% Convenience macros to determine the category of the selected thesis type.
+%    \begin{macrocode}
+\newcommand{\ifmaster}[1]{%
+  \ifestrequal{\istaustriathesis@thesis@type}{%
+    \istaustriathesis@thesis@master
+  }{#1}{}%
+}%
+\newcommand{\ifphd}[1]{%
+  \ifestrequal{\istaustriathesis@thesis@type}{%
+    \istaustriathesis@thesis@phd
+  }{#1}{}%
+}%
+%    \end{macrocode}
+% \end{macro}
+% \end{macro}
+% \begin{macro}{\setthesis}
+% \changes{v1.6}{2024/02/20}{Add master thesis template}
+% Sets the thesis type.
+%    \begin{macrocode}
+\newcommand{\setthesis}[1]{%
+  \ifdefstring{\istaustriathesis@thesis@master}{#1}{%
+%    \end{macrocode}
+% Initializes |master| thesis type.
+%    \begin{macrocode}
+    \renewcommand{\istaustriathesis@thesis@type}{%
+      \istaustriathesis@thesis@master}%
+    \renewcommand{\istaustriathesis@degreename}{%
+      Master of Science}%
+    \renewcommand{\istaustriathesis@thesisname}{%
+      Master's Thesis}%
+  }{}%
+  \ifdefstring{\istaustriathesis@thesis@phd}{#1}{%
+%    \end{macrocode}
+% Initializes |doctor| thesis type.
+%    \begin{macrocode}
+    \renewcommand{\istaustriathesis@thesis@type}{%
+      \istaustriathesis@thesis@phd}%
+    \renewcommand{\istaustriathesis@degreename}{%
+      Doctor of Philosophy}%
+    \renewcommand{\istaustriathesis@thesisname}{%
+      Thesis}%
+  }{}%
+}%
+%    \end{macrocode}
+% \end{macro}
 %
 % \subsubsection{Declarations}
 %\label{sec:impl:data:declarations}
@@ -634,6 +754,7 @@
 % \begin{macro}{\istaustriathesis@submission}
 % \begin{macro}{\istaustriathesis@committee}
 % \begin{macro}{\istaustriathesis@onfile}
+% \changes{v1.6}{2024/02/20}{Add master thesis template}
 % Define literals.
 %    \begin{macrocode}
 \newcommand{\istaustriathesis@by}{by}%
@@ -641,7 +762,7 @@
 \emph{A thesis submitted to the\\Graduate School\\of the\\
 Institute of Science and Technology Austria\\
 in partial fulfillment of the requirements\\
-for the degree of\\Doctor of Philosophy}}%
+for the degree of\\\istaustriathesis@degreename}}%
 \newcommand{\istaustriathesis@committee}{Committee in charge:}%
 \newcommand{\istaustriathesis@onfile}{Signed page is on file}%
 %    \end{macrocode}
@@ -848,23 +969,42 @@ not distribute modified versions of the work.}%
 % \end{macro}
 %
 % \begin{macro}{\CommitteeSummaryBlock}
+% \changes{v1.6}{2024/02/20}{Add master thesis template}
 %    \begin{macrocode}
 \newcommand{\CommitteeSummaryBlock}{%
   \istaustriathesis@committee
   \istaustriathesis@skip
-  \\\istaustriathesis@person@defensechair@name, Chair
-  \\\istaustriathesis@person@supervisor@name
-  \ifdef{\istaustriathesis@person@cosupervisor@def}{%
-    \\\istaustriathesis@person@cosupervisor@name
-  }{}%
-  \\\istaustriathesis@person@committeememberI@name
-  \\\istaustriathesis@person@committeememberII@name
-  \ifdef{\istaustriathesis@person@committeememberIII@def}{%
-    \\\istaustriathesis@person@committeememberIII@name
-  }{}%
-  \ifdef{\istaustriathesis@person@committeememberIIII@def}{%
-    \\\istaustriathesis@person@committeememberIIII@name
-  }{}%
+  \ifmaster{%
+    \\\istaustriathesis@person@supervisor@name, Supervisor
+    \ifdef{\istaustriathesis@person@cosupervisor@def}{%
+      \\\istaustriathesis@person@cosupervisor@name
+    }{}%
+    \\\istaustriathesis@person@committeememberI@name
+    \ifdef{\istaustriathesis@person@committeememberII@def}{%
+      \\\istaustriathesis@person@committeememberII@name
+    }{}%
+    \ifdef{\istaustriathesis@person@committeememberIII@def}{%
+      \\\istaustriathesis@person@committeememberIII@name
+    }{}%
+    \ifdef{\istaustriathesis@person@committeememberIIII@def}{%
+      \\\istaustriathesis@person@committeememberIIII@name
+    }{}%
+  }%
+  \ifphd{%
+    \\\istaustriathesis@person@defensechair@name, Chair
+    \\\istaustriathesis@person@supervisor@name
+    \ifdef{\istaustriathesis@person@cosupervisor@def}{%
+      \\\istaustriathesis@person@cosupervisor@name
+    }{}%
+    \\\istaustriathesis@person@committeememberI@name
+    \\\istaustriathesis@person@committeememberII@name
+    \ifdef{\istaustriathesis@person@committeememberIII@def}{%
+      \\\istaustriathesis@person@committeememberIII@name
+    }{}%
+    \ifdef{\istaustriathesis@person@committeememberIIII@def}{%
+      \\\istaustriathesis@person@committeememberIIII@name
+    }{}%
+  }%
 }%
 %    \end{macrocode}
 % \end{macro}
@@ -946,34 +1086,65 @@ not distribute modified versions of the work.}%
 % \end{macro}
 %
 % \begin{macro}{\CommitteeBlock}
+% \changes{v1.6}{2024/02/20}{Add master thesis template}
 %    \begin{macrocode}
 \newcommand{\CommitteeBlock}{%
-  \SignatureBlock{Supervisor}{%
-    \istaustriathesis@person@supervisor@fullnameaffiliation}\par
-  \istaustriathesis@medskip
-  \ifdef{\istaustriathesis@person@cosupervisor@def}{%
-    \SignatureBlock{Co-supervisor}{%
-      \istaustriathesis@person@cosupervisor@fullnameaffiliation}\par
+  \ifmaster{%
+    \SignatureBlock{Supervisor}{%
+      \istaustriathesis@person@supervisor@fullnameaffiliation}\par
     \istaustriathesis@medskip
-  }{}%
-  \SignatureBlock{Committee Member}{%
-    \istaustriathesis@person@committeememberI@fullnameaffiliation}\par
-  \istaustriathesis@medskip
-  \SignatureBlock{Committee Member}{%
-    \istaustriathesis@person@committeememberII@fullnameaffiliation}\par
-  \istaustriathesis@medskip
-  \ifdef{\istaustriathesis@person@committeememberIII@def}{%
+    \ifdef{\istaustriathesis@person@cosupervisor@def}{%
+      \SignatureBlock{Co-supervisor}{%
+        \istaustriathesis@person@cosupervisor@fullnameaffiliation}\par
+      \istaustriathesis@medskip
+    }{}%
     \SignatureBlock{Committee Member}{%
-      \istaustriathesis@person@committeememberIII@fullnameaffiliation}\par
+      \istaustriathesis@person@committeememberI@fullnameaffiliation}\par
     \istaustriathesis@medskip
-  }{}%
-  \ifdef{\istaustriathesis@person@committeememberIIII@def}{%
+    \ifdef{\istaustriathesis@person@committeememberII@def}{%
+      \SignatureBlock{Committee Member}{%
+        \istaustriathesis@person@committeememberII@fullnameaffiliation}\par
+      \istaustriathesis@medskip
+    }{}%
+    \ifdef{\istaustriathesis@person@committeememberIII@def}{%
+      \SignatureBlock{Committee Member}{%
+        \istaustriathesis@person@committeememberIII@fullnameaffiliation}\par
+      \istaustriathesis@medskip
+    }{}%
+    \ifdef{\istaustriathesis@person@committeememberIIII@def}{%
+      \SignatureBlock{Committee Member}{%
+        \istaustriathesis@person@committeememberIIII@fullnameaffiliation}\par
+      \istaustriathesis@medskip
+    }{}%
+  }%
+  \ifphd{%
+    \SignatureBlock{Supervisor}{%
+      \istaustriathesis@person@supervisor@fullnameaffiliation}\par
+    \istaustriathesis@medskip
+    \ifdef{\istaustriathesis@person@cosupervisor@def}{%
+      \SignatureBlock{Co-supervisor}{%
+        \istaustriathesis@person@cosupervisor@fullnameaffiliation}\par
+      \istaustriathesis@medskip
+    }{}%
     \SignatureBlock{Committee Member}{%
-      \istaustriathesis@person@committeememberIIII@fullnameaffiliation}\par
+      \istaustriathesis@person@committeememberI@fullnameaffiliation}\par
     \istaustriathesis@medskip
-  }{}%
-  \SignatureBlock{Defense Chair}{%
-    \istaustriathesis@person@defensechair@fullnameaffiliation}\par
+    \SignatureBlock{Committee Member}{%
+      \istaustriathesis@person@committeememberII@fullnameaffiliation}\par
+    \istaustriathesis@medskip
+    \ifdef{\istaustriathesis@person@committeememberIII@def}{%
+      \SignatureBlock{Committee Member}{%
+        \istaustriathesis@person@committeememberIII@fullnameaffiliation}\par
+      \istaustriathesis@medskip
+    }{}%
+    \ifdef{\istaustriathesis@person@committeememberIIII@def}{%
+      \SignatureBlock{Committee Member}{%
+        \istaustriathesis@person@committeememberIIII@fullnameaffiliation}\par
+      \istaustriathesis@medskip
+    }{}%
+    \SignatureBlock{Defense Chair}{%
+      \istaustriathesis@person@defensechair@fullnameaffiliation}\par
+  }%
 }%
 %    \end{macrocode}
 % \end{macro}
@@ -1028,9 +1199,10 @@ not distribute modified versions of the work.}%
 % \begin{macro}{\ISSNBlock}
 % \changes{v1.2}{2021/01/24}{Improve ISBN handling}
 % \changes{v1.5}{2022/09/20}{Update naming}
+% \changes{v1.6}{2024/02/20}{Add master thesis template}
 %    \begin{macrocode}
 \newcommand{\ISSNBlock}{%
-  ISTA Thesis%
+  ISTA \istaustriathesis@thesisname%
   \ifdef{\istaustriathesis@data@issn@def}{%
     , ISSN: \istaustriathesis@data@issn
   }{}\par
@@ -1051,6 +1223,7 @@ not distribute modified versions of the work.}%
 % \end{macro}
 %
 % \begin{macro}{\StatementBlock}
+% \changes{v1.6}{2024/02/20}{Amend statement concerning AI use}
 %    \begin{macrocode}
 \newcommand{\StatementBlock}{%
   \noindent I hereby declare that this thesis is my own work and that %
@@ -1058,6 +1231,10 @@ not distribute modified versions of the work.}%
   stated; this thesis does not contain my previous work without this %
   being stated, and the bibliography contains all the literature that %
   I used in writing the dissertation.\par
+  \istaustriathesis@medskip
+  \noindent I accept full responsibility for the content and factual %
+  accuracy of this work, including the data and their analysis and %
+  presentation, and the text and citation of other work.\par
   \istaustriathesis@medskip
   \noindent I declare that this is a true copy of my thesis, including %
   any final revisions, as approved by my thesis committee, and that %

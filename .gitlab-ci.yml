@@ -16,7 +16,7 @@ compile_example:
     # Download TeX Live installation script.
     - mkdir install
     - wget -c http://mirror.ctan.org/systems/texlive/tlnet/install-tl-unx.tar.gz -O - | tar -xz -C install
-    # Install TeX Live using predefine installation profile.
+    # Install TeX Live using predefined installation profile.
     - perl install/install-tl*/install-tl --profile=tests/texlive.profile --repository=https://ctan.net/systems/texlive/tlnet/
     # Add folder of TeX-related executables to system path.
     - export PATH=$PATH:/usr/local/texlive/2023/bin/x86_64-linuxmusl
@@ -29,17 +29,19 @@ compile_example:
     - when: always
   artifacts:
     paths:
-      - example.pdf # Output the compiled example file.
-      - example.log # Output the compilation log for debugging.
+      - example-master.pdf # Output the compiled example file.
+      - example-master.log # Output the compilation log for debugging.
+      - example-phd.pdf # Output the compiled example file.
+      - example-phd.log # Output the compilation log for debugging.
     expire_in: 1 year
 
 compare_with_reference:
   stage: test
   script:
-    - apk add --no-cache poppler-utils imagemagick # Install comparison tools.
+    - apk add --no-cache poppler-utils imagemagick imagemagick-pdf # Install comparison tools.
     # Count the pages of the compiled example file and its reference.
-    - pagecount=$(pdfinfo example.pdf | grep Pages | awk '{print $2}')
-    - pagecount_ref=$(pdfinfo example-ref.pdf | grep Pages | awk '{print $2}')
+    - pagecount=$(pdfinfo example-$TYPE.pdf | grep Pages | awk '{print $2}')
+    - pagecount_ref=$(pdfinfo example-$TYPE-ref.pdf | grep Pages | awk '{print $2}')
     # Compare page counts and report error if they do not match.
     - if [ "$pagecount" -ne "$pagecount_ref" ]; then
         printf '%s\n' "Page count of generated example file does not match reference" >&2 &&
@@ -48,15 +50,16 @@ compare_with_reference:
         printf '%s\n' "Page count of generated example file matches reference" >&2;
       fi
     # Generate per-page difference images between the example file and its reference.
-    - "magick example.pdf null: example-ref.pdf
+    - mkdir tests-$TYPE
+    - "magick example-$TYPE.pdf null: example-$TYPE-ref.pdf
        -compose difference -layers composite -channel a -separate
-       tests/diff_%d.png"
+       tests-$TYPE/diff_%d.png"
     # Measure per-page differences between the example file and its reference.
-    - "magick example.pdf null: example-ref.pdf
+    - "magick example-$TYPE.pdf null: example-$TYPE-ref.pdf
        -compose difference -layers composite -channel a -separate -precision 12
-       -format %[fx:mean]\\\\n info: > tests/differences.dat"
+       -format %[fx:mean]\\\\n info: > tests-$TYPE/differences.dat"
     # Get the largest difference across all pages.
-    - difference=$(sort -g tests/differences.dat | tail -n 1 | awk '{ printf "%.20f", $1 }')
+    - difference=$(sort -g tests-$TYPE/differences.dat | tail -n 1 | awk '{ printf "%.20f", $1 }')
     # Check for non-zero differences and report error if difference detected.
     - if [ 1 -eq "$(echo "${difference} > 0" | bc -l)" ]; then
         printf '%s\n' "Generated example file does not match reference" >&2 &&
@@ -70,10 +73,13 @@ compare_with_reference:
     - when: always
   artifacts:
     paths:
-      - tests/*.png # Output the difference images for debugging.
-      - tests/*.dat # Output the per-page differences for debugging.
+      - tests-$TYPE/*.png # Output the difference images for debugging.
+      - tests-$TYPE/*.dat # Output the per-page differences for debugging.
     when: always
     expire_in: 1 year
+  parallel:
+    matrix:
+      - TYPE: [phd, master]
 
 check_pdf_a:
   stage: test
@@ -86,7 +92,7 @@ check_pdf_a:
        echo "1"; sleep 1;echo "Y"; sleep 1; echo "N"; sleep 1; echo "N"; sleep 1; echo "1") |
       sh ./verapdf-*/verapdf-install # Enter choices for the interactive menu of the Java installer.
     # Validate the generated PDF.
-    - validation=$(/root/verapdf/verapdf --format text example.pdf)
+    - validation=$(/root/verapdf/verapdf --format text example-$TYPE.pdf)
     # Check the validation result.
     - if [[ "$validation" == PASS* ]]; then
         printf '%s\n' "Generated example file conforms to the PDF/A standard" >&2;
@@ -98,3 +104,6 @@ check_pdf_a:
     - if: $CI_COMMIT_BRANCH == "develop"
       when: manual
     - when: always
+  parallel:
+    matrix:
+      - TYPE: [phd, master]

@@ -1,4 +1,4 @@
-% Copyright (C) 2020-2023 by Thomas Auzinger <thomas@auzinger.name>
+% Copyright (C) 2020-2024 by Thomas Auzinger <thomas@auzinger.name>
 
 \documentclass[draft,final]{istaustriathesis}
 
@@ -24,7 +24,7 @@
 % Define convenience functions to use the author name and the thesis title in the PDF document properties.
 \newcommand{\authorname}{Forename Surname} % The author name without titles.
 \newcommand{\thesistitle}{Title of the Thesis} % The title of the thesis.
-\newcommand{\issn}{2663-337X} % Standard ISSN of all ISTA theses.
+\newcommand{\issn}{2791-4585} % Standard ISSN of all ISTA Master's theses.
 \newcommand{\isbn}{978-0-00000-000-0} % Leave empty if no ISBN is used.
 % Please contact IST Library library@ist.ac.at if you want to register an ISBN for your thesis.
 
@@ -35,7 +35,7 @@
 \Language{en-US}                                        % The document's language in the document properties. Select 'en-US' or 'en-GB'.
 \Keywords{a\sep list\sep of\sep keywords}               % The document's keywords in the document properties (separated by '\sep ').
 \Publisher{Institute of Science and Technology Austria} % The document's publisher in the document properties.
-\Subject{Doctoral Thesis}                               % The document's subject in the document properties.
+\Subject{Master's Thesis}                               % The document's subject in the document properties.
 \Copyright{\doclicenseLongTextForHyperrefFixed}         % The document's copyright message in the document properties.
 \CopyrightURL{\doclicenseURL}                           % The document's copyright URL in the document properties.
 \Copyrighted{True}
@@ -93,10 +93,11 @@
 \makeoddfoot{Ruled}{}{\thepage}{} % For main matter.
 
 % Required data.
+\setthesis{master} % Select 'master' or 'phd'.
 \settitle{\thesistitle}
 \setsubtitle{Optional Subtitle} % Comment this line if no subtitle is used.
 % If your subtitle contains commas, enclose it with additional curvy brackets (i.e., \setsubtitle{{subtitle text}}) or define it as a macro as done with \thesistitle.
-\setdate{2020}{03}{10} % Set signing date with 3 arguments: {day}{month}{year}.
+\setdate{2024}{02}{20} % Set signing date with 3 arguments: {day}{month}{year}.
 \setissn{\issn}
 \setisbn{\isbn} % Comment this line if no ISBN is used.
 
@@ -106,14 +107,15 @@
 % Set persons with 4 arguments:
 %  {title(s) before name}{name}{title(s) after name}{affiliation}
 %  where both titles are optional (i.e. can be given as empty brackets {}).
+% Some of the following persons are optional for Master's of PhD theses and can be commented if they do not apply.
 \setauthor{}{\authorname}{}{\istaustriaaffiliation}
 \setsupervisor{}{Name Surname}{}{\istaustriaaffiliation}
-\setcosupervisor{}{Name Surname}{}{Institution, Place, Country} % Comment this line if no cosupervisor.
+\setcosupervisor{}{Name Surname}{}{Institution, Place, Country} % Optional for Master's and PhD theses.
 \setcommitteememberI{}{Name Surname}{}{\istaustriaaffiliation}
-\setcommitteememberII{}{Name Surname}{}{Institution, Place, Country}
-\setcommitteememberIII{}{Name Surname}{}{Institution, Place, Country} % Comment this line if no third committee member.
-\setcommitteememberIIII{}{Name Surname}{}{Institution, Place, Country} % Comment this line if no fourth committee member.
-\setdefensechair{}{Name Surname}{}{\istaustriaaffiliation}
+%\setcommitteememberII{}{Name Surname}{}{Institution, Place, Country} % Optional for Master's thesis.
+%\setcommitteememberIII{}{Name Surname}{}{Institution, Place, Country} % Optional for Master's and PhD theses.
+%\setcommitteememberIIII{}{Name Surname}{}{Institution, Place, Country} % Optional for Master's and PhD theses.
+%\setdefensechair{}{Name Surname}{}{\istaustriaaffiliation} % Optional for Master's thesis.
 
 \begin{document}
 
@@ -155,7 +157,7 @@
 	During her PhD studies, Jane also presented her research results at the EvoBIO conference in Parma in 2018 and helped develop the tool EVOBOT for modeling evolutionary constraints, currently hosted by ISTA.}
 \end{aboutauthor}
 
-\begin{publicationlist}
+\begin{publicationlist}  % Remove if not applicable for a Master's thesis.
 \todo[inline]{
 	Specify all co-authors and collaborator contributions to this thesis.
 	See the \href{https://phd.pages.ist.ac.at/graduate_school_guidelines_for_thesis_submission/}{Guidelines for Thesis Submission} for details.
