@@ -150,7 +150,7 @@
 % \DescribeMacro{\setisbn}
 % All commands in this section are called with one mandatory argument, e.g., as |\command|\marg{text}, where \meta{text} defines the content of the commands.
 % \begin{center}
-% \begin{tabular}{lllc}
+% \begin{tabular}{llc}
 %   \toprule
 %   Command & Role & Optional\\
 %   \midrule
@@ -175,7 +175,7 @@
 % \DescribeMacro{\setdefensechair}
 % All commands in this section are called with four mandatory arguments, e.g., as |\command|\marg{pretitle}\marg{name}\marg{posttitle}\marg{affiliation}, where \meta{name} defines both the first name(s) and family name(s) of the person. A title that is placed before the name is assigned with \meta{pretitle}, while a trailing title is given with \meta{posttitle}. Both \meta{pretitle} and \meta{posttitle} can be left empty, to indicate an absence of such a title; the insertion of appropriate glue between titles and names is handled by the |istaustriathesis| class. The declaration of the person's affiliation via \meta{affiliation} usually contains the institution, its city, and its country. The following persons can be set:
 % \begin{center}
-% \begin{tabular}{lllc}
+% \begin{tabular}{llc}
 %   \toprule
 %   Command & Role & Optional\\
 %   \midrule
@@ -196,7 +196,7 @@
 % \DescribeMacro{\setdate}
 % All commands in this section are called with three madatory arguments, e.g., as |\command|\marg{day}\marg{month}\marg{year}. The syntax is identical to the last three arguments of the |\newdate| command of the |datetime| package, from which these commands derive. The following dates can be set:
 % \begin{center}
-% \begin{tabular}{lllc}
+% \begin{tabular}{llc}
 %   \toprule
 %   Command & Role & Optional\\
 %   \midrule
@@ -213,7 +213,7 @@
 % \DescribeMacro{\setcopyright}
 % The type of copyright license can be chosen as restirictive or as one of the Creative Commons\index{Creative Commons} (CC) licenses (see \url{https://creativecommons.org/choose/} for further information on possible choices).
 % \begin{center}
-% \begin{tabular}{lllc}
+% \begin{tabular}{lll}
 %   \toprule
 %   Command & Options & Description\\
 %   \midrule
@@ -286,7 +286,7 @@
 % Used as |\CreatePerson|\marg{name}, it generates a command |\set|\meta{name}.
 % Used as |\set|\meta{name}\marg{pretitle}\marg{personname}\marg{posttitle}\marg{affiliation}, the newly created command assigns the supplied values to the corresponding internal variables |\istaustriathesis@person@|\meta{name}|@|\textellipsis as given in the table below.
 % \begin{center}
-% \begin{tabular}{lllc}
+% \begin{tabular}{ll}
 %   \toprule
 %   Argument & Internal Variable\\
 %   \midrule
