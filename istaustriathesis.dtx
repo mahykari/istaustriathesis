@@ -49,7 +49,7 @@
 %</driver>
 % \fi
 %
-% \CheckSum{658}
+% \CheckSum{670}
 %
 % \CharacterTable
 %  {Upper-case    \A\B\C\D\E\F\G\H\I\J\K\L\M\N\O\P\Q\R\S\T\U\V\W\X\Y\Z
@@ -397,6 +397,7 @@
 \RequirePackage{datetime2,datetime2-calc}%
 \RequirePackage{calc}%
 \RequirePackage{etoolbox}%
+\RequirePackage{todonotes}%
 \RequirePackage{graphicx}%
 \graphicspath{{graphics/}}%
 %    \end{macrocode}
@@ -781,8 +782,11 @@ for the degree of\\\istaustriathesis@degreename}}%
 % \begin{macro}{\istaustriathesis@license@ccbyncsa}
 % \begin{macro}{\istaustriathesis@license@ccbyncnd}
 % \changes{v1.2}{2021/01/24}{Enable Creative Commons licenses}
+% \changes{v1.6}{2024/02/20}{Add placeholder for license choice}
 % Seven license types are differentiated: |restricted| and six Creative Commons variants |ccby...|.
+% The type |choose| is a placeholder before license selection.
 %    \begin{macrocode}
+\newcommand{\istaustriathesis@license@choose}{choose}%
 \newcommand{\istaustriathesis@license@restricted}{restricted}%
 \newcommand{\istaustriathesis@license@ccby}{cc-by}%
 \newcommand{\istaustriathesis@license@ccbysa}{cc-by-sa}%
@@ -807,8 +811,10 @@ for the degree of\\\istaustriathesis@degreename}}%
 % \begin{macro}{\istaustriathesis@ccbyncsa}
 % \begin{macro}{\istaustriathesis@ccbyncnd}
 % \changes{v1.2}{2021/01/24}{Enable Creative Commons licenses}
+% \changes{v1.6}{2024/02/20}{Add placeholder for license choice}
 % Define literals.
 %    \begin{macrocode}
+\newcommand{\istaustriathesis@choose}{\todo[inline]{Choose a license (i.e., `All Rights Reserved' or a Creative Commons license).}}%
 \newcommand{\istaustriathesis@restricted}{All Rights Reserved}%
 \newcommand{\istaustriathesis@ccby}{%
 CC BY 4.0 The copyright of this thesis rests with the author. %
@@ -887,9 +893,14 @@ not distribute modified versions of the work.}%
 %
 % \begin{macro}{\setlicense}
 % \changes{v1.2}{2021/01/24}{Enable Creative Commons licenses}
+% \changes{v1.6}{2024/02/20}{Add placeholder for license choice}
 % Sets the copyright license.
 %    \begin{macrocode}
 \newcommand{\setlicense}[1]{
+  \ifdefstring{\istaustriathesis@license@choose}{#1}{%
+    \renewcommand{\istaustriathesis@license}{%
+      \istaustriathesis@choose}%
+  }{}%
   \ifdefstring{\istaustriathesis@license@restricted}{#1}{%
     \renewcommand{\istaustriathesis@license}{%
       \istaustriathesis@restricted}%
