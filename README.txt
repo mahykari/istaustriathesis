@@ -71,11 +71,11 @@ build-thesis.bat  The batch file to generate the thesis on Windows systems.
 build-thesis.sh   The batch file to generate the thesis on Unix-based systems.
 example-master-ref.pdf  The reference solution for the compiled example
                           document.
-example-master.tex      An LaTeX source file showing the use of the
+example-master.tex      A LaTeX source file showing the use of the
                           istaustriathesis document class.
 example-phd-ref.pdf     The reference solution for the compiled example
                           document.
-example-phd.tex         An LaTeX source file showing the use of the
+example-phd.tex         A LaTeX source file showing the use of the
                           istaustriathesis document class.
 intro.bib   The bibliography file of intro.tex.
 intro.tex   The LaTeX source file of a document that gives an introduction to
