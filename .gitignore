@@ -38,3 +38,6 @@ Thumbs.db
 *~
 *.swp
 *.swo
+
+# Project-specific directories
+ppm-tex/

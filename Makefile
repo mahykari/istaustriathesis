@@ -3,8 +3,7 @@
 
 # Configuration
 CLASS = istaustriathesis
-SOURCE_PHD = example-phd
-SOURCE_MASTER = example-master
+SOURCE_MASTER = master
 PDFLATEX = pdflatex
 BIBTEX = bibtex
 MAKEINDEX = makeindex
@@ -45,13 +44,13 @@ $(CLASS).pdf: $(CLASS).dtx $(CLASS).cls
 	$(PDFLATEX) $(CLASS).dtx
 	$(PDFLATEX) $(CLASS).dtx
 
-# Build both example documents
+# Build the master thesis
 .PHONY: examples
-examples: example-master example-phd
+examples: master
 
-# Build the master example
-.PHONY: example-master
-example-master: $(SOURCE_MASTER).pdf
+# Build the master thesis
+.PHONY: master
+master: $(SOURCE_MASTER).pdf
 
 $(SOURCE_MASTER).pdf: $(SOURCE_MASTER).tex $(CLASS).cls intro.tex intro.bib
 	$(PDFLATEX) $(SOURCE_MASTER)
@@ -64,22 +63,6 @@ $(SOURCE_MASTER).pdf: $(SOURCE_MASTER).tex $(CLASS).cls intro.tex intro.bib
 	$(PDFLATEX) $(SOURCE_MASTER)
 	$(PDFLATEX) $(SOURCE_MASTER)
 	$(PDFLATEX) $(SOURCE_MASTER)
-
-# Build the PhD example
-.PHONY: example-phd
-example-phd: $(SOURCE_PHD).pdf
-
-$(SOURCE_PHD).pdf: $(SOURCE_PHD).tex $(CLASS).cls intro.tex intro.bib
-	$(PDFLATEX) $(SOURCE_PHD)
-	$(BIBTEX) $(SOURCE_PHD)
-	$(PDFLATEX) $(SOURCE_PHD)
-	$(PDFLATEX) $(SOURCE_PHD)
-	$(MAKEINDEX) -t $(SOURCE_PHD).glg -s $(SOURCE_PHD).ist -o $(SOURCE_PHD).gls $(SOURCE_PHD).glo
-	$(MAKEINDEX) -t $(SOURCE_PHD).alg -s $(SOURCE_PHD).ist -o $(SOURCE_PHD).acr $(SOURCE_PHD).acn
-	$(MAKEINDEX) -t $(SOURCE_PHD).ilg -o $(SOURCE_PHD).ind $(SOURCE_PHD).idx
-	$(PDFLATEX) $(SOURCE_PHD)
-	$(PDFLATEX) $(SOURCE_PHD)
-	$(PDFLATEX) $(SOURCE_PHD)
 
 # Clean auxiliary files (keeps PDFs)
 .PHONY: clean
@@ -98,14 +81,6 @@ clean:
 	       $(SOURCE_MASTER).glsdefs $(SOURCE_MASTER).idx $(SOURCE_MASTER).ilg \
 	       $(SOURCE_MASTER).ind $(SOURCE_MASTER).ist $(SOURCE_MASTER).mw \
 	       $(SOURCE_MASTER).tdo $(SOURCE_MASTER).xmpdata
-	@rm -f $(SOURCE_PHD).aux $(SOURCE_PHD).bbl $(SOURCE_PHD).blg \
-	       $(SOURCE_PHD).log $(SOURCE_PHD).out $(SOURCE_PHD).toc \
-	       $(SOURCE_PHD).lof $(SOURCE_PHD).lot $(SOURCE_PHD).loa \
-	       $(SOURCE_PHD).acn $(SOURCE_PHD).acr $(SOURCE_PHD).alg \
-	       $(SOURCE_PHD).glg $(SOURCE_PHD).glo $(SOURCE_PHD).gls \
-	       $(SOURCE_PHD).glsdefs $(SOURCE_PHD).idx $(SOURCE_PHD).ilg \
-	       $(SOURCE_PHD).ind $(SOURCE_PHD).ist $(SOURCE_PHD).mw \
-	       $(SOURCE_PHD).tdo $(SOURCE_PHD).xmpdata
 	@echo "Auxiliary files cleaned."
 
 # Clean all artifacts including PDFs
@@ -114,20 +89,18 @@ cleanall: clean
 	@echo "Cleaning all generated files..."
 	@rm -f $(CLASS).pdf $(CLASS).cls
 	@rm -f $(SOURCE_MASTER).pdf
-	@rm -f $(SOURCE_PHD).pdf
 	@echo "All generated files cleaned."
 
 # Help target
 .PHONY: help
 help:
 	@echo "Available targets:"
-	@echo "  all         - Build class file, documentation, and examples (default)"
-	@echo "  build       - Same as 'all'"
-	@echo "  class       - Build only the class file (.cls)"
-	@echo "  doc         - Build only the class documentation"
-	@echo "  examples    - Build both example documents"
-	@echo "  example-master - Build the master thesis example"
-	@echo "  example-phd    - Build the PhD thesis example"
-	@echo "  clean       - Remove auxiliary files (keep PDFs)"
-	@echo "  cleanall    - Remove all generated files including PDFs"
-	@echo "  help        - Show this help message"
+	@echo "  all            - Build class file, documentation, and example (default)"
+	@echo "  build          - Same as 'all'"
+	@echo "  class          - Build only the class file (.cls)"
+	@echo "  doc            - Build only the class documentation"
+	@echo "  examples       - Build the master thesis"
+	@echo "  master         - Build the master thesis (use this for your thesis)"
+	@echo "  clean          - Remove auxiliary files (keep PDFs)"
+	@echo "  cleanall       - Remove all generated files including PDFs"
+	@echo "  help           - Show this help message"
