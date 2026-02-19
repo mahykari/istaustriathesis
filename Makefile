@@ -9,6 +9,7 @@ BIBTEX = bibtex
 MAKEINDEX = makeindex
 GS = gs
 PDFA_ICC = /usr/share/texlive/texmf-dist/tex/generic/colorprofiles/sRGB.icc
+SUBMISSION = 2026_Karimi_Mahyar_Thesis.pdf
 
 # LaTeX auxiliary file extensions
 AUX_EXTENSIONS = aux bbl blg log out toc lof lot loa \
@@ -120,6 +121,12 @@ $(SOURCE_MASTER)-pdfa2b.pdf: $(SOURCE_MASTER).pdf
 	  /tmp/pdfa2b_def.ps $<
 	@echo "PDF/A-2b output written to $@"
 
+# Rename/copy the PDF/A output to the ISTA submission filename
+.PHONY: submit
+submit: $(SOURCE_MASTER)-pdfa2b.pdf
+	cp $< $(SUBMISSION)
+	@echo "Submission copy written to $(SUBMISSION)"
+
 # Help target
 .PHONY: help
 help:
@@ -131,6 +138,7 @@ help:
 	@echo "  examples       - Build the master thesis"
 	@echo "  master         - Build the master thesis (use this for your thesis)"
 	@echo "  pdfa           - Post-process master.pdf into master-pdfa2b.pdf (PDF/A-2b, via Ghostscript)"
+	@echo "  submit         - Copy master-pdfa2b.pdf to $(SUBMISSION)"
 	@echo "  clean          - Remove auxiliary files (keep PDFs)"
 	@echo "  cleanall       - Remove all generated files including PDFs"
 	@echo "  help           - Show this help message"
