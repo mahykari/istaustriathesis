@@ -1,7 +1,9 @@
 % Copyright (C) 2020-2024 by Thomas Auzinger <thomas@auzinger.name>
 
 \PassOptionsToPackage{usenames,dvipsnames,table}{xcolor} % Ensure that the document loads packages with all required options.
-\documentclass[draft,final]{istaustriathesis}
+\documentclass[final]{istaustriathesis}
+
+\renewcommand{\ttdefault}{lmtt} % Restore Latin Modern Mono instead of Courier
 
 % Set the copyright license. The possible choices are 'restricted' to reserve all rights or a Creative Commons license.
 % See https://creativecommons.org/choose/ for information on choosing a license.
@@ -47,7 +49,8 @@ Runtime verification\sep Monitoring\sep Reactive functionalities\sep Cryptograph
 \end{filecontents*}
 
 % Extended LaTeX functionality is enabled by including packages with \usepackage{...}.
-\usepackage[english]{babel} % The language of the thesis. Use 'british' for British English.
+% babel is loaded by the class with [english]; American and British English
+% share the same babel language, so no separate loading is needed.
 \usepackage{natbib}     % Extend bibliography management.
 \usepackage{bibentry}   % Provide full citation support for single references.
 \usepackage{amsmath}    % Extended typesetting of mathematical expression.
@@ -58,13 +61,16 @@ Runtime verification\sep Monitoring\sep Reactive functionalities\sep Cryptograph
 \usepackage{multirow}   % Allows table elements to span several rows.
 \usepackage{booktabs}   % Improves the typesetting of tables.
 \usepackage{subcaption} % Allows the use of subfigures and enables their referencing.
-\usepackage[ruled,linesnumbered,algochapter]{algorithm2e} % Enables the writing of pseudo code.
+\usepackage{ifthen}     % Conditional commands, needed by macros.
 \usepackage[usenames,dvipsnames,table]{xcolor} % Allows the definition and use of colors. This package has to be included before TikZ.
 \usepackage{nag}        % Issues warnings when best practices in writing LaTeX documents are violated.
 \usepackage{todonotes}  % Provides tooltip-like todo notes.
 \usepackage{morewrites} % Increases the number of external files that can be used.
 \usepackage[a-2b,mathxmp]{pdfx}  % Enables PDF/A compliance. Loads the package hyperref and has to be included second to last.
-\usepackage[acronym,toc]{glossaries} % Enables the generation of glossaries and lists of acronyms. This package has to be included last.
+\usepackage[acronym,toc]{glossaries} % Enables the generation of glossaries and lists of acronyms.
+
+% --- Paper-specific packages and macros (loaded after pdfx/hyperref) ---
+\input{chapters/macros}
 
 % Set PDF document properties
 \hypersetup{
@@ -86,7 +92,7 @@ Runtime verification\sep Monitoring\sep Reactive functionalities\sep Cryptograph
 
 % Comment the following line to switch the document to a serif font, i.e., Latin Modern Roman
 % (see https://tug.org/FontCatalogue/latinmodernroman/)
-\renewcommand{\familydefault}{\sfdefault} % Switch document to sans serif font, i.e., Latin Modern Sans.
+%\renewcommand{\familydefault}{\sfdefault} % Switch document to sans serif font, i.e., Latin Modern Sans.
 % (see https://tug.org/FontCatalogue/latinmodernsans/)
 
 % Set the page numbers to bottom centered.
@@ -135,26 +141,30 @@ Runtime verification\sep Monitoring\sep Reactive functionalities\sep Cryptograph
 \addstatementpage
 
 \begin{abstract}
-\todo[inline]{
-	Summarize the gist of your thesis in one page.}
+Runtime verification offers scalable solutions to improve the safety and reliability of systems. However, systems that require verification or monitoring by a third party to ensure compliance with a specification might contain sensitive information, causing privacy concerns when usual runtime verification approaches are used. Privacy is compromised if protected information about the system, or sensitive data that is processed by the system, is revealed. In addition, revealing the specification being monitored may undermine the essence of third-party verification.
+
+In this thesis, we propose a protocol for privacy-preserving runtime verification of systems against formal sequential specifications. We develop the protocol in two steps. In the first step, the monitor verifies whether the system satisfies the specification without learning anything else, though both parties are aware of the specification. In the second step, we extend the protocol to ensure that the system remains oblivious to the monitored specification, while the monitor learns only whether the system satisfies the specification and nothing more. Our protocol adapts and improves existing techniques used in cryptography, and more specifically, multi-party computation.
+
+The sequential specification defines the observation step of the monitor, whose granularity depends on the situation (e.g., banks may be monitored on a daily basis). Our protocol exchanges a single message per observation step, after an initialization phase. This design minimizes communication overhead, enabling relatively lightweight privacy-preserving monitoring. We implement our approach for monitoring specifications described by register automata and evaluate it experimentally.
 \end{abstract}
 
 % The Acknowledgement chapter is optional and can be removed.
 \begin{acknowledgements}
-\todo[inline]{
-	Mention grants if you were funded.
-	Consider Scientific Service Units (SSUs) at ISTA and other staff if you got their support.}
+I thank my supervisor, Thomas A. Henzinger, for his guidance and support throughout this project.
+I thank K.~S.~Thejaswini for her equal contributions to the research that forms the basis of this thesis; the protocol design, security proofs, and theoretical framework were developed collaboratively.
+I also thank Krzysztof Pietrzak for serving on my thesis committee and for insightful discussions on the cryptographic aspects of this work.
+
+This work is part of the project VAMOS, which has received funding from the European Research Council (ERC) under grant agreement No.\ 101020093, and the Austrian Science Fund (FWF) SFB project SpyCoDe F8502.
 \end{acknowledgements}
 
 \begin{aboutauthor}
 Mahyar Karimi completed his BSc in Computer Engineering at the University of Tehran
 before joining ISTA as a researcher supervised by Thomas A. Henzinger.
-His research works lie at the intersection of
-formal verification and software engineering,
-with a particular focus on runtime verification (monitoring),
-secure multi-party computation,
-and verifiable machine learning.
-His work has been published in top-tier conferences
+His research lies at the intersection of
+formal verification and cryptography,
+with a particular focus on runtime verification (monitoring)
+and secure multi-party computation.
+His work has been published in a top-tier conference
 in the fields of computer security and formal methods.
 \end{aboutauthor}
 
@@ -204,16 +214,20 @@ and evaluation were carried out by Mahyar Karimi.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \mainmatter % Switch to Arabic page and chapter numbering.
 \pagestyle{Ruled} % Show chapter and section name at the top of the page.
-%\pagestyle{plain} % Alternative page style without the names at the top.
 
-\chapter{Introduction}
-\todo{Enter your text here.}
+\input{chapters/introduction}
 
-\chapter{Additional Chapter}
-\todo{Enter your text here.}
+\input{chapters/background}
 
-% REMOVE THE FOLLOWING LINE IN THE FINAL VERSION OF THE THESIS.
-\input{intro.tex} % A short introduction to LaTeX.
+\input{chapters/formulation}
+
+\input{chapters/protocol}
+
+\input{chapters/experiments}
+
+\input{chapters/related}
+
+\input{chapters/conclusion}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%% BACK MATTER %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -222,17 +236,13 @@ and evaluation were carried out by Mahyar Karimi.
 \pagestyle{plain}
 
 \bibliographystyle{alpha} % Define the citation style.
-\bibliography{intro} % Add the bibliography file (intro.bib in this case).
+\bibliography{references} % Add the bibliography file.
 
 \mainmatter* % Remove this line to prevent numbering of appendix chapters.
 \appendix % Number appendix chapters with letters instead of numbers.
 
-\chapter{Example Appendix Chapter}
+\input{chapters/appendix}
 
 \backmatter
-% REMOVE THE FOLLOWING THREE LINES IN THE FINAL VERSION OF THE THESIS.
-\makeatletter\@todonotes@SetTodoListName{List of Todos}\makeatother % Set name of list of todos.
-\todototoc % Add the list of todos to the table of contents.
-\listoftodos % Add a list of all todos.
 
 \end{document}
