@@ -48,11 +48,16 @@ $(CLASS).pdf: $(CLASS).dtx $(CLASS).cls
 .PHONY: examples
 examples: master
 
+# Chapter and bibliography sources
+CHAPTERS = $(wildcard chapters/*.tex)
+FIGURES  = $(wildcard chapters/Figures/*/*.csv)
+BIBS     = references.bib intro.bib
+
 # Build the master thesis
 .PHONY: master
 master: $(SOURCE_MASTER).pdf
 
-$(SOURCE_MASTER).pdf: $(SOURCE_MASTER).tex $(CLASS).cls intro.tex intro.bib
+$(SOURCE_MASTER).pdf: $(SOURCE_MASTER).tex $(CLASS).cls $(CHAPTERS) $(FIGURES) $(BIBS) intro.tex
 	$(PDFLATEX) $(SOURCE_MASTER)
 	$(BIBTEX) $(SOURCE_MASTER)
 	$(PDFLATEX) $(SOURCE_MASTER)
