@@ -1,0 +1,239 @@
+% =============================================================================
+% Macros for the thesis - consolidated from ppm-tex/0macros.tex and ppm-tex/macros.tex
+% Adapted for istaustriathesis (memoir-based) class
+% =============================================================================
+
+% --- Additional packages needed for the paper content ---
+\usepackage{graphicx}
+\usepackage{enumerate}
+\usepackage{comment}
+\usepackage{tabularx}
+\usepackage{mathrsfs}
+\usepackage{complexity}
+\usepackage{xargs}
+
+% TikZ and pgfplots for figures
+\usepackage{tikz}
+\usetikzlibrary{patterns,shapes.callouts,shapes.geometric}
+\usepackage{pgfplots}
+\pgfplotsset{compat=1.18}
+
+% tikzpeople for Monitor/System figures
+\usepackage{tikzpeople}
+
+% --- Monitor/System tikzpeople figure commands (from quals-prop/monsys.tex) ---
+% Single-entity monitoring: draws a physician (System) and police officer (Monitor)
+\newcommand{\monitorsystem}{%
+    % System as a physician at (0,0)
+    \node[physician, minimum size=1.25cm] (system) at (0,0) {};
+    % Monitor as a police officer at (6,0)
+    \node[police, minimum size=1.25cm, mirrored] (monitor) at (6,0) {};
+    % Cloud callout for x (System's data)
+    \node[cloud callout, draw=gray, text=gray,
+          callout pointer width=0.5cm,
+          callout pointer segments=3,
+          callout relative pointer={(0.4,-0.3)}]
+          at (-1.25,1.5) {\scalebox{1.5}{$x$}};
+    % Cloud callout for phi (Monitor's specification)
+    \node[cloud callout, draw=gray, text=gray,
+          callout pointer width=0.5cm,
+          callout pointer segments=3,
+          callout relative pointer={(-0.2,-0.4)}]
+          at (7.25,1.5) {\scalebox{1.5}{$\phi$}};
+}
+
+% Labels for System and Monitor
+\newcommand{\systemlabel}{\node[below=0.2cm of system] {System};}
+\newcommand{\monitorlabel}{\node[below=0.2cm of monitor] {Monitor};}
+
+% Arrow connections between System and Monitor
+\newcommand{\monitorconnections}{%
+    \draw[->,blue!60] (4.5,0.75) -- ++(-3,0);
+    \draw[->] (1.5,0.50) -- ++(3,0);
+    \draw[->,blue!60] (4.5,0.25) -- ++(-3,0);
+    \draw[->,blue!60] (4.5,0.00) -- ++(-3,0);
+    \draw[draw opacity=0] (1.5,-.30) -- node {$\vdots$} ++(3,0);
+    \draw[->] (1.5,-.75) -- ++(3,0);
+}
+
+% Theorem infrastructure
+% Note: memoir has its own \newtheorem; do NOT load amsthm (it conflicts).
+% thm-restate provides restatable theorems.
+\usepackage{thm-restate}
+
+% Must come after pdfx (which loads hyperref)
+\usepackage[nameinlink,capitalise]{cleveref}
+
+% Algorithm packages - use algorithm + algorithmic (matching the paper)
+\usepackage{algorithm}
+\usepackage{algorithmic}
+
+% Assumption environment
+\newtheorem{assumption}{Assumption}[chapter]
+\crefname{assumption}{Assumption}{Assumptions}
+
+% Theorem environments (memoir style -- no \theoremstyle)
+\newtheorem{theorem}{Theorem}[chapter]
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{corollary}[theorem]{Corollary}
+\newtheorem{definition}[theorem]{Definition}
+\newtheorem{example}[theorem]{Example}
+\newtheorem{remark}[theorem]{Remark}
+
+% proof environment (memoir does not provide one by default)
+\newenvironment{proof}[1][Proof]{%
+  \par\noindent\textit{#1.}\enspace\ignorespaces
+}{%
+  \hfill$\square$\par\medskip
+}
+
+% --- Colors ---
+\definecolor{MyBlue}{RGB}{50,100,200}
+
+% --- Complexity classes ---
+\newcommand{\PTIME}{\ComplexityFont{PTIME}}
+\newcommand{\omegaP}{\omega\text{-}\PTIME}
+\newcommand{\omegaIP}{\omega\text{-}\IP}
+
+% --- Protocol and monitoring ---
+\newcommand{\mstate}[2]{\left(#1,#2\right)}
+\newcommand{\ideal}{\textsc{Ideal}}
+\newcommand{\real}{\textsc{Real}}
+\newcommand{\isbad}{\textsf{flag}}
+\newcommand{\mupdate}{\textsf{nextstate}}
+
+% --- Parties ---
+\newcommand{\Pc}{\textsf{Sys}}
+\newcommand{\Mc}{\textsf{Mon}}  % \newcommand since memoir does not predefine \Mc
+\newcommand{\Monitor}{Monitor}
+\newcommand{\System}{System}
+\newcommand{\setup}{\texttt{Setup}}
+
+% --- Blackboard letters ---
+\newcommand{\Bb}{\mathbb{B}}
+\newcommand{\Nb}{\mathbb{N}}
+\newcommand{\Gb}{\mathbb{G}}
+\newcommand{\Zb}{\mathbb{Z}}
+\newcommand{\Db}{\mathbb{D}}
+
+% --- Calligraphic letters ---
+\newcommand{\Ac}{\mathcal{A}}
+\newcommand{\Bc}{\mathcal{B}}
+\newcommand{\Cc}{\mathcal{C}}
+\newcommand{\Dc}{\mathcal{D}}
+\newcommand{\Fc}{\mathcal{F}}
+\newcommand{\Gc}{\mathcal{G}}
+\newcommand{\Hc}{\mathcal{H}}
+\newcommand{\Lc}{\mathcal{L}}
+\newcommand{\Nc}{\mathcal{N}}
+\newcommand{\Qc}{\mathcal{Q}}
+\newcommand{\Rc}{\mathcal{R}}
+\newcommand{\Sc}{\mathcal{S}}
+\newcommand{\Tc}{\mathcal{T}}
+\newcommand{\Uc}{\mathcal{U}}
+\newcommand{\Vc}{\mathcal{V}}
+\newcommand{\Wc}{\mathcal{W}}
+
+% --- Math operators and helpers ---
+\newcommand{\Even}{\mathrm{Even}}
+\newcommand{\Odd}{\mathrm{Odd}}
+\newcommand{\Reg}[2]{\Rc^{#1}\!\left(#2\right)}
+\newcommand{\Def}[2]{\Dc^{#1}\!\left(#2\right)}
+\newcommand{\floor}[1]{\left\lfloor #1 \right\rfloor}
+\newcommand{\ceil}[1]{\left\lceil #1 \right\rceil}
+\newcommand{\seq}[1]{\left\langle #1 \right\rangle}
+\newcommand{\tpl}[1]{\left( #1 \right)}
+\newcommand{\eset}[1]{\left\{\, #1 \,\right\}}
+\newcommand{\set}[1]{\left\{ #1 \right\}}
+\newcommand{\Nats}{\mathbb{N}}
+\newcommand{\mymax}{\mathrm{max}}
+\newcommand{\infSeq}{\mathrm{Inf}}
+\newcommand{\stateseq}[1]{\boldsymbol{#1}}
+\newcommand{\Oh}{\mathcal{O}}
+\newcommand{\permsat}{4\text{-}\textsc{Permutation SAT}}
+\newcommand{\SATThree}{3\text{-}\textsc{SAT}}
+\newcommand{\kclique}{k\times k\text{-}\textsc{Clique}} 
+\newcommand{\rabingame}{\textsc{Rabin Game}} 
+
+% Slanted inequality signs
+\renewcommand{\leq}{\leqslant}
+\renewcommand{\geq}{\geqslant}
+\renewcommand{\le}{\leqslant}
+\renewcommand{\ge}{\geqslant}
+
+% --- Cryptography ---
+\newcommand{\distribution}{\Hc}
+\newcommand{\Gen}{\text{Gen}}
+\newcommand{\Enc}{\text{Enc}}
+\newcommand{\Dec}{\text{Dec}}
+\newcommand{\sEnc}{\text{sEnc}}
+\newcommand{\sDec}{\text{sDec}}
+\newcommand{\encYao}{\text{encYao}}
+\newcommand{\decYao}{\text{decYao}}
+\newcommand{\encGG}{\textbf{encGG}}
+\newcommand{\fakeGarble}{\overline{\textbf{Garble}}}
+\newcommand{\Garble}{\textbf{Garble}}
+\newcommand{\fakeKeys}{\overline{\textbf{Keys}}}
+\newcommand{\keys}{\textbf{Keys}}
+\newcommand{\nextstate}{f_s}
+\newcommand{\view}{\texttt{view}}
+\newcommand{\outpu}{\texttt{output}}
+\newcommand{\compare}{\texttt{compare}}
+\newcommand{\update}{\texttt{update}}
+\newcommand{\val}{\texttt{val}}
+\newcommand{\proceed}{\textsc{proceed}}
+\newcommand{\terminate}{\textsc{terminate}}
+\newcommand{\pstring}{\sigma}
+\newcommand{\mstring}{\mu}
+\newcommand{\OT}{\texttt{OT}}
+
+% --- Indistinguishability symbol ---
+\newcommand\indistinguishable{\mathrel{\stackrel{\makebox[0pt]{\mbox{\normalfont\tiny c}}}{\equiv}}}
+
+% --- Protocol naming: ONE protocol, presented in two steps ---
+\newcommand{\protocolone}{open-specification step}
+\newcommand{\protocoltwo}{hidden-specification step}
+\newcommand{\Protocolone}{Open-Specification Step}
+\newcommand{\Protocoltwo}{Hidden-Specification Step}
+
+% --- Value macros ---
+\newcommand{\systemval}[2]{\ifthenelse{\equal{#2}{}}{\texttt{pval}_{#1}}{\texttt{pval}_{#1}\left({#2}\right)}}
+\newcommand{\monitorval}[2]{\ifthenelse{\equal{#2}{}}{\texttt{rval}_{#1}}{\texttt{sval}_{#1}\left({#2}\right)}}
+
+% --- Complexity classes ---
+\newclass{\TOWER}{TOWER}
+\newclass{\ACKERMANN}{ACKERMANN}
+\newclass{\EXPTIME}{EXPTIME}
+\newclass{\IIEXPTIME}{2-EXPTIME}
+\newclass{\NEXPTIME}{NEXPTIME}
+
+% --- TikZ lock drawing ---
+\newcommand{\drawlock}[2]{ % #1 = x position, #2 = y position
+    \begin{scope}[shift={(#1,#2)}, scale=0.01]
+        \draw[thick] (-10,20) arc[start angle=180, end angle=0, radius=10] -- (10,5) -- (7,5) 
+                     -- (7,15) arc[start angle=0, end angle=180, radius=7] -- (-7,5) -- (-10,5) -- cycle;
+        \draw[thick, fill=gray!30] (-15,5) rectangle (15,-20);
+        \draw[fill=black] (0,-10) circle (3);
+        \draw[thick] (-2,-10) -- (2,-10) -- (0,-16) -- cycle;
+    \end{scope}
+}
+
+\newcommand{\lockpicture}{
+\begin{tikzpicture}
+    \draw[thick] (-1,2) arc[start angle=180, end angle=0, radius=1] -- (1,.5) -- (.7,.5) 
+                 -- (.7,1.5) arc[start angle=0, end angle=180, radius=0.7] -- (-.7,.5) -- (-1,.5) -- cycle;
+    \draw[thick, fill=gray!30] (-1.5,.5) rectangle (1.5,-2);
+    \draw[fill=black] (0,-1) circle (0.3);
+    \draw[thick] (-2,-1) -- (2,-1) -- (0,-1.6) -- cycle;
+\end{tikzpicture}
+}
+
+% --- Teal color for new text ---
+\newcommand{\new}[1]{\textcolor{teal}{#1}}
+
+% --- Todo notes for authors (can be disabled for final version) ---
+\newcommandx{\theju}[2][1=]{\todo[linecolor=blue,backgroundcolor=blue!25,bordercolor=blue,#1]{\tiny T: #2}}
+\newcommandx{\mahyar}[2][1=]{\todo[linecolor=red,backgroundcolor=red!25,bordercolor=red,#1]{\tiny M:#2}}
+\newcommand{\thejaswini}[1]{\todo[color=blue!30,inline]{\small #1 -Thejaswini}}
+\newcommand{\mahyarfull}[1]{\todo[color=red!30,inline]{\small #1 -Mahyar}}

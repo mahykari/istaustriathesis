@@ -1,0 +1,80 @@
+\chapter{Introduction}\label{ch:intro}
+
+Runtime verification offers scalable solutions to improve the safety and reliability of systems. 
+Unlike traditional static verification, which attempts to verify entire system models against specifications, runtime verification focuses on monitoring the behavior of a system during its execution. 
+This approach is inherently more lightweight, as it processes individual observations produced by the system rather than reasoning about the entire state space~\cite{LS09,BFFR18}.
+
+However, systems that require monitoring by a third party to ensure compliance with a specification might contain sensitive information, causing privacy concerns when traditional runtime verification approaches are used.
+Privacy is compromised if protected information about the system, or sensitive data processed by the system, is revealed to the monitor. 
+Furthermore, revealing the specification being monitored may undermine the very essence of third-party verification.
+
+\section{Motivation}
+
+Privacy and monitoring seem at odds. Monitoring typically involves verifying whether the execution trace of a system satisfies a given specification, which seemingly requires access to the system trace. Privacy, on the other hand, demands that protected information about the system remain undisclosed. Balancing these conflicting objectives presents a significant challenge, particularly in contexts where monitoring is essential but the underlying data is sensitive. This challenge arises in many real-world scenarios: a bank undergoing an audit may need to share data to demonstrate compliance; a hospital may need to report statistics to ensure adherence to healthcare standards; a self-driving car or metro system may be monitored for operational safety. In each case, sharing protected IP or client data with a third-party monitor raises concerns about privacy.
+
+One possible solution is to allow the system to self-monitor by embedding the specification into the system and generating its own verification results. However, this approach lacks credibility in settings where third-party validation is crucial. For instance, if hospitals were entirely self-certified, the certificates would lack the impartiality needed to inspire public confidence.
+This necessitates a solution that allows third-party monitors to continuously and repeatedly verify whether a system complies with a given specification, all while obscuring the internals of the system and its data.
+
+Hiding the system and its data is just a first step, but our need for privacy might not stop there. Sometimes, one might even need to hide the specification that a system is being monitored against. 
+For motivation, we can again consider the domain of healthcare, where the runtime verification of traces satisfying specifications expressed in temporal logic has already been studied~\cite{JLKWHSS16}. 
+For instance, in the National Health Services (NHS) in England, hospital funding is tied to performance metrics, optimization of which led many hospitals to restructure their operations~\cite{Cra17,Mea14}. Unfortunately, such restructurings resulted in extreme cases like the events at Mid-Staffordshire NHS Foundation Trust, where financial targets led to patient neglect~\cite{mid2013report}. This exemplifies Goodhart's Law: \emph{``When a measure becomes a target, it ceases to be a good measure,''} or, as an ex-NHS manager put it, \emph{``hitting the target but missing the point.''} Indeed any measure has the potential to become a target when gamifications are employed to achieve that target.
+To avoid such distortions, it is crucial to also develop protocols for monitoring that keep both the system/data and specification private, ensuring accurate and unbiased evaluation.
+
+Recent advances have demonstrated that verification can be performed in a privacy-preserving manner spanning a variety of domains, including SAT solving~\cite{LJAPW22}, verifying resolution proofs~\cite{LAHPTW22}, matching strings against regular expressions~\cite{LWSTRP24}, and model-checking specifications described by CTL formulas~\cite{JLAP20}.
+However, privacy-preserving verification often introduces significant computational overhead. This poses scalability challenges, particularly in real-world applications where the underlying systems involve an enormous number of states.
+In contrast, runtime verification focuses not on verifying the entire system but rather on monitoring specific outputs produced by the system during execution. This approach inherently involves smaller-scale data exchanges, making it a suitable candidate for privacy-preserving methods.
+
+\section{Contributions}
+
+We provide a protocol that would aid a monitoring setup as shown in \cref{fig:monitoringsetup}. Implementing our protocol on the system's side and the monitor's side enables monitoring where only one message is sent per observation round, the specification is kept secret, and the observable outputs of the system are kept secret.
+
+We model the specification as a Boolean circuit that takes two inputs---the current monitor state and the current system observation---and produces two outputs: the next monitor state and a single-bit \emph{flag} indicating whether the observed prefix violates the specification.
+Our protocol ensures that in each round, the monitor learns exactly one bit---the flag---and nothing else: neither the input, output, nor internal state of the monitored system, nor even the internal state of the specification itself.
+
+We develop the protocol in two steps, addressing two security settings:
+\begin{itemize}
+    \item[(a)] \textbf{Open specification.} The specification is not a secret and is known to both parties. The protocol in this setting is a modification of the classic MPC protocol known as Yao's garbled circuits~\cite{Yao86,GMW87}. We modify the classical protocol to enable repeated computation while maintaining the secrecy of the specification state.
+    \item[(b)] \textbf{Hidden specification.} The specification is a secret and known only to the monitor. Inspired by recent advances in private function evaluation (PFE), we extend the protocol to additionally hide the circuit topology using techniques based on the Decisional Diffie-Hellman (DDH) assumption. We build upon the seminal work of Katz and Malka~\cite{KM11} and the recent work of Liu, Wang, and Yu~\cite{LWY22}.
+\end{itemize}
+Note that in setting~(a), the monitored system knows which of its parts (which system inputs, which system outputs, and which internal system states) are being examined by the specification, while in setting~(b) it does not. Hence setting~(b) is particularly interesting for large systems being monitored against small specifications.
+
+Our protocol adapts and combines existing cryptographic techniques---Yao's garbled circuits, the DDH-based label structure of Liu, Wang, and Yu~\cite{LWY22}, and Bellare-Micali oblivious transfer~\cite{BM89}---to the reactive monitoring setting.
+Two-party protocols for reactive functionalities are well-studied~\cite{HL10}; the cryptographic building blocks we use are standard.
+Our main practical design choice is that, after an initial setup phase, each monitoring round requires only a single message from the system to the monitor.
+Secret-sharing-based MPC requires three or more parties~\cite{GMW87} and is therefore inapplicable in our two-party setting, while OT-based two-party alternatives exchange at least three messages per round~\cite{CSW20}.
+FHE-based constructions, such as that of Banno et al.~\cite{BMMBWS22}, face a different obstacle: their evaluation cost is linear in the DFA size of the specification, which can be exponentially larger than the circuit representation we use (see \cref{ch:experiments}).
+The single-message property is convenient when hardware for bidirectional communication is limited.
+
+We implemented our protocol to analyze the influence of several parameters involved in building such protocols.
+We use specifications described as register automata~\cite{GDPT13}, which we convert to Boolean circuits.
+Our experiments show the feasibility of our protocol when the circuit sizes are on the order of $10^5$ for acceptable security parameters.
+Additionally, in the hidden-specification setting, the time per round is influenced more by the size of the specification than by the size of the monitored system.
+This allows scalability to large system sizes as long as the specification remains small.
+
+\section{Thesis outline}
+
+This thesis is organized as follows.
+
+\begin{description}
+    \item[\cref{ch:background}: Background.] We provide the necessary background on runtime verification, multi-party computation, garbled circuits, oblivious transfer, and the Decisional Diffie-Hellman assumption.
+    \item[\cref{ch:formulation}: Problem Formulation.] We formally define privacy-preserving monitoring, including the ideal settings, correctness, and security definitions based on the simulation paradigm.
+    \item[\cref{ch:protocol}: The Protocol.] We introduce a general framework for reactive secure monitoring, discuss the design space and motivate our construction choices, and then present the protocol in two steps. First, we describe the open-specification setting where both parties know the specification circuit. Then, we extend the protocol to the hidden-specification setting, where the circuit topology must also be kept secret.
+    \item[\cref{ch:experiments}: Experimental Evaluation.] We describe our C++ prototype implementation and evaluate the protocol on two monitoring scenarios: an access control system and a lock management system for parallel programs.
+    \item[\cref{ch:related}: Related Work.] We survey related work in privacy-preserving verification and monitoring, and compare our approach with existing methods.
+    \item[\cref{ch:conclusion}: Conclusion and Future Work.] We summarize our contributions and discuss directions for future research.
+\end{description}
+
+% Architecture figure
+\begin{figure}[t]
+\centering
+\begin{tikzpicture}
+    \monitorsystem
+    \systemlabel
+    \monitorlabel
+    \monitorconnections
+\end{tikzpicture}
+    \caption[The privacy-preserving monitoring setting.]{The privacy-preserving monitoring setting.
+    The physician represents the System (e.g., a medical center)
+    and the police officer represents the Monitor (e.g., law enforcement).}
+    \label{fig:monitoringsetup}
+\end{figure}

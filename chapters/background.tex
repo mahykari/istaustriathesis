@@ -1,0 +1,104 @@
+\chapter{Background}\label{ch:background}
+
+In this chapter, we provide the necessary background for understanding the protocol presented in this thesis. We begin with a brief overview of runtime verification, then introduce the cryptographic primitives that form the foundation of our privacy-preserving protocol: garbled circuits, oblivious transfer, and the Decisional Diffie-Hellman assumption. We also discuss the simulation-based security model and reactive functionalities.
+
+\section{Runtime verification and monitoring}\label{sec:rv}
+
+Runtime verification~\cite{LS09,BFFR18} is a lightweight formal verification technique that focuses on monitoring the behavior of a running system against a formal specification. Unlike model checking, which exhaustively explores the state space of a system model, runtime verification observes actual execution traces and checks them incrementally. A \emph{monitor} is an entity that receives a stream of observations (events) from a system and checks, at each step, whether the observed prefix of the execution trace satisfies a given specification. The specification defines which behaviors are acceptable and which are not. When a violation is detected, the monitor raises an alarm.
+
+In this work, we focus on \emph{safety specifications}~\cite{KKLSV02}, which stipulate that ``nothing bad happens.'' A safety specification can be represented as a state machine: the monitor starts in an initial state and, at each observation round, transitions to a new state based on the current observation. A Boolean function, which we call \isbad, indicates whether the observed prefix violates the specification. We model the specification as a circuit $\Cc$ that computes two functions simultaneously: a next-state function $\mupdate$ and the violation flag $\isbad$. The circuit takes as input the current monitor state $\mu[r]$ and the current system observation $\sigma[r]$, and produces the next monitor state $\mu[r+1] = \mupdate(\mu[r], \sigma[r])$ and the flag $\tau[r] = \isbad(\mu[r], \sigma[r])$. For our implementations, we use specifications described as register automata~\cite{GDPT13}, which we convert into Boolean circuits using the Yosys synthesis suite.
+
+\section{Multi-party computation}\label{sec:mpc}
+
+Multi-party computation (MPC), studied since the 1980s~\cite{Yao82}, allows two or more parties who do not trust each other to collaboratively compute a function on their private inputs without revealing these inputs to each other. Typically, MPC focuses on a ``one-shot'' setting, where the parties compute one or more outputs based on their inputs, but do so exactly once. A specific variant of MPC that is relevant to our work is \emph{private function evaluation} (PFE), where one party owns a private function (a ``secret circuit'') along with a part of the input, while the other party holds the rest of the input. The goal is to design a protocol that allows the function to be evaluated using the inputs of both parties securely: one or both parties can learn the result of the function on the input, but nothing else is revealed. Runtime verification, however, requires not a one-shot but a repeated evaluation process, whose granularity---called the (\emph{observation}) \emph{round}---depends on the application. The performance of banks may be observed daily, hospitals monthly, autopilots and metro systems every second. Such \emph{reactive functionalities} are important for monitoring systems, where internal states of the system (e.g., accumulated data or ongoing logs) and the monitor (for sequential specifications) need to remain hidden even across repeated interactions.
+
+\section{Yao's garbled circuits}\label{sec:yao}
+
+The most fundamental tool used in secure two-party computation is attributed to Yao and was dubbed Yao's garbling by Goldreich, Micali, and Wigderson~\cite{GMW87}. 
+
+\subsection{Garbling a single gate}
+
+We first describe a toy version of the problem posed by Yao. Consider two parties $A$ and $B$. Can we have a secure protocol where party $A$ has two bits, and $B$ wants to know the output of gate $G$ computing a Boolean function over two bits, where gate $G$ is known to both parties? Yao's garbling produces a simple solution to this as follows.
+
+Party $A$ starts by randomly generating strings of a fixed length: $L^0$, $L^1$, $R^0$, $R^1$, $S^0$, and $S^1$. The strings $L^0$ and $L^1$ correspond intuitively to each value $0$ and $1$ taken by the left input wire of the gate, respectively. Similarly, $R^0$ and $R^1$ correspond to the values taken by the right input wire, and $S^0$ and $S^1$ to the output wire taking values $0$ and $1$, respectively.
+
+After the labeling step, Party $A$ \emph{encrypts} the label of the output of $G$ using keys that correspond to the input. So, if party $B$ had keys that correspond to input $(0,1)$, then it can only open the output that would represent $G(0,1)$.
+More formally, party $A$ calls 
+a subroutine $\textbf{\encYao}_G$ that generates the \emph{garbled gate} which consists of four ciphertexts as follows:
+\begin{equation}
+  \textbf{\encYao}_G  \left( [L^0, L^1], [R^0, R^1], [S^0, S^1] \right)
+  \coloneqq
+    \left\{ \Enc_{L^\alpha,R^\beta}  \left(
+        S^{G(\alpha,\beta)} \right) \right\}_{\alpha,\beta \in \{0,1\}} \tag{\$}\label{eq:yao}
+\end{equation}
+and sends it to party $B$, but the encrypted messages are sent in random order. 
+That is, if gate $G$ was an \emph{AND} gate, then the garbled gate would be a random order of the elements $\{\Enc_{L^0,R^0}(S^0),\Enc_{L^1,R^0}(S^0)$, $\Enc_{L^0,R^1}(S^0),\Enc_{L^1,R^1}(S^1)\}$. Party $A$ also sends $\seq{S^0,0}$ and $\seq{S^1, 1}$ to indicate to $B$ that $S^0$ corresponds to bit $0$ and $S^1$ to bit $1$. If party $A$'s input for the left and the right gate are $\ell,r\in \{0,1\}$, then she also sends the random labels $L^\ell$ and $R^r$.
+
+Party $B$ then uses $L^\ell$ and $R^r$ as keys to open the four ciphertexts; with very high probability, only one of the four will open, which corresponds to exactly $S^{G(\ell,r)}$. If $S^{G(\ell,r)} = S^0$, he concludes $G(\ell,r) = 0$, and $1$ if $S^{G(\ell,r)} = S^1$.
+
+\subsection{Extension with oblivious transfer}
+
+Now, consider the same situation with a gate $G$ over two bits; however, one bit of input is known to party $A$ and the other bit is known to party $B$. Can we modify the above protocol to ensure that party $B$ learns $G(\alpha,\beta)$ without learning $\alpha$, where $\alpha$ is party $A$'s input and $\beta$ is party $B$'s input?
+
+This is where \emph{oblivious transfer} (\OT) comes in. Oblivious transfer is a two-party functionality in which a sender holds two strings $x_0,x_1\in\{0,1\}^n$ and a receiver holds a choice bit $\beta\in\{0,1\}$. The functionality delivers $x_\beta$ to the receiver while hiding $\beta$ from the sender and $x_{1-\beta}$ from the receiver:
+\[
+  \OT \colon \{0,1\}^{2n}\times\{0,1\} \to \{0,1\}^n, \qquad \OT((x_0,x_1),\beta) = x_\beta.
+\]
+We describe a concrete protocol realizing this functionality in \cref{sec:ot}.
+
+Using \OT{} as a sub-protocol, we can modify the previously described garbling protocol. The garbling protocol proceeds as follows. Party $A$ similarly finds labels $L^0,L^1,R^0,R^1,S^0,$ and $S^1$ corresponding to $0$ or $1$ for the wires, and prepares the garbled gates as described in the previous step. After this, party $A$ and party $B$ run a protocol for oblivious transfer where $A$ has the labels for the input wire corresponding to $B$'s input $\beta$, say $R_0$ and $R_1$, and $B$ has the input bit. At the end of the \OT{} protocol, $B$ would receive $R_\beta$. Later, party $A$ also sends $L_\alpha$. This way, out of the four ciphertexts with the keys $L_\alpha$ and $R_\beta$, party $B$ can only open the one ciphertext that contains the key $S^{G(\alpha,\beta)}$. He matches this string obtained with $S^0$ or $S^1$, both received from $A$.
+
+\subsection{Garbling an entire circuit}
+
+Consider the same problem; however, instead of just a simple gate $G$, it is a circuit $\Cc$ that party $B$ wants to use to evaluate on party $A$'s input. Then for each wire $W$ in the circuit, party $A$ similarly prepares random keys to represent the value $W^0$ and $W^1$. Whenever an output wire feeds into an input for a gate, party $A$ uses the same random keys for the output and input wire.
+For each gate $G$ in the circuit $\Cc$, party $A$ computes $\textbf{encYao}_G$ using the corresponding gate's inputs and output wire labels. Party $A$ further sends the labels generated for the output wire along with whether they correspond to $0$ or $1$ to $B$, and the input labels of the wires which correspond to her input.
+
+Party $B$ can use the keys corresponding to the input of party $A$ and unlock the gates to learn the keys to the next gates in a bottom-up manner and work through the circuit until he obtains the keys corresponding to the output wires. Then party $B$ can match the keys with the corresponding values sent by $A$.
+
+To summarize, Yao's garbled circuits allow two parties to evaluate a Boolean circuit on their joint inputs without revealing those inputs to each other. Party~$A$ (the garbler) encodes the circuit by replacing each wire value with a random label and encrypting each gate's output label under the corresponding input labels. Party~$B$ (the evaluator) uses the labels it receives---its own obtained via oblivious transfer, $A$'s sent directly---to decrypt the circuit gate by gate and learn only the final output. This is the core building block of our protocol; the remaining challenge is adapting it to the \emph{reactive} setting, where the circuit must be evaluated repeatedly with hidden carry-over state.
+
+\section{Oblivious transfer}\label{sec:ot}
+
+We introduced the oblivious transfer functionality $\OT \colon \{0,1\}^{2n}\times\{0,1\} \to \{0,1\}^n$ in \cref{sec:yao}. Secure protocols for \OT{} have been known since the 1980s, with the earliest forms proposed by Rabin~\cite{Rab81}, and later improvements and alternative protocols by Kilian~\cite{Kil88}, Bellare and Micali~\cite{BM89}, and several others.
+
+\paragraph{The Bellare-Micali protocol.}
+Our implementation uses the \OT{} protocol of Bellare and Micali~\cite{BM89}, which operates in a cyclic group $\Gb = \seq{g}$ of prime order~$q$. The protocol proceeds in three messages:
+\begin{enumerate}
+    \item \textbf{Sender setup.} Party $A$ (the sender) chooses a random group element $C \xleftarrow{\$} \Gb$ and sends $C$ to party $B$.
+    \item \textbf{Receiver choice.} Party $B$ (the chooser) picks a random exponent $k \xleftarrow{\$} \Zb_q$ and computes two public keys: $\mathsf{pk}_\beta = g^k$ and $\mathsf{pk}_{1-\beta} = C / g^k$. Party $B$ sends both $\mathsf{pk}_0$ and $\mathsf{pk}_1$ to party $A$.
+    \item \textbf{Sender encryption.} Party $A$ checks that $\mathsf{pk}_0 \cdot \mathsf{pk}_1 = C$, then for each $i \in \{0,1\}$, picks a random $r_i \xleftarrow{\$} \Zb_q$ and computes the ciphertext $(c_{i,1}, c_{i,2}) = (g^{r_i}, H(\mathsf{pk}_i^{r_i}) \oplus x_i)$ where $H$ is a hash function modeled as a random oracle. Party $A$ sends both ciphertexts to $B$.
+\end{enumerate}
+Party $B$ can decrypt only the $\beta$-th ciphertext: using its secret key~$k$, it computes $H(c_{\beta,1}^k) \oplus c_{\beta,2} = x_\beta$. The other ciphertext is encrypted under the public key $\mathsf{pk}_{1-\beta} = C/g^k$. Decrypting it would require the discrete logarithm of $\mathsf{pk}_{1-\beta}$, i.e., the value $k'$ such that $g^{k'} = C/g^k$. Since $C$ was chosen uniformly at random by party~$A$, the discrete logarithm of~$C$ is unknown to~$B$, and therefore so is~$k'$.
+
+Two-party protocols for reactive functionalities are well-studied~\cite{HL10}; standard OT-based constructions require at least three message exchanges per round~\cite{CSW20}. A na\"ive application of \OT{} in every round can therefore become a communication bottleneck; in \cref{ch:protocol} we show how to amortize this cost to a single message per round.
+
+\section{The Decisional Diffie-Hellman assumption}\label{sec:ddh}
+
+Let $\Gb = \seq{g}$ be a cyclic group of prime order~$q$ and let $a,b \in \Zb_q$. Since exponentiation commutes, $(g^a)^b = (g^b)^a = g^{ab}$, so a party who knows $a$ can compute $g^{ab}$ from $g^b$, and vice versa. The \emph{Computational} Diffie-Hellman assumption (CDH) asserts that, without knowledge of either exponent, computing $g^{ab}$ from $(g^a, g^b)$ is infeasible. The stronger \emph{Decisional} Diffie-Hellman assumption (DDH) asserts that one cannot even \emph{distinguish} $g^{ab}$ from a uniformly random group element~\cite{Bon98}.
+
+\begin{assumption}[Decisional Diffie-Hellman assumption~\cite{Bon98}]\label{assumption:DDH}
+    Let $\Gb = \seq{g}$ be a cyclic group of prime order $q\in \Theta(2^k)$. The DDH assumption states that no probabilistic polynomial-time algorithm can distinguish, with non-negligible advantage, between the following two distributions:
+    \begin{itemize}
+        \item \emph{Real DH tuples:} $(g^a,\; g^b,\; g^{ab})$, where $a,b \xleftarrow{\$} \Zb_q$;
+        \item \emph{Random tuples:} $(g^a,\; g^b,\; g^{c})$, where $a,b,c \xleftarrow{\$} \Zb_q$.
+    \end{itemize}
+    Note that the distinguisher observes $g^a$ and $g^b$ but does not know the exponents $a$ or $b$.
+\end{assumption}
+
+The requirement that $\Gb$ have prime order is essential: in groups whose order has small prime divisors, the Legendre symbol leaks information about $g^{ab}$, making DDH trivially false~\cite[Section~1.1]{Bon98}. This property is crucial for our hidden-specification setting, where the circuit topology must be obfuscated.
+
+A key result we use in our security proofs is a lemma from Naor and Reingold~\cite{NR04}, which lifts the DDH assumption from pairs to $n$-tuples:
+
+\begin{restatable}[\protect{\cite[Lemma~4.4]{NR04}}]{lemma}{NaorReingold}\label{lemma:DDHprop}
+     Assuming that the DDH assumption holds in a cyclic group $\Gb = \seq{g}$ of prime order $q\in \Theta(2^k)$  for $n\in \mathrm{poly}(\kappa)$, given $n$ randomly chosen elements from the group $g_1,g_2,\dots,g_n\xleftarrow{\$}\Gb$ and $n+1$ randomly chosen exponents $a,a_1,a_2,\dots,$ $a_n\xleftarrow{\$}\Zb_q$,  we have that $\tpl{g_1^{a},g_2^{a},\dots,g_n^{a}}$ is computationally indistinguishable from an $n$-tuple $\tpl{g_1^{a_1},g_2^{a_2},\dots,g_n^{a_n}}$.
+\end{restatable}
+
+\section{Simulation-based security}\label{sec:simulation}
+
+The standard framework for proving the security of cryptographic protocols is the \emph{real/ideal paradigm}~\cite{Lin17}. The idea is to define two worlds: an \emph{ideal world} and a \emph{real world}. In the ideal world, the parties hand their private inputs to a trusted third party, who performs the computation honestly and returns the correct outputs---no messages are exchanged between the parties, so there is nothing to ``leak.'' In the real world, no trusted third party exists; the parties interact directly using the protocol. A protocol is said to be \emph{secure} if the real-world execution is computationally indistinguishable from the ideal-world execution.
+
+More concretely, security is proven by constructing a \emph{simulator} for each party. A simulator is a probabilistic polynomial-time algorithm that takes as input only what the party is entitled to know---its own private inputs and the outputs it is supposed to receive---and produces a \emph{simulated transcript}. If the simulated transcript is computationally indistinguishable from the party's \emph{real view} (i.e., the collection of all messages the party received, along with its own random coins), then we conclude that the protocol reveals nothing beyond what the party could have computed from its inputs and outputs alone. The intuition is that if an efficient simulator can fabricate a convincing transcript without access to the other party's secrets, then the real transcript cannot contain meaningful information about those secrets either.
+
+Constructing such a simulator is often the hardest part of a security proof. The simulator must account for every message the party observes and produce each component of the transcript in a way that is statistically or computationally close to the real distribution, despite not knowing the other party's private input. In garbled-circuit-based protocols, for example, the simulator for the evaluator must produce garbled gates that ``look real'' even though the simulator does not know the garbler's input. The standard strategy, detailed in Lindell's tutorial~\cite{Lin17}, is to proceed via a \emph{hybrid argument}: one defines a sequence of intermediate experiments, each differing from the previous one in a single component, and shows that adjacent experiments are indistinguishable under a cryptographic assumption. The first experiment corresponds to the real execution and the last to the simulated one; if the endpoints were distinguishable with non-negligible advantage~$\varepsilon$, then by an averaging argument some adjacent pair of hybrids would be distinguishable with advantage at least $\varepsilon/n$, contradicting the underlying cryptographic assumption.
+
+In our setting, we consider \emph{semi-honest} (also called \emph{honest-but-curious}) adversaries. A semi-honest party follows the protocol faithfully---it does not alter, reorder, or inject messages---but may examine the transcript it accumulates to try to learn additional information about the other party's private data. This is in contrast to \emph{malicious} adversaries, who may deviate from the protocol arbitrarily. The semi-honest model is appropriate for many monitoring scenarios where both parties---say, a regulatory authority and a service provider---have an institutional incentive to follow the protocol, but may be curious about each other's private data. We adopt this model throughout the thesis; the security proofs in \cref{ch:protocol,app:proofs} construct explicit simulators for each party and establish indistinguishability via hybrid arguments.

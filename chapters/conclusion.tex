@@ -1,0 +1,30 @@
+\chapter{Conclusion and Future Work}\label{ch:conclusion}
+
+\section{Summary}
+
+In this thesis, we presented a protocol for privacy-preserving runtime monitoring, developed in two steps. In the first step (\cref{sec:openstep}), we constructed a protocol for the open-specification setting, where the specification circuit is known to both the Monitor and the System. In the second step (\cref{sec:hiddenstep}), we extended this to the hidden-specification setting, where the circuit describing the specification must also remain secret from the System.
+
+Both steps of the protocol are correct and secure under standard cryptographic assumptions (CPA-secure encryption, secure oblivious transfer, and, for the hidden-specification step, the Decisional Diffie-Hellman assumption). The protocol sends only a single message per round from the System to the Monitor, reducing communication overhead compared to approaches based on secret sharing.
+
+Our experimental evaluation (\cref{ch:experiments}) demonstrates the feasibility of the protocol for circuits with up to $10^5$ gates at industrially relevant security parameters. In particular, the hidden-specification step exhibits a time complexity dominated by the size of the specification circuit rather than the size of the System's observable output, enabling scalability to large system sizes as long as the specification remains small.
+
+\section{Future work}
+
+While the levels of privacy provided by our protocol are sufficient for many real-world applications, they fall short of the requirements in highly privacy-sensitive settings. Several directions for future work remain.
+
+\paragraph{Covert and malicious adversaries.}
+We only assume semi-honest parties in the current work. Extending the protocol to protect against actively malicious parties---those who intentionally deviate from the protocol---may be computationally expensive. A potential compromise is to consider \emph{covert systems}, as proposed by Aumann and Lindell~\cite{AL10}, where adversaries that deviate from the protocol are caught with a positive probability. For monitoring applications, repeated interactions increase the likelihood of catching cheating agents across multiple rounds, ultimately approaching probabilities close to~1.
+
+\paragraph{Circuit optimization.}
+Even for the setting of semi-honest parties, we believe that our protocol could be enhanced by optimizing the number of gates that represent the specification (see \cref{fig:timekeeperplus_time_P2}).
+Heuristics can be employed to reduce circuit size, but an alternative approach is to relax the specifications---either in terms of soundness or completeness---depending on the specific requirements, to enable encoding with smaller circuits.
+
+\paragraph{Parallelization.}
+Another direction to improve the performance of our protocol is to parallelize the computation. The process of garbling gates is inherently parallelizable for both parties, particularly for the System. Similarly, the Monitor's task of ungarbling can also be parallelized, with the primary bottleneck being the depth of the circuit. Consequently, finding circuits with lower depth, even if it means increasing the number of gates, could enable faster parallelized algorithms.
+
+\paragraph{Integration with monitoring tools.}
+Our protocol works for specifications described by register automata, or using Yosys for circuit synthesis. It would be future work to integrate it with state-of-the-art monitoring tools such as BeepBeep~\cite{MKH18}, DejaVu~\cite{HPU18}, or \textsc{MonPoly}~\cite{BKZ17}.
+
+\paragraph{Distributed monitoring.}
+Lastly, our current protocol assumes that the Monitor and the monitored System are single entities, and that the Monitor relies on a linear order of observations.
+Developing privacy-preserving monitoring protocols for scenarios where the System and Monitor are distributed is an interesting research challenge.

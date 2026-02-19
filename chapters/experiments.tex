@@ -1,0 +1,243 @@
+\chapter{Experimental Evaluation}\label{ch:experiments}
+
+To test the feasibility of our protocol for monitoring, we developed an experimental C++ prototype\footnote{This prototype is accessible online at \url{https://github.com/mahykari/ppm}.}
+and performed experiments to evaluate the following key questions.
+\begin{enumerate}
+    \item How do the measured requirements of both steps of the protocol change under varying security parameters ($n\geq 1024$ would be industrial standard),
+    \begin{enumerate}
+        \item in terms of time taken per round? (see \cref{fig:timekeeper_times_P1,fig:timekeeper_times_P2})\label{item:securityTime}
+        \item in terms of message sizes per round? (see \cref{fig:locks_message_P2})\label{item:securityMessage}
+    \end{enumerate}
+    \item When the specification size ($c$) is fixed, but the size of System observables data ($s$) is large, how much do these measurements change for the \protocoltwo? (see \cref{fig:timekeeperplus_time_P2,plot:timekeeperplus_size_P2})\label{item:circuitvsprogram}
+\end{enumerate}
+
+\section{Experiment scenarios}\label{sec:scenarios}
+
+To answer these questions, we consider two experiment scenarios.
+
+\subsection{Access control system (ACS)}\label{sec:acs}
+
+In this scenario, we consider an access control system for an office building, where two types of employees, namely types $A$ and $B$, enter or exit the building through a set of external doors. The ACS tracks the numbers of entries and exits for each type of employee and for each door.
+The Monitor keeps two variables $\texttt{cnt}_A$ and $\texttt{cnt}_B$,
+where $\texttt{cnt}_e$ denotes count of type-$e$ employees currently in the building. At round $r$, for door $i$ of the building, the Monitor receives input from the ACS, structured as follows:
+    $\texttt{entered}_A^i[r]$, $\texttt{exited}_A^i[r]$, $\texttt{entered}_B^i[r]$, $\texttt{exited}_B^i[r]$.
+There are $N$ doors, hence $N$ such quadruples. Each $\texttt{entered}_e^i$ denotes the number of type-$e$ employees who have entered through door $i$ of the building \emph{since} the last round; \texttt{exited} values have a similar definition.
+
+\paragraph{Specification.} Our specification for this system requires that the number of type~$A$ employees currently in the building is never less than type~$B$ employees;
+concretely, the \isbad~function of the register machine activates if and only if $\texttt{cnt}_A < \texttt{cnt}_B$.
+The value of $\texttt{cnt}_e$ updates with the following rule:
+$\texttt{cnt}_e \leftarrow
+    \texttt{cnt}_e \,+\, \sum_{i} \left(
+    \texttt{entered}_e^i[r]\right) - \sum_{i} \left(\texttt{exited}_e^i[r] \right)$.
+Each number is an unsigned integer of fixed bit-width $W$.
+The monitor only keeps track of employee count per type and needs $2W$ bits for Monitor state, whereas the input of the ACS to each round takes $4NW$ bits.
+
+To answer Question~\ref{item:circuitvsprogram}, we create another case where the ACS keeps track of the internal doors in the building as well (e.g., individual offices). We use $N'$ to denote the number of internal doors. In this case, each ACS update takes $4(N+N')W$ bits, but the specification is still expressed over only $4NW$ bits.
+
+\subsection{Locks of a parallel program}\label{sec:locks}
+
+In this scenario, every lock has at most one ``user'' at any given time. Each lock provides a \texttt{lock()} and \texttt{unlock()} interface, and all the locks are initially ``unlocked.''
+The Monitor keeps track of all lock states $\texttt{lock}_1, \dots, \texttt{lock}_N$, where $N$ denotes the total number of locks in the system. Each $\texttt{lock}_i$ can have value \texttt{LOCK} or \texttt{UNLOCK}.
+The Monitor, at round $t$, receives input from the lock system, structured as follows: $\texttt{request}_1[t], \dots, \texttt{request}_N[t]$,
+where $N$ denotes the number of locks, and each \texttt{request} can have value \texttt{LOCK}, \texttt{UNLOCK}, or \texttt{SKIP}.
+
+\paragraph{Specification.} The specification for this scenario requires that \texttt{lock()} or \texttt{unlock()} is never called twice in a row for any of the locks in the system. Concretely, at round $r$, we have:
+$ \isbad \iff \bigvee_i \left(
+    \texttt{request}_i[r] = \texttt{lock}_i \right) $.
+To update $\texttt{lock}_i$, we simply replace its value with $\texttt{request}_i[r]$.
+As the Monitor keeps track of all locks, it needs $N$ bits for its state.
+Each \texttt{request} takes 2 bits to represent, and hence each update to the Monitor needs $2 N$ bits.
+
+\section{Experiment results}\label{sec:results}
+
+\input{chapters/experimentfigures}
+
+\paragraph{Execution time.}
+To answer Question~\ref{item:securityTime}, we plot the breakdown of execution times for the \protocolone~in \cref{fig:timekeeper_times_P1} (scenario ACS), and in \cref{fig:timekeeper_times_P2,fig:locks_times_P2} (scenarios ACS and locks) for the \protocoltwo. For these cases, ACS only updates on external doors (i.e., $N'=0$),
+and we select values
+for $N$ among $\{10,30\}$ and $W$ among $\{16,32\}$ to give us $4$ different instances.
+For the Locks scenario, we consider the values $\{100, 300,500,1000\}$ for the parameter $N$. We show the smallest and largest instances; the intermediate parameter settings exhibit the same patterns in all cases. The \protocolone~relies only on random string generation instead of group operations and has symmetric garbling and ungarbling phases, and the round times are lower and more uniformly distributed between System and Monitor.
+In the \protocoltwo, time is mostly spent on the System side, since the System performs more group operations than the Monitor in the garbling process; as the security parameter increases, this difference becomes more visible.
+The superlinear growth of round times also conforms with the complexity of group operations.
+
+\paragraph{Message size.}
+For Question~\ref{item:securityMessage}, we plot the breakdown of message sizes for the \protocoltwo~in \cref{fig:locks_message_P2}, using the Locks scenario with $N \in \{100, 300, 500, 1000\}$.
+The \protocolone~exhibits the same linear correlation between message size and gate count; we omit its plot since it is qualitatively identical.
+As expected, message sizes grow linearly with the number of gates in both steps of the protocol.
+In the \protocolone, message sizes are proportional to the label length, which depends on the security parameter~$n$.
+
+\paragraph{Scaling with System input.}
+Finally, for Question~\ref{item:circuitvsprogram}, we plot \cref{fig:timekeeperplus_time_P2,plot:timekeeperplus_size_P2}, which show how round time increases with increasing sizes of the System's observable data, while keeping ``relevant'' System input size fixed and again consider parameters of $N$ and $W$ from $\{10,30\}$ and $\{16,32\}$, respectively. However, to inflate System input size, we use increasing values for the parameter $N'$ (number of internal doors). Observe that the circuit size remains the same even while the specification considers an increasing number of external doors.
+With the parameters we have used in our experiments, as System input increases, the time taken per round increases only marginally, as a result of the garbling phase's dominance in execution time (\cref{plot:timekeeperplus_time_P2}). The increase in message size is more observable, as one key is sent per each bit of the input (\cref{plot:timekeeperplus_size_P2}). The omitted intermediate circuit sizes ($c=14542$ and $c=20618$) show the same trends. However, even this growth is less steep than the growth of the message size when both circuit size and System observables are scaled proportionally as seen in \cref{fig:locks_message_P2}.
+
+We remark that all the monitoring latencies reported are for a single event rather than a trace.
+
+\section{Comparison with related work}\label{sec:comparison}
+
+As discussed in \cref{ch:related}, the setting considered by Banno et al.~\cite{BMMBWS22} (and therefore also Waga et al.~\cite{WMSMBBS24}) is orthogonal to ours---each protocol is tailored to its specific context and not directly applicable to the other. However, some of their specifications they describe might be relevant to our setting, and vice versa. Therefore, we evaluated our protocol on several of their specifications and, conversely, estimated the performance of their protocol on the ACS and locks scenarios from our work.
+
+Banno et al.\ consider two scenarios: a DFA that counts the number of 1s in its input modulus $m$ (MOD) and Blood Glucose Monitoring (BGM).
+They also have two protocols REVERSE and BLOCK.
+We implemented the specifications for each scenario with the \emph{highest} reported monitoring latencies in their work for either REVERSE or BLOCK, with the same security parameter as Banno et al.\ ($n=1024$). For these values, our protocol takes time that is in the order of magnitude of 100 milliseconds. We remark that their experiments were run on Intel Xeon Silver (32 cores and 64 threads), a superior hardware to ours. These times are summarized in \cref{table:compareBanno}.
+
+\begin{table}[t]
+    \centering
+    \renewcommand{\arraystretch}{1.1}
+    \setlength{\tabcolsep}{6pt}
+    \begin{tabular}{|l|r|r|}
+        \hline
+        \multirow{2}{*}{\textbf{Benchmark}} & \multicolumn{2}{c|}{\textbf{Banno et al.}} \\
+        \cline{2-3}
+        & \textbf{DFA Size} & \textbf{Time} \\
+        \hline
+        MOD ($m=500$)  & 500  & $\sim$0.002 s \\
+        \hline
+        BGM ($\psi_2$), REVERSE   & 2885376 & $\sim$24 s \\
+        BGM ($\psi_2$), BLOCK     & 11126 & 0.182 s \\
+        \hline
+        BGM ($\psi_4$), REVERSE  & N/A & time-out \\
+        BGM ($\psi_4$), BLOCK     & 7026 & 0.049 s \\
+        \hline
+        ACS (\cref{fig:timekeeper_times_P2a})  & $\geq 2^{32}$ & $10$ hours (estimated)\\
+        \hline
+        LOCKS (\cref{fig:locks_times_P2a}) & $\geq 2^{300}$  & $10^6$ years (estimated) \\
+        \hline
+    \end{tabular}
+    \caption{Monitoring latency of a single event in the protocol of Banno et al.~\cite{BMMBWS22}.}
+    \label{table:compareBanno}
+\end{table}
+
+\begin{table}[t]
+    \centering
+    \renewcommand{\arraystretch}{1.1}
+    \setlength{\tabcolsep}{6pt}
+    \begin{tabular}{|l|r|r|}
+        \hline
+        \multirow{2}{*}{\textbf{Benchmark}} & \multicolumn{2}{c|}{\textbf{\Protocoltwo}} \\
+        \cline{2-3}
+        & \textbf{Circuit Size} & \textbf{Time for $n=1024$} \\
+        \hline
+        MOD ($m=500$)  &  146 & 0.30 s  \\
+        \hline
+        BGM ($\psi_2$)  & {118} & {0.24 s} \\
+        \hline
+        BGM ($\psi_4$) & {89} & {0.23 s} \\
+        \hline
+        ACS (\cref{fig:timekeeper_times_P2a})  & 7127 & 18.94 s \\
+        \hline
+        LOCKS (\cref{fig:locks_times_P2a}) & 5700 & 19.96 s \\
+        \hline
+    \end{tabular}
+    \caption{Monitoring latency of a single event in the \protocoltwo.}
+    \label{table:compareHidden}
+\end{table}
+
+To test our specifications against their protocol, we also estimated the time taken by their protocol on the ACS and Locks scenarios we designed. However, our scenarios cannot be directly specified as LTL expressions over the observable output alone to be used directly as an input into their protocol, since our description language is more expressive than LTL specification.
+Since their protocol converts LTL specifications into DFAs, we considered the size of the smallest possible DFAs accepting the ACS and Locks scenarios to estimate the running time. We then extrapolated the monitoring latency on ACS and the locks scenario from the fact that their protocol is linear in the size of the DFA, and scaled from the other DFA instances provided in their work.
+These times are summarized in \cref{table:compareHidden}.
+
+For both \cref{table:compareBanno,table:compareHidden}, we use the same notation as their paper to refer to the LTL specifications ($\psi_2$ and $\psi_4$) in their work, obtained originally from related work on runtime verification for artificial pancreas~\cite{CFMS15}.
+
+The sizes of the formulas considered in the experiments conducted by Waga et al.~\cite{WMSMBBS24} are similar in terms of DFA sizes to those considered by Banno et al., and we therefore only restrict our comparison to the work of Banno et al. It is reasonable to expect that the monitoring latency of both Waga et al.'s protocols on these specifications would also be in the same order of magnitude.
+
+\paragraph{Remark.}
+Unlike the \protocoltwo, which requires circuits with a single type of binary gate, the \protocolone~supports multiple gate types, enabling the use of optimized garbling techniques \cite{ZRE15,App16}.
+Further, even the \protocoltwo~can be made more efficient if the number of gates of each type is known to all, while still ensuring the circuit topology is not known.
+This opens potential avenues for optimization. Additionally, our experiments showed a 50\% average reduction in circuit size when ABC utilized all basic gates instead of only NAND gates, which could contribute to further speed-up.
+
+\section{Implementation details}\label{sec:implementation}
+
+We implemented our protocol as a C++ prototype, available at \url{https://github.com/mahykari/ppm}. This section describes the software architecture, the circuit synthesis pipeline, the cryptographic implementation choices, and the engineering decisions that shaped the system.
+
+\subsection{Software architecture}\label{sec:architecture}
+
+The implementation models the System and Monitor as separate operating-system processes that communicate via message passing. Internally, each party is implemented as a \emph{communicating transition system}---a state machine whose states can perform read, write, send, and receive operations. This architecture is implemented through an abstract \texttt{State} class with two key methods: \texttt{isSend()} and \texttt{isRecv()}, which indicate whether the current state requires sending or receiving a message, and \texttt{next()}, which computes the successor state.
+
+Each protocol variant is encapsulated in its own C++ namespace: \texttt{Y} for the open-specification step (Yao's protocol) and \texttt{LWY} for the hidden-specification step (the DDH-based extension). Within each namespace, the protocol logic is expressed as a sequence of concrete state classes. For example, the hidden-specification System proceeds through states such as \texttt{InitSystem}, \texttt{RecvLabels}, \texttt{Generate\-Garbled\-Gates}, \texttt{Send\-Garbled\-Gates}, \texttt{Send\-System\-Input\-Labels}, \texttt{Send\-Flag\-Bit\-Labels}, and (in the first round only) \texttt{System\-Oblivious\-Transfer}, followed by \texttt{Recv\-Flag\-Bit} and \texttt{Update\-System}; subsequent rounds cycle back to the garbling phase.
+
+A key feature of this design is that it supports \emph{protocol composition}: the oblivious transfer sub-protocol (Bellare-Micali) is itself implemented as a separate state machine in the \texttt{BM} namespace, with its own sender and chooser state sequences. During the OT phase, the outer protocol state (\texttt{SystemObliviousTransfer} or \texttt{MonitorObliviousTransfer}) delegates to the inner OT state machine, forwarding send/receive operations through the same message handler. This is invoked once per Monitor-state bit in the first round, totalling $m$ OT instances during setup.
+
+An \texttt{Interface} class for each party (e.g., \texttt{LWY::SystemInterface}) drives the state machine: at each step, it synchronizes communication (sending or receiving as dictated by the current state), then transitions to the next state. The main loop runs until the state becomes null (indicating protocol completion or termination).
+
+\paragraph{Memory management.}
+Each party maintains a \texttt{Memory} structure that persists across state transitions. For the System in the hidden-specification step, this includes the driver base labels (as \texttt{BigInt} values from GMP), the feed-in wire labels, the garbled gates, the current garbling exponents $(\alpha^0, \alpha^1)$, and the next-round exponents $(\beta^0, \beta^1)$. For the Monitor, the memory stores the circuit representation, the shuffled circuit (for topology hiding), the evaluated driver labels from the previous round, and the flag-bit labels.
+
+All big-integer arithmetic is handled through the GMP library's C++ wrapper (\texttt{mpz\_class}), aliased as \texttt{BigInt}. Group elements and exponents are represented uniformly as \texttt{BigInt} values. The \texttt{QuadraticResidueGroup} class provides the group operations (multiplication, exponentiation, inversion) as modular arithmetic operations on these integers.
+
+\paragraph{Message passing.}
+Communication between the System and Monitor processes uses ZeroMQ, a high-performance asynchronous messaging library. We use the request-reply (REQ-REP) socket pattern: each party creates one REQ socket (for sending) and one REP socket (for receiving), bound to fixed TCP ports on \texttt{localhost}. The \texttt{MessageHandler} class encapsulates this setup, providing simple \texttt{send()} and \texttt{recv()} methods that serialize messages as strings.
+
+Messages are serialized as whitespace-delimited hexadecimal strings. Big integers are converted to base-16 string representations via GMP's \texttt{get\_str()} method. Garbled gates are serialized as four consecutive ciphertext strings. This text-based serialization is straightforward and aids debugging, though a binary format would reduce message sizes by roughly 50\%.
+
+\subsection{Circuit synthesis pipeline}\label{sec:pipeline}
+
+The end-to-end pipeline for converting a monitoring specification into an executable protocol involves four stages: specification authoring, circuit synthesis, BLIF parsing, and circuit construction.
+
+\paragraph{Step 1: Specification authoring.}
+Each specification is written as a synthesizable Verilog module named \texttt{Spec}, with three ports: \texttt{monitor} (input, the current monitor state), \texttt{system} (input, the current system observation), and \texttt{out} (output, the concatenation of the next monitor state and the flag bit). The Verilog module uses combinational logic (\texttt{always @(*)}) to compute the next state and flag from the current inputs.
+
+For example, the ACS specification declares parameters \texttt{NDOORS} and \texttt{WORDLEN}, splits the system input into per-door quadruples of entered/exited counts, accumulates them into counters \texttt{cntA} and \texttt{cntB}, and sets the fault flag if \texttt{cntA < cntB}. The Locks specification similarly processes per-lock commands and flags double-locking or double-unlocking.
+
+\paragraph{Step 2: Circuit synthesis with Yosys and ABC.}
+The shell script \texttt{YosysParser.sh} invokes the Yosys open synthesis suite with a synthesis script (\texttt{synth.ys}). The script performs the following operations:
+\begin{enumerate}
+    \item \textbf{Read and elaborate.} Yosys reads the Verilog file with parameterized defines (e.g., \texttt{-D NDOORS=10 -D WORDLEN=16}) and elaborates the design hierarchy.
+    \item \textbf{Technology mapping.} The \texttt{techmap} pass converts high-level Verilog constructs (adders, comparators, multiplexers) into a gate-level netlist.
+    \item \textbf{Gate mapping with ABC.} The \texttt{abc -g NAND} pass uses the Berkeley ABC synthesis tool~\cite{BM10} to map the netlist to NAND gates only (required for the hidden-specification step, where all gates must be of a single type to avoid leaking topology information through gate types). ABC also performs logic optimization, which typically reduces circuit size by 40--50\% compared to a naïve decomposition.
+    \item \textbf{Equivalence checking.} The synthesis script creates a miter circuit between the original and synthesized modules and uses SAT solving to formally verify their equivalence, ensuring correctness of the synthesis.
+    \item \textbf{Output.} Yosys writes the result in two formats: synthesized Verilog (\texttt{synth.v}) and BLIF (\texttt{synth.blif}). The BLIF file is consumed by the C++ code.
+\end{enumerate}
+
+\paragraph{Step 3: BLIF parsing.}
+The \texttt{BlifParser} class in the C++ code reads the BLIF file produced by Yosys. It parses the \texttt{.inputs}, \texttt{.outputs}, and \texttt{.names} (gate) directives, building an in-memory circuit graph. Each BLIF gate specifies its input wires and a truth table; since all gates are NAND gates after ABC synthesis, each truth table maps to a single NAND operation.
+
+\paragraph{Step 4: Circuit construction.}
+The parsed BLIF graph is converted into a \texttt{Circuit} object, which stores the gates as \texttt{Driver} objects (an abstraction for anything that can drive a wire: either an input wire or a gate output). Each \texttt{Gate} records its left and right input driver IDs, and each \texttt{Driver} records which gates it feeds into. The circuit supports evaluation (\texttt{evaluate()}) for testing correctness, and shuffling (\texttt{shuffle()}) for the hidden-specification step, where the Monitor randomly permutes the gate ordering to define the topology-hiding permutation $\pi$.
+
+\subsection{Cryptographic implementation}\label{sec:crypto-impl}
+
+\paragraph{Group choice and parameters.}
+The DDH assumption is required to hold in the group used by the hidden-specification step. We use the group of \emph{quadratic residues} $QR_p$ modulo a safe prime~$p$. A prime $p$ is \emph{safe} if $p = 2q + 1$ where $q$ is also prime (a Sophie Germain prime). The group $QR_p$ has order $q$, and the DDH assumption is believed to hold in $QR_p$ when $p$ is a safe prime~\cite{Bon98}.
+
+We use the specific primes defined in RFC~2409~\cite{rfc2409} and RFC~3526~\cite{rfc3526}: MODP groups of sizes 768, 1024, 1536, 2048, 3072, and 4096 bits. These are well-known, widely deployed primes whose safety (in the safe-prime sense) has been independently verified. The security parameter $n$ in our experiments corresponds to the bit-length of the prime $p$; for example, $n = 2048$ uses the 2048-bit MODP prime, providing approximately 112 bits of security against discrete-logarithm attacks.
+
+The base generator of $QR_p$ is~$4$ (since $4 = 2^2$ is always a quadratic residue). Random generators are produced by exponentiating~$4$ to a random exponent modulo~$p$. Random exponents are drawn uniformly from $\{1, \ldots, q-1\}$ using GMP's \texttt{mpz\_urandomm}.
+
+\paragraph{Symmetric encryption (garbling).}
+The garbled-gate encryption scheme $\textbf{Enc}_{L,R}(S)$ from \cref{eq:yao} is instantiated using the SHAKE-256 extendable-output function (XOF) from the SHA-3 family. Specifically, for keys $L$ and $R$ (represented as hexadecimal strings) and secret $S$:
+\[
+\Enc_{L,R}(S) = \text{SHAKE-256}(L \mathbin\| R, |S| + 100) \oplus (S \mathbin\| 1^{100})
+\]
+where $|S|$ denotes the length of $S$ in hexadecimal digits and $1^{100}$ is a 100-hex-digit constant (400 bits) appended for decryption verification. During decryption, the recipient XORs the hash output with each of the four ciphertexts; the correct decryption is identified by checking that the last 100 hex digits equal $\texttt{f}^{100}$.
+
+We chose SHAKE-256 over a fixed-output hash (such as SHA-512, which is also implemented in the codebase as an alternative garbler) because group elements in our protocol can be arbitrarily large---a 3072-bit prime yields group elements of 768 hex digits, well beyond the 128-hex-digit output of SHA-512. The XOF property of SHAKE-256 allows us to produce hash outputs of any desired length. SHAKE-256 provides a fixed security level of 256~bits, which does not scale with the group's security parameter; however, 256~bits of hash security exceeds the security level of all group sizes we use (the 4096-bit group provides $\sim$140 bits of security), so this does not introduce a practical weakness.
+
+\paragraph{Oblivious transfer.}
+We implement the Bellare-Micali OT protocol~\cite{BM89}, which proceeds in three messages:
+\begin{enumerate}
+    \item The Sender generates a random group element $C$ and sends it to the Chooser.
+    \item The Chooser generates a random exponent $k$, computes a public key $\textit{pk}_\sigma = g^k$ (where $g$ is a generator) and $\textit{pk}_{1-\sigma} = C / g^k$, and sends $\textit{pk}_0$ to the Sender. (The Sender can compute $\textit{pk}_1 = C / \textit{pk}_0$.)
+    \item The Sender encrypts each message $m_b$ under the corresponding public key using ElGamal-style encryption and sends both ciphertexts. The Chooser can only decrypt $m_\sigma$ because it knows the discrete log of $\textit{pk}_\sigma$.
+\end{enumerate}
+In the \texttt{BM} namespace, this is implemented as a six-state sender machine (\texttt{InitSender} $\to$ \texttt{GenerateConstant} $\to$ \texttt{SendConstant} $\to$ \texttt{RecvPublicKey} $\to$ \texttt{EncryptMessages} $\to$ \texttt{SendEncryptedMessages}) and a corresponding six-state chooser machine.
+
+\paragraph{Randomness.}
+Cryptographic randomness is sourced from \texttt{/dev/urandom}, the Linux kernel's non-blocking pseudo-random number generator. To minimize the overhead of repeated system calls, random bytes are buffered: a 1~MB buffer is allocated at program startup and refilled from \texttt{/dev/urandom} whenever it is exhausted. Random hexadecimal strings for wire labels in the open-specification step are generated directly from this buffer. For the hidden-specification step, random group exponents are generated via GMP's \texttt{mpz\_urandomm}, seeded with a time-based seed (note: this uses Mersenne Twister internally, which is not cryptographically secure; the implementation includes a TODO to replace this with a CSPRNG for production use).
+
+\subsection{Engineering decisions}\label{sec:engineering}
+
+\paragraph{Choice of C++.}
+We chose C++ for its combination of high performance and access to mature cryptographic libraries. The performance-critical operations---modular exponentiation and hashing---are delegated to GMP and OpenSSL, both of which are highly optimized C libraries with decades of development. C++ provides zero-cost abstractions (templates, virtual dispatch for the state machine pattern) without sacrificing the ability to call into C libraries directly. Alternatives such as Rust would offer stronger memory safety guarantees but lack the mature ecosystem of cryptographic big-integer libraries; Python, while offering rapid prototyping, would be too slow for the tight inner loops of garbling and exponentiation.
+
+\paragraph{Choice of ZeroMQ.}
+ZeroMQ provides a simple, high-level API for inter-process communication while handling low-level concerns such as message framing, buffering, and reconnection. We use the REQ-REP pattern, which enforces strict alternation between send and receive operations---matching the turn-taking structure of our protocol. Alternatives such as raw TCP sockets would require manual message framing; gRPC would add unnecessary complexity (protocol buffers, code generation) for our simple message format.
+
+\paragraph{Localhost binding.}
+In all experiments, both the System and Monitor processes run on the same machine and communicate over \texttt{localhost}. This means the reported round times reflect computation time but not network latency. For a real deployment over a network, the additional latency per round would equal one network round-trip time (typically 1--100~ms for a WAN), which is negligible compared to the computational cost of garbling for circuits with $c > 1000$ gates.
+
+\paragraph{Timeout.}
+We use a timeout of one hour per protocol round (excluding the first round's initialization). This generous timeout accommodates the largest circuit sizes ($c \approx 42000$ gates) at the highest security parameters ($n = 4096$), where a single round can take over 30~minutes. In a production deployment, the timeout would be tuned to the expected circuit size and security parameter.
+
+\paragraph{Experimental hardware.}
+All experiments were run on a personal computer with an Intel Core i5-1235U processor, 16~GB of memory, running Linux Mint 21.3.
+

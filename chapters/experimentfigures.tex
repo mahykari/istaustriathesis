@@ -1,0 +1,359 @@
+\pgfplotsset {
+  lockstyleMessage/.style={
+    width=10cm,
+    height=10cm,
+    grid=major,
+    axis lines*=left,
+    scaled x ticks=false,
+    x tick label style={
+      /pgf/number format/.cd,
+      fixed,
+      fixed zerofill,
+      precision=0,
+      1000 sep={}, },
+    y tick label style={
+      /pgf/number format/.cd,
+      fixed,
+      fixed zerofill,
+      precision=0,
+      1000 sep={}, },
+    xlabel style={font=\normalsize},
+    ylabel style={font=\normalsize},
+    legend style={
+        legend pos=north west,
+        draw=none,
+        font=\normalsize
+    },
+    xlabel={No. of gates $c$ in circuit},
+    ylabel={Message size (MB)},
+    xtick distance=5000,
+    ytick distance=25,
+    ymin=0,
+    ymax=100,
+    every plot/.style={line width=1.5pt},
+    axis line style={line width=0.5pt},
+    every tick label/.append style={font=\tiny},
+  }
+}
+\begin{figure}
+  \centering
+  \begin{tikzpicture}[scale=0.5]
+    \begin{axis}[lockstyleMessage,xmin=0,xmax=20000]
+        \addplot[blue!20!white,mark=*] table[col sep=comma, x=Gate count, y=Message size (k768)] {chapters/Figures/Locks-MessageSize/protocol2.csv};   \addlegendentry{$n=\phantom{0}768$}
+        
+        \addplot[blue!40!white,mark=*] table[col sep=comma, x=Gate count, y=Message size (k1024)] {chapters/Figures/Locks-MessageSize/protocol2.csv};  \addlegendentry{$n=1024$}
+
+        \addplot[blue,mark=*] table[col sep=comma, x=Gate count, y=Message size (k1536)] {chapters/Figures/Locks-MessageSize/protocol2.csv};  \addlegendentry{$n=1536$}
+
+        \addplot[blue!60!black,mark=*] table[col sep=comma, x=Gate count, y=Message size (k2048)] {chapters/Figures/Locks-MessageSize/protocol2.csv};  \addlegendentry{$n=2048$}
+
+        \addplot[blue!15!black,mark=*] table[col sep=comma, x=Gate count, y=Message size (k3072)] {chapters/Figures/Locks-MessageSize/protocol2.csv};  \addlegendentry{$n=3072$}
+    \end{axis}
+    \end{tikzpicture}
+  \caption[Message size vs.\ gate count for the Locks scenario: \protocoltwo.]{Message size vs.\ gate count for the Locks scenario: \protocoltwo.}\label{fig:locks_message_P2}
+\end{figure}
+
+\pgfplotsset{
+  acsstyle/.style={
+    width=8cm,
+    height=6cm,
+    ybar stacked,
+    symbolic x coords={1536,2048,3072,4096},
+    xtick=data,
+    bar width=24pt,
+    axis lines*=left,
+    grid=major,
+    scaled y ticks=false,
+    y tick label style={
+      /pgf/number format/.cd,
+      fixed,
+      fixed zerofill,
+      precision=0,
+      1000 sep={}
+    },
+    ymin=0,
+    ymax=45,
+    ytick distance=9,
+    ylabel={Time (s)},
+    xlabel={Security parameter},
+    legend style={
+      legend pos=north west,
+      draw=none
+    },
+    xlabel style={font=\normalsize},
+    ylabel style={font=\normalsize},
+    every tick label/.append style={font=\normalsize},
+  }
+}
+\begin{figure}
+\centering
+  \begin{subfigure}[b]{0.45\textwidth}
+  \centering
+  \scalebox{0.5}{ \begin{tikzpicture}
+    \begin{axis}[acsstyle]
+      \addplot[fill=blue!60!white] table[col sep=comma, x=Security parameter, y=Monitor time (p640c7127)] {chapters/Figures/ACS-Time/protocol1.csv};
+      \addplot[fill=red!60] table[col sep=comma, x=Security parameter, y=Program time (p640c7127)] {chapters/Figures/ACS-Time/protocol1.csv};
+      \legend{Monitor time, Program time};
+    \end{axis}
+  \end{tikzpicture} }
+  \caption{$s=640, c=7127$}
+  \end{subfigure}
+  \hspace{0.02\textwidth}
+  \begin{subfigure}[b]{0.45\textwidth}
+  \centering
+  \scalebox{0.5}{ \begin{tikzpicture}
+    \begin{axis}[acsstyle]
+      \addplot[fill=blue!60!white] table[col sep=comma, x=Security parameter, y=Monitor time (p3840c42145)] {chapters/Figures/ACS-Time/protocol1.csv};
+      \addplot[fill=red!60] table[col sep=comma, x=Security parameter, y=Program time (p3840c42145)] {chapters/Figures/ACS-Time/protocol1.csv};
+    \end{axis}
+  \end{tikzpicture} }
+  \caption{$s=3840, c=42145$}
+  \end{subfigure}
+\caption[Timings for the ACS scenario: \protocolone.]{Timings for the ACS scenario: \protocolone.}\label{fig:timekeeper_times_P1}
+\end{figure}
+\pgfplotsset{
+  acsstyle1/.style={
+    acsstyle,
+    symbolic x coords={768,1024,1536,2048,3072}
+  }
+}
+\begin{figure}
+\centering
+  \begin{subfigure}[b]{0.45\textwidth}
+  \centering
+  \begin{tikzpicture}[scale=0.5]
+    \begin{axis}[acsstyle1,ymax=2500,ytick distance=500]
+      \addplot[fill=blue!60!white] table[col sep=comma, x=Security parameter, y=Monitor time (p640c7127)] {chapters/Figures/ACS-Time/protocol2.csv};
+      \addplot[fill=red!60] table[col sep=comma, x=Security parameter, y=Program time (p640c7127)] {chapters/Figures/ACS-Time/protocol2.csv};
+      \legend{Monitor time, System time};
+    \end{axis}
+  \end{tikzpicture}
+  \caption{$s=640, c=7127$}\label{fig:timekeeper_times_P2a}
+  \end{subfigure}
+  \hspace{0.02\textwidth}
+  \begin{subfigure}[b]{0.45\textwidth}
+  \centering
+  \begin{tikzpicture}[scale=0.5]
+    \begin{axis}[acsstyle1,ymax=2500,ytick distance=500]
+      \addplot[fill=blue!60!white] table[col sep=comma, x=Security parameter, y=Monitor time (p3840c42145)] {chapters/Figures/ACS-Time/protocol2.csv};
+      \addplot[fill=red!60] table[col sep=comma, x=Security parameter, y=Program time (p3840c42145)] {chapters/Figures/ACS-Time/protocol2.csv};
+    \end{axis}
+  \end{tikzpicture}
+  \caption{$s=3840, c=42145$}
+  \end{subfigure}
+\caption[Timings for the ACS scenario: \protocoltwo.]{Timings for the ACS scenario: \protocoltwo.}\label{fig:timekeeper_times_P2}
+\end{figure}
+\pgfplotsset{
+  lockstyleBar/.style={
+    width=8cm,
+    height=6cm,
+    ybar stacked,
+    symbolic x coords={768,1024,1536,2048,3072},
+    xtick=data,
+    bar width=24pt,
+    axis lines*=left,
+    grid=major,
+    scaled y ticks=false,
+    y tick label style={
+      /pgf/number format/.cd,
+      fixed,
+      fixed zerofill,
+      precision=0,
+      1000 sep={}
+    },
+    ymin=0,
+    ymax=1500,
+    ytick distance=300,
+    ylabel={Time (s)},
+    xlabel={Security parameter},
+    legend style={
+      legend pos=north west,
+      draw=none
+    },
+    xlabel style={font=\normalsize},
+    ylabel style={font=\normalsize},
+    every tick label/.append style={font=\normalsize},
+  }
+}
+\begin{figure}
+  \centering
+  \begin{subfigure}{0.45\textwidth}
+    \centering
+  \begin{tikzpicture}[scale=0.5]
+    \begin{axis}[lockstyleBar,ymax=1500,ytick distance=500]
+      \addplot[fill=blue!60!white] table[col sep=comma, x=Security parameter, y=Monitor time (p200c1705)] {chapters/Figures/Locks-Time/protocol2.csv};
+      \addplot[fill=red!60] table[col sep=comma, x=Security parameter, y=Program time (p200c1705)] {chapters/Figures/Locks-Time/protocol2.csv};
+      \legend{Monitor time, System time};
+    \end{axis}
+  \end{tikzpicture}
+    \caption{$s=200, c=1705$}\label{fig:locks_times_P2a}
+  \end{subfigure}
+  \hspace{0.02\textwidth}
+  \begin{subfigure}{0.45\textwidth}
+  \centering
+  \scalebox{0.5}{\begin{tikzpicture}
+    \begin{axis}[lockstyleBar,ymax=1500,ytick distance=500]
+      \addplot[fill=blue!60!white] table[col sep=comma, x=Security parameter, y=Monitor time (p2000c18959)] {chapters/Figures/Locks-Time/protocol2.csv};
+      \addplot[fill=red!60] table[col sep=comma, x=Security parameter, y=Program time (p2000c18959)] {chapters/Figures/Locks-Time/protocol2.csv};
+    \end{axis}
+  \end{tikzpicture} }
+    \caption{$s=2000, c=18959$}
+  \end{subfigure}
+  \caption[Timings for the Locks scenario: \protocoltwo.]{Timings for the Locks scenario: \protocoltwo.}\label{fig:locks_times_P2}
+\end{figure}
+
+\pgfplotsset{
+  acsplusstyle/.style={
+    width=10cm,
+    height=10cm,
+    grid=major,
+    axis lines*=left,
+    scaled x ticks=false,
+    x tick label style={
+      /pgf/number format/.cd,
+      fixed,
+      fixed zerofill,
+      precision=0,
+      1000 sep={} },
+    y tick label style={
+      /pgf/number format/.cd,
+      fixed,
+      fixed zerofill,
+      precision=0,
+      1000 sep={},
+    },
+    xlabel={No. of bits $s$ of System observable output},
+    ylabel={Round time (s)},
+    xtick distance=2500,
+    ytick distance=500,
+    ymin=0,
+    ymax=2500,
+    legend style={
+      legend pos=north west,
+      draw=none,
+    },
+    every plot/.style={line width=1.5pt},
+    axis line style={line width=0.5pt},
+    xlabel style={font=\normalsize},
+    ylabel style={font=\normalsize},
+    every tick label/.append style={font=\Large},
+  }
+}
+\begin{figure}
+\centering
+    \begin{subfigure}{0.45\textwidth}
+    \centering
+    \begin{tikzpicture}[scale=0.47]
+    \begin{axis}[acsplusstyle,xmin=0,xmax=17500]
+        \addplot[blue!20!white,mark=*] table[col sep=comma, x=Program input size, y=Round time (k768)] {chapters/Figures/ACSPlus/c=7127.csv}; \addlegendentry{$n=\phantom{0}768$}
+        
+        \addplot[blue!40!white,mark=*] table[col sep=comma, x=Program input size, y=Round time (k1024)] {chapters/Figures/ACSPlus/c=7127.csv}; \addlegendentry{$n=1024$}
+
+        \addplot[blue,mark=*] table[col sep=comma, x=Program input size, y=Round time (k1536)] {chapters/Figures/ACSPlus/c=7127.csv}; \addlegendentry{$n=1536$}
+
+        \addplot[blue!60!black,mark=*] table[col sep=comma, x=Program input size, y=Round time (k2048)] {chapters/Figures/ACSPlus/c=7127.csv}; \addlegendentry{$n=2048$}
+
+        \addplot[blue!15!black,mark=*] table[col sep=comma, x=Program input size, y=Round time (k3072)] {chapters/Figures/ACSPlus/c=7127.csv}; \addlegendentry{$n=3072$}
+    \end{axis}
+    \end{tikzpicture}
+    \caption{$c=7127$}
+    \end{subfigure}
+
+    \begin{subfigure}{0.45\textwidth}
+    \centering
+    \begin{tikzpicture}[scale=0.47]
+    \begin{axis}[acsplusstyle,xmin=0,xmax=17500]
+        \addplot[blue!20!white,mark=*] table[col sep=comma, x=Program input size, y=Round time (k768)] {chapters/Figures/ACSPlus/c=42145.csv};
+        
+        \addplot[blue!40!white,mark=*] table[col sep=comma, x=Program input size, y=Round time (k1024)] {chapters/Figures/ACSPlus/c=42145.csv};
+
+        \addplot[blue,mark=*] table[col sep=comma, x=Program input size, y=Round time (k1536)] {chapters/Figures/ACSPlus/c=42145.csv};
+
+        \addplot[blue!60!black,mark=*] table[col sep=comma, x=Program input size, y=Round time (k2048)] {chapters/Figures/ACSPlus/c=42145.csv};
+
+        \addplot[blue!15!black,mark=*] table[col sep=comma, x=Program input size, y=Round time (k3072)] {chapters/Figures/ACSPlus/c=42145.csv};
+    \end{axis}
+    \end{tikzpicture}
+    \caption{$c=42145$}
+    \end{subfigure}
+    \caption[Timings for the ACS scenario, \protocoltwo: fixed specifications, increasing System observable output size.]{Timings for the ACS scenario, \protocoltwo: fixed specifications, increasing System observable output size.}\label{plot:timekeeperplus_time_P2}\label{fig:timekeeperplus_time_P2}
+\end{figure}
+
+\pgfplotsset{
+  acsstyleMessage/.style={
+    width=10cm,
+    height=10cm,
+    grid=major,
+    axis lines*=left,
+    scaled x ticks=false,
+    xlabel={No. of bits $s$ of System observable output},
+    ylabel={Message size (MB)},
+    x tick label style={
+      /pgf/number format/.cd,
+      fixed,
+      fixed zerofill,
+      precision=0,
+      1000 sep={} },
+    y tick label style={
+      /pgf/number format/.cd,
+      fixed,
+      fixed zerofill,
+      precision=0,
+      1000 sep={},
+    },
+    xtick distance=2500,
+    ytick distance=30,
+    ymin=0,
+    ymax=150,
+    legend style={
+      legend pos=north west,
+      draw=none,
+    },
+    every plot/.style={line width=1.5pt},
+    axis line style={line width=0.5pt},
+    xlabel style={font=\normalsize},
+    ylabel style={font=\normalsize},
+    every tick label/.append style={font=\Large},
+  }
+}
+\begin{figure}
+\centering
+    \begin{subfigure}{0.45\textwidth}
+    \centering
+    \begin{tikzpicture}[scale=0.47]
+    \begin{axis}[acsstyleMessage,xmin=0,xmax=17500]
+        \addplot[blue!20!white,mark=*] table[col sep=comma, x=Program input size, y=Message size (k768)] {chapters/Figures/ACSPlus/c=7127.csv}; \addlegendentry{$n=\phantom{0}768$}
+        
+        \addplot[blue!40!white,mark=*] table[col sep=comma, x=Program input size, y=Message size (k1024)] {chapters/Figures/ACSPlus/c=7127.csv}; \addlegendentry{$n=1024$}
+
+        \addplot[blue,mark=*] table[col sep=comma, x=Program input size, y=Message size (k1536)] {chapters/Figures/ACSPlus/c=7127.csv}; \addlegendentry{$n=1536$}
+
+        \addplot[blue!60!black,mark=*] table[col sep=comma, x=Program input size, y=Message size (k2048)] {chapters/Figures/ACSPlus/c=7127.csv}; \addlegendentry{$n=2048$}
+
+        \addplot[blue!15!black,mark=*] table[col sep=comma, x=Program input size, y=Message size (k3072)] {chapters/Figures/ACSPlus/c=7127.csv}; \addlegendentry{$n=3072$}
+    \end{axis}
+    \end{tikzpicture}
+    \caption{$c=7127$}
+    \end{subfigure}
+
+    \begin{subfigure}{0.45\textwidth}
+    \centering
+    \begin{tikzpicture}[scale=0.47]
+    \begin{axis}[acsstyleMessage,xmin=0,xmax=17500]
+        \addplot[blue!20!white,mark=*] table[col sep=comma, x=Program input size, y=Message size (k768)] {chapters/Figures/ACSPlus/c=42145.csv};
+        
+        \addplot[blue!40!white,mark=*] table[col sep=comma, x=Program input size, y=Message size (k1024)] {chapters/Figures/ACSPlus/c=42145.csv};
+
+        \addplot[blue,mark=*] table[col sep=comma, x=Program input size, y=Message size (k1536)] {chapters/Figures/ACSPlus/c=42145.csv};
+
+        \addplot[blue!60!black,mark=*] table[col sep=comma, x=Program input size, y=Message size (k2048)] {chapters/Figures/ACSPlus/c=42145.csv};
+
+        \addplot[blue!15!black,mark=*] table[col sep=comma, x=Program input size, y=Message size (k3072)] {chapters/Figures/ACSPlus/c=42145.csv};
+    \end{axis}
+    \end{tikzpicture}
+    \caption{$c=42145$}
+    \end{subfigure}
+    \caption[Message size for the ACS scenario: fixed specifications, increasing System observable output size.]{Message size for the ACS scenario: fixed specifications, increasing System observable output size.}
+    \label{plot:timekeeperplus_size_P2}
+    \label{fig:timekeeperplus_size_P2}
+\end{figure}

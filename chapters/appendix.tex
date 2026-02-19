@@ -1,0 +1,235 @@
+\appendix
+
+\chapter{Security Proofs}\label{app:proofs}
+
+In this appendix, we provide detailed proofs for the main theorems stated in \cref{ch:protocol}. Each proof proceeds by defining explicit hybrid experiments, constructing simulators, and reducing indistinguishability to standard cryptographic assumptions.
+
+Throughout this appendix, we use $\ell$ to denote the number of monitoring rounds, which is assumed to be a fixed polynomial in the security parameter $n$.
+
+\section{Correctness and security of the open-specification step}\label{sec:proof1}
+
+\Protocolonesecure*
+
+\begin{proof}
+We prove correctness, Monitor security, and System security separately.
+
+\paragraph{Correctness.}
+The correctness argument follows the structure of standard Yao garbled circuit evaluation, extended to the reactive setting.
+
+At each round $r$, the System generates fresh random labels $w_i^0[r], w_i^1[r]$ for each feed-out wire $\omega_i$ (except the Monitor's state input wires for $r > 1$, which reuse the output labels from round $r-1$). The System garbles each gate~$G_j$ by encrypting the output label under the two input labels using the CPA-secure encryption scheme $\Enc$. The Monitor receives:
+\begin{itemize}
+    \item the garbled gates $\encGG_j[r]$ for all $j \in \{1, \ldots, c\}$;
+    \item the System's input labels $w_{m+i}^{\pstring_i[r]}[r]$ for $i \in \{1, \ldots, s\}$;
+    \item the Monitor's state labels (via OT in round 1, or carried over from round $r-1$);
+    \item both labels $w_{O+m+1}^0[r]$ and $w_{O+m+1}^1[r]$ for the flag output wire.
+\end{itemize}
+
+For each gate $G_j$ in the circuit (processed bottom-up), the Monitor holds exactly one label for each input wire: the label corresponding to the actual bit value on that wire. Using these as decryption keys, exactly one of the four ciphertexts in $\encGG_j[r]$ decrypts successfully (with probability $1 - 2^{-100}$ per gate, due to the 100-bit verification padding). The successfully decrypted value is the output label corresponding to the correct bit value $G_j(\alpha, \beta)$ where $\alpha, \beta$ are the actual bit values on the left and right input wires.
+
+Propagating from input to output, the Monitor obtains the label $w_{O+m+1}^{\tau[r]}[r]$ for the flag bit, which it matches against the two flag labels to determine $\tau[r]$. By construction, $\tau[r] = \isbad(\sigma[r], \mu[r])$, which is the correct output.
+
+For the reactive component: the Monitor also obtains labels $w_{O+i}^{\mu_i[r+1]}[r]$ for $i \in \{1, \ldots, m\}$, corresponding to the next monitor state. By the label-reuse step of the protocol (see \cref{sec:openstep}), $w_i^b[r+1] = w_{O+i}^b[r]$, so these labels are exactly the input labels the Monitor needs for round $r+1$. The union bound over all gates and all $\ell$ rounds gives a total error probability of at most $c \cdot \ell \cdot 2^{-100}$, which is negligible for any polynomial $\ell$.
+
+\paragraph{Security for the Monitor (System's view).}
+We construct a simulator $\Sc_\Pc$ for the System's view. In the real protocol, the System's view consists of:
+\begin{itemize}
+    \item its own input sequence $\sigma[1], \ldots, \sigma[\ell]$;
+    \item the circuit $\Cc$ (known to both parties);
+    \item the messages received during the OT phase (in round 1);
+    \item the flag bits $\tau[1], \ldots, \tau[\ell]$ (the ``proceed'' / ``terminate'' responses from the Monitor).
+\end{itemize}
+
+The simulator $\Sc_\Pc$ operates as follows. It knows $\Cc$, $\sigma[1], \ldots, \sigma[\ell]$, and $\tau[1], \ldots, \tau[\ell]$ (the System's inputs and the outputs it is entitled to receive). It generates random internal coins and simulates the OT messages using the OT simulator guaranteed by the OT security assumption. Since the System acts as the OT sender, the OT simulator produces messages indistinguishable from real ones without knowledge of the Monitor's choice bits $\mu_i[1]$.
+
+This is straightforward because the System generates all garbled gates and labels itself---it does not receive any messages that depend on the Monitor's private state $\mu[r]$. The only message the System receives from the Monitor is the flag bit, which the simulator knows. Therefore, $\Sc_\Pc$ simply outputs the System's own random coins, the simulated OT transcript, and the flag bits. The indistinguishability follows from the OT security assumption.
+
+\paragraph{Security for the System (Monitor's view).}
+This is the main part of the proof. We construct a simulator $\Sc_\Mc$ and show indistinguishability through a hybrid argument.
+
+\medskip
+\noindent\textbf{The Monitor's real view.} In round $r$, the Monitor's view consists of:
+\begin{itemize}
+    \item its own inputs $(\Cc, \mu[1])$ and random coins;
+    \item in round 1: the OT transcript, through which it receives $w_i^{\mu_i[1]}[1]$ for each $i \in \{1, \ldots, m\}$;
+    \item for each round $r$: the garbled gates $\encGG_j[r]$ for $j \in \{1, \ldots, c\}$, the System input labels $w_{m+i}^{\pstring_i[r]}[r]$ for $i \in \{1, \ldots, s\}$, and the flag labels $w_{O+m+1}^0[r]$, $w_{O+m+1}^1[r]$.
+\end{itemize}
+
+\medskip
+\noindent\textbf{Hybrid experiments.} We define a sequence of hybrid experiments $\Hc_0, \Hc_1, \ldots, \Hc_c$ for each round~$r$. In hybrid $\Hc_0$, the transcript is generated exactly as in the real protocol. In hybrid $\Hc_c$, the transcript is generated by the simulator. The intermediate hybrids interpolate by replacing garbled gates with simulated ones, proceeding from the output gates to the input gates.
+
+For a single round $r$, let $G_{j_1}, G_{j_2}, \ldots, G_{j_c}$ be a topological ordering of the gates from outputs to inputs (i.e., $G_{j_1}$ is an output gate).
+
+\begin{itemize}
+    \item \textbf{Hybrid $\Hc_0$ (real):} All garbled gates are computed honestly. The System input labels and Monitor state labels correspond to the actual input values.
+    
+    \item \textbf{Hybrid $\Hc_k$ (for $1 \leq k \leq c$):} Gates $G_{j_1}, \ldots, G_{j_k}$ are \emph{simulated}: for each such gate, the four ciphertexts are encryptions of the label $w_{\text{out}}^{b^*}[r]$ where $b^*$ is the correct output bit, using all four combinations of input labels. Equivalently, three of the four ciphertexts are replaced with encryptions of the same (correct) output label instead of the labels corresponding to incorrect outputs. Gates $G_{j_{k+1}}, \ldots, G_{j_c}$ are still garbled honestly.
+    
+    \item \textbf{Hybrid $\Hc_c$ (simulated):} All gates are simulated. The Monitor's view consists of garbled gates that encrypt only the correct output label (four times each), plus the labels corresponding to the actual wire values. This is exactly what the simulator $\Sc_\Mc$ produces, since it can compute the correct wire values given $(\Cc, \mu[1], \tau[1], \ldots, \tau[\ell])$.
+\end{itemize}
+
+\medskip
+\noindent\textbf{Indistinguishability of adjacent hybrids.}
+We show that $\Hc_{k-1}$ and $\Hc_k$ are computationally indistinguishable for each $k$. Consider gate $G_{j_k}$ with input wires carrying values $a, b \in \{0,1\}$ in the honest evaluation. In $\Hc_{k-1}$, the four ciphertexts of $G_{j_k}$ are:
+\[
+\Enc_{w_L^\alpha, w_R^\beta}\left(w_{\text{out}}^{G_{j_k}(\alpha,\beta)}\right) \quad \text{for } (\alpha, \beta) \in \{0,1\}^2.
+\]
+In $\Hc_k$, the ciphertext for $(\alpha, \beta) \neq (a, b)$ is replaced with:
+\[
+\Enc_{w_L^\alpha, w_R^\beta}\left(w_{\text{out}}^{b^*}\right) \quad \text{where } b^* = G_{j_k}(a,b).
+\]
+The Monitor never obtains the keys $w_L^\alpha$ for $\alpha \neq a$ or $w_R^\beta$ for $\beta \neq b$ (since gates $G_{j_1}, \ldots, G_{j_{k-1}}$ are already simulated and only provide the correct label). Therefore, distinguishing $\Hc_{k-1}$ from $\Hc_k$ requires breaking the CPA security of $\Enc$: a distinguisher could be used to construct an adversary against the CPA game by embedding the challenge ciphertext in one of the three modified positions.
+
+\medskip
+\noindent\textbf{Handling the reactive component.}
+The key subtlety in the reactive setting is that the labels for the Monitor's state output wires in round~$r$ become the input labels for round $r+1$. We must show that this reuse does not break the hybrid argument.
+
+Consider two consecutive rounds $r$ and $r+1$. The Monitor's state labels $w_{O+i}^b[r]$ (for $b \in \{0,1\}$, $i \in \{1, \ldots, m\}$) are reused as $w_i^b[r+1]$. In each round, the hybrid argument replaces garbled gates one at a time. The critical observation is:
+
+\begin{enumerate}
+    \item The Monitor knows only the label $w_{O+i}^{\mu_i[r+1]}[r]$ for the actual state value $\mu_i[r+1]$, not both labels. So the Monitor does not gain additional information about the ``other'' label $w_{O+i}^{1-\mu_i[r+1]}[r]$ from evaluating the circuit in round $r$.
+    \item In round $r+1$, the Monitor uses $w_i^{\mu_i[r+1]}[r+1] = w_{O+i}^{\mu_i[r+1]}[r]$ as an input label. The garbled gates of round $r+1$ use fresh random labels for all other wires, so the hybrid argument for round $r+1$ is independent of the specific values of $w_i^b[r+1]$.
+    \item The CPA security of $\Enc$ holds even when the keys (labels) are reused across different ciphertexts, as long as the adversary does not know both keys for any gate. Since the Monitor only holds one label per wire, this condition is maintained.
+\end{enumerate}
+
+Therefore, the hybrid argument can be applied independently to each round, yielding a total distinguishing advantage of at most $c \cdot \ell \cdot \epsilon_{\text{CPA}}$, where $\epsilon_{\text{CPA}}$ is the CPA advantage, which is negligible for polynomial $\ell$.
+
+\medskip
+\noindent\textbf{Simulator construction.}
+The simulator $\Sc_\Mc$ for the Monitor operates as follows:
+\begin{enumerate}
+    \item It receives $(\Cc, \mu[1])$ and $\tau[1], \ldots, \tau[\ell]$.
+    \item For each round $r$, it chooses an arbitrary monitor-state string $\tilde{\mu}[r+1] \in \{0,1\}^m$ (e.g., $0^m$). Note that the simulator does \emph{not} know the System's inputs $\sigma[r]$ and therefore cannot compute the true next state $\mu[r+1] = \nextstate(\mu[r], \sigma[r])$. This is not needed: in the fully simulated transcript (hybrid~$\Hc_c$), every garbled gate encrypts a single output label under all four input-label pairs, so the gate tables do not implement any real Boolean function. The specific bit values assigned to internal and state wires are therefore irrelevant to the Monitor's view---only the flag output $\tau[r]$ must be correct.
+    \item For each round $r$:
+    \begin{itemize}
+        \item It generates one random label $\tilde{w}_i[r]$ per wire, corresponding to the nominal bit value assigned to that wire: the true $\mu_i[1]$ for initial-state wires, $\tilde{\mu}_i[r+1]$ for state-output wires, and arbitrary values for all other internal wires.
+        \item For each gate $G_j$, it produces simulated garbled gates: four ciphertexts, all encrypting the correct output label $\tilde{w}_{\text{out}}[r]$ under all four input-label combinations (using random labels for the ``wrong'' input values).
+        \item It sets the flag labels so that the label corresponding to $\tau[r]$ is the one the Monitor obtains.
+    \end{itemize}
+    \item It simulates the OT transcript for round 1 using the OT simulator.
+\end{enumerate}
+
+The simulator's output is indistinguishable from the real view by the hybrid argument above, completing the proof.
+\end{proof}
+
+\section{Correctness and security of the hidden-specification step}\label{sec:proof2}
+
+\Protocoltwosecure*
+
+\begin{proof}
+We prove correctness, Monitor security, and System security separately. The System security proof is the most involved, as it requires showing that the DDH assumption hides the circuit topology.
+
+\paragraph{Correctness.}
+The correctness of the hidden-specification step follows from the algebraic structure of the labeling scheme.
+
+During setup, the Monitor assigns base labels $g_j \in \Gb$ to each feed-out wire $\omega_j$ (for $j \in \{1, \ldots, O\}$) and exponents $t_i \in \Zb_q$ to each feed-in wire $\iota_i$ (for $i \in \{1, \ldots, I\}$). The Monitor computes feed-in base labels $\ell_i = g_{\pi(i)}^{t_i}$, where $\pi(i) = j$ if feed-out wire $\omega_j$ connects to feed-in wire $\iota_i$.
+
+At round $r$, the System chooses exponents $\alpha^0[r], \alpha^1[r] \in \Zb_q$ and assigns:
+\begin{align*}
+    w_j^b[r] &= g_j^{\alpha^b[r]} && \text{for feed-out wires } j \in \{1, \ldots, O\}, \\
+    u_i^b[r] &= \ell_i^{\alpha^b[r]} = g_{\pi(i)}^{t_i \cdot \alpha^b[r]} && \text{for feed-in wires } i \in \{1, \ldots, I\}.
+\end{align*}
+
+For a gate $G_k$ with feed-in wires $\iota_{2k-1}$ and $\iota_{2k}$ connected to feed-out wires of gates $G_\ell$ and $G_r$ respectively, the System garbles using input labels $u_{2k-1}^b[r] = g_{m+s+\ell}^{t_{2k-1} \cdot \alpha^b[r]}$ and $u_{2k}^b[r] = g_{m+s+r}^{t_{2k} \cdot \alpha^b[r]}$, and output labels $w_{m+s+k}^b[r] = g_{m+s+k}^{\alpha^b[r]}$.
+
+After ungarbling gate $G_k$, the Monitor obtains $w_{m+s+k}^{b^*}[r] = g_{m+s+k}^{\alpha^{b^*}[r]}$ for the correct output bit $b^*$. To compute the input label for a downstream gate $G_{k'}$ whose feed-in wire $\iota_{2k'-1}$ is connected to $\omega_{m+s+k}$, the Monitor computes:
+\[
+\left(g_{m+s+k}^{\alpha^{b^*}[r]}\right)^{t_{2k'-1}} = g_{m+s+k}^{t_{2k'-1} \cdot \alpha^{b^*}[r]} = u_{2k'-1}^{b^*}[r],
+\]
+which is exactly the correct feed-in label. This confirms that the Monitor can propagate labels through the circuit correctly.
+
+For the output wires, the System also chooses exponents $\beta^0[r], \beta^1[r]$ and sets $w_{O+i}^b[r] = g_i^{\beta^b[r]}$ for $i \in \{1, \ldots, m\}$ (the Monitor state outputs). In round $r+1$, the System sets $\alpha^b[r+1] = \beta^b[r]$, so $w_j^b[r+1] = g_j^{\beta^b[r]} = w_{O+j}^b[r]$ for $j \in \{1, \ldots, m\}$, maintaining label continuity across rounds.
+
+\paragraph{Security for the Monitor (System's view).}
+We must show that the System learns neither the Monitor's specification state $\mu[r]$ nor the circuit topology (encoded by $\pi$).
+
+The System's view across all rounds consists of:
+\begin{itemize}
+    \item the base labels $g_1, \ldots, g_O \in \Gb$ (received during setup);
+    \item the feed-in base labels $\ell_1, \ldots, \ell_I \in \Gb$ (received during setup);
+    \item the OT transcript (round 1 only);
+    \item the flag bits $\tau[1], \ldots, \tau[\ell]$.
+\end{itemize}
+
+We proceed through a sequence of hybrid experiments.
+
+\medskip
+\noindent\textbf{Hybrid $\Hc_0$ (real):} The experiment is exactly the real protocol execution.
+
+\medskip
+\noindent\textbf{Hybrid $\Hc_1$ (random feed-in labels):} Replace the feed-in base labels $\ell_i = g_{\pi(i)}^{t_i}$ with uniformly random group elements $\ell_i' \xleftarrow{\$} \Gb$, for all $i \in \{1, \ldots, I\}$.
+
+\medskip
+\noindent\emph{Claim:} $\Hc_0 \indistinguishable \Hc_1$ under the DDH assumption.
+
+\noindent\emph{Proof of claim:} The System sees $O$ base labels $(g_1, \ldots, g_O)$ and $I$ feed-in labels $(\ell_1, \ldots, \ell_I)$ where $\ell_i = g_{\pi(i)}^{t_i}$. Since each $t_i$ is independently random and $\pi$ maps each $\ell_i$ to some $g_j$, this is a collection of $I$ independent instances of exponentiated group elements.
+
+By \cref{lemma:DDHprop} (the Naor-Reingold multi-instance DDH lemma), given $O$ random group elements $g_1, \ldots, g_O$, the tuple $(g_{\pi(1)}^{t_1}, g_{\pi(2)}^{t_2}, \ldots, g_{\pi(I)}^{t_I})$ is computationally indistinguishable from a tuple of $I$ uniformly random group elements, regardless of the function $\pi$. This is because even if we condition on $\pi$, each $t_i$ is independently random, and the DDH assumption guarantees that exponentiating a random group element by a random exponent produces a distribution indistinguishable from uniform.
+
+More precisely, we can reduce to DDH by considering one feed-in wire at a time. For feed-in wire $\iota_i$ connected to feed-out wire $\omega_j$ (so $\pi(i) = j$), the System sees $g_j$ and $g_j^{t_i}$. Given a DDH challenge $(g, g^a, g^b, Z)$ where $Z$ is either $g^{ab}$ or $g^c$ for random~$c$, we can embed $g_j = g^a$ and $\ell_i = Z^{b'}$ for a fresh random $b'$, so that $Z = g^{ab}$ yields $\ell_i = g_j^{ab'}$ (a valid exponentiated label) while $Z = g^c$ yields $\ell_i = g^{cb'}$ (a random group element). Since there are $I$ feed-in wires, a standard hybrid argument over the $I$ instances gives a reduction with advantage loss $I$, which is polynomial.
+
+After this replacement, the feed-in base labels are independent of $\pi$, and hence the circuit topology is hidden from the System.
+
+\medskip
+\noindent\textbf{Hybrid $\Hc_2$ (simulated OT):} Replace the OT transcript with a simulated transcript produced by the OT simulator.
+
+\medskip
+\noindent\emph{Claim:} $\Hc_1 \indistinguishable \Hc_2$ by the security of the OT protocol against semi-honest adversaries.
+
+\noindent\emph{Proof of claim:} In the OT phase, the System acts as the sender with messages $(w_i^0[1], w_i^1[1])$ for each Monitor state bit $i$, and the Monitor acts as the chooser with choice bit $\mu_i[1]$. The OT security guarantee provides a simulator that, given the sender's messages but not the choice bit, produces a transcript indistinguishable from the real one. Since $\Hc_1$ already replaces the feed-in labels with random values, the OT messages $(w_i^0[1], w_i^1[1])$ are functions only of the (still honest) base labels and exponents, and the OT simulator's output remains indistinguishable.
+
+\medskip
+\noindent\textbf{Hybrid $\Hc_2$ constitutes the simulator's output.} The simulator $\Sc_\Pc$ operates as follows:
+\begin{enumerate}
+    \item Generate $O$ random group elements as base labels.
+    \item Generate $I$ random group elements as feed-in base labels (independent of any permutation $\pi$).
+    \item Simulate the OT transcript using the OT simulator.
+    \item Output the flag bits $\tau[1], \ldots, \tau[\ell]$.
+\end{enumerate}
+This simulator uses only the System's inputs ($\sigma[1], \ldots, \sigma[\ell]$), the circuit size $c$ (from which $O$ and $I$ are derived), and the flag bits---it does not require knowledge of $\Cc$ or $\mu[1]$. The indistinguishability of its output from the real System view follows from $\Hc_0 \indistinguishable \Hc_1 \indistinguishable \Hc_2$.
+
+\paragraph{Security for the System (Monitor's view).}
+The Monitor's real view across all rounds consists of:
+\begin{itemize}
+    \item its own inputs $(\Cc, \mu[1])$ and random coins;
+    \item the OT transcript (round 1), through which it receives $w_i^{\mu_i[1]}[1]$ for each $i$;
+    \item for each round $r$: the garbled gates $\encGG_j[r]$ for all gates $j$, the System input labels, and the flag labels.
+\end{itemize}
+
+The proof proceeds through a hybrid argument analogous to the open-specification case, but working with group-element labels instead of random strings.
+
+\medskip
+\noindent\textbf{Hybrid experiments for each round $r$.} As in \cref{sec:proof1}, we replace garbled gates from output to input, one gate at a time.
+
+\begin{itemize}
+    \item \textbf{Hybrid $\Hc'_0$:} The garbled gates are computed honestly with labels $w_j^b[r] = g_j^{\alpha^b[r]}$.
+    
+    \item \textbf{Hybrid $\Hc'_k$:} Gates $G_{j_1}, \ldots, G_{j_k}$ (ordered output-to-input) are simulated: all four ciphertexts encrypt the correct output label.
+    
+    \item \textbf{Hybrid $\Hc'_c$:} All gates are simulated.
+\end{itemize}
+
+The indistinguishability of adjacent hybrids $\Hc'_{k-1}$ and $\Hc'_k$ follows from the CPA security of $\Enc$, by the same argument as in \cref{sec:proof1}. The Monitor holds only one label per wire (the one corresponding to the correct bit value), so it cannot distinguish a ciphertext encrypting the wrong output label from one encrypting the correct label, because it lacks the keys to decrypt the modified ciphertexts.
+
+\medskip
+\noindent\textbf{Handling reactivity with exponent reuse.}
+The hidden-specification step introduces an additional subtlety: the exponents $\alpha^0[r+1] = \beta^0[r]$ and $\alpha^1[r+1] = \beta^1[r]$ are reused across rounds. We must verify this does not compromise security.
+
+In each round $r$, the System chooses fresh $\beta^0[r], \beta^1[r] \xleftarrow{\$} \Zb_q$ for the output wires. These become $\alpha^0[r+1], \alpha^1[r+1]$ in round $r+1$. The Monitor's view of the output labels in round $r$ includes only $w_{O+i}^{\mu_i[r+1]}[r] = g_i^{\beta^{\mu_i[r+1]}[r]}$ for each $i$---it does \emph{not} see $\beta^0[r]$ or $\beta^1[r]$ directly, only the group elements $g_i$ raised to one of these exponents.
+
+In round $r+1$, the Monitor sees new garbled gates computed with $\alpha^b[r+1] = \beta^b[r]$. The hybrid argument for round $r+1$ only requires that the Monitor holds one label per wire, which is maintained by the label reuse mechanism. The exponent values $\alpha^0[r+1]$ and $\alpha^1[r+1]$ are not revealed by the group elements the Monitor observes (extracting them would require computing discrete logarithms). Therefore, the hybrid argument applies independently to each round.
+
+\medskip
+\noindent\textbf{Simulator construction.}
+The simulator $\Sc_\Mc$ for the Monitor operates as follows:
+\begin{enumerate}
+    \item It receives $(\Cc, \mu[1])$ and $\tau[1], \ldots, \tau[\ell]$.
+    \item For each round $r$, it chooses an arbitrary monitor-state string $\tilde{\mu}[r+1] \in \{0,1\}^m$ (e.g., $0^m$). As in \cref{sec:proof1}, the simulator does \emph{not} know $\sigma[r]$ and cannot compute the true next state; nor does it need to, because in the fully simulated transcript every garbled gate encrypts a single output label under all four input-label pairs.
+    \item For each round $r$, it generates one random group element per wire (labelled according to the nominal bit value: $\mu_i[1]$ for initial-state wires, $\tilde{\mu}_i[r+1]$ for state-output wires, and arbitrary values elsewhere) and produces simulated garbled gates (all four ciphertexts encrypting the correct output label).
+    \item It simulates the OT transcript for round~1 using the OT simulator, providing the Monitor's state label corresponding to $\mu_i[1]$.
+    \item It sets the flag labels so that the Monitor determines $\tau[r]$ correctly.
+\end{enumerate}
+
+Note that the simulator does \emph{not} need the System's inputs $\sigma[r]$---it only needs $\tau[r]$---because the simulated garbled gates encrypt only one label per gate, and the specific bit values on internal and state wires are immaterial to the Monitor's view.
+
+The total distinguishing advantage is at most $c \cdot \ell \cdot \epsilon_{\text{CPA}} + I \cdot \epsilon_{\text{DDH}} + \epsilon_{\text{OT}}$, where $\epsilon_{\text{CPA}}$, $\epsilon_{\text{DDH}}$, and $\epsilon_{\text{OT}}$ are the advantages of the respective assumptions, all of which are negligible. This completes the proof.
+\end{proof}

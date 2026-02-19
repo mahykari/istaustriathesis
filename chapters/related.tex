@@ -1,0 +1,53 @@
+\chapter{Related Work}\label{ch:related}
+
+In this chapter, we survey existing work related to privacy-preserving verification and monitoring, and position our contributions relative to the literature.
+
+\section{Privacy-preserving static verification}
+
+Recent work on privacy-preserving verification has largely focused on static settings. A wide range of verification paradigms have been shown to be amenable to cryptographic techniques: for example, verifying resolution proofs in zero knowledge~\cite{LAHPTW22}, solving SAT formulas~\cite{LJAPW22}, matching strings against regular expressions~\cite{LWSTRP24}, checking string and regular expression equivalence~\cite{KAAP25}, and model-checking CTL specifications~\cite{JLAP20}. In contrast, our work targets runtime verification, where the system's data evolves dynamically and must be processed incrementally at each step. This fundamental difference means that static privacy-preserving verification techniques cannot be directly applied to the monitoring setting we consider.
+
+\section{Privacy-preserving runtime monitoring}
+
+Banno et al.~\cite{BMMBWS22} and Waga et al.~\cite{WMSMBBS24} use fully homomorphic encryption (FHE) for oblivious online monitoring of LTL~\cite{Pnu77} and STL~\cite{MN04} specifications, respectively. Their work is the closest in spirit to ours, but the two lines of work differ in trust model, specification language, and the underlying cryptographic machinery.
+
+\paragraph{Trust model.}
+In their setting, an evaluating server (or the system itself) performs the monitoring computation on FHE-encrypted data; because only the key holder can decrypt the result, the server learns neither the system's data nor the verdict. The system---as key holder---is the party that ultimately learns whether the specification is satisfied. In our setting the roles are reversed: the \emph{Monitor} must learn the verdict, while the System's data stays hidden. Adapting FHE to our trust model is conceivable---for example, the System could encrypt its data under the Monitor's public key---but doing so naïvely would let the Monitor decrypt the raw data, defeating the purpose. A more careful adaptation using re-encryption or proxy schemes might work, but would add further overhead to a primitive that is already expensive.
+
+\paragraph{Specification representation and scalability.}
+Banno et al.\ and Waga et al.\ represent specifications as temporal-logic formulas that are converted into deterministic finite automata (DFAs). Their FHE-based evaluation is linear in the DFA size: each monitoring round homomorphically multiplies an encrypted state vector by a transition matrix, which requires $O(|Q|^2)$ ciphertext multiplications per round (where $|Q|$ is the number of DFA states). For small specifications this is fast---around 2\,ms for a 500-state DFA~\cite{BMMBWS22}. However, specifications arising in practice can produce DFAs that are astronomically large: the access-control specification in our experiments has at least $2^{32}$~states, and the lock-ordering specification has at least $2^{300}$~states (see \cref{table:compareBanno}). At those sizes, the FHE-based approach becomes infeasible regardless of implementation quality, because the bottleneck---homomorphic ciphertext multiplication, which is orders of magnitude slower than plaintext arithmetic---is applied $O(|Q|^2)$ times per round.
+
+Our protocol avoids the DFA blowup entirely by working directly on Boolean circuits synthesized from the specification. The circuit representation is exponentially more compact for specifications with large state spaces (our lock-ordering circuit has roughly $6000$ gates), and garbled-circuit evaluation replaces the expensive homomorphic multiplications with symmetric-key operations (or, in the hidden-specification step, modular exponentiations in a DDH group). The price we pay is a weaker adversary model: our protocol assumes semi-honest parties, whereas Banno et al.\ and Waga et al.\ handle malicious adversaries.
+
+\paragraph{Scope of contribution.}
+We do not claim to introduce new cryptographic primitives or techniques. Two-party computation for reactive functionalities is textbook material---Hazay and Lindell~\cite{HL10} give a standard treatment---and our protocol combines well-established building blocks (Yao's garbled circuits, the DDH-based topology hiding of Liu et al.~\cite{LWY22}, and Bellare-Micali oblivious transfer~\cite{BM89}) in a straightforward way. The label-reuse mechanism that avoids repeated oblivious transfer is our main design choice, but the underlying idea is not fundamentally different from standard techniques for stateful two-party computation. Our contribution is applying these tools to the monitoring problem and providing concrete implementations; whether a more careful application of FHE or other mainstream MPC techniques could achieve comparable performance remains an open question, and our experiments in \cref{ch:experiments} supply baselines for such a comparison.
+
+\section{Two-party computation and private function evaluation}\label{sec:pfe-related}
+
+Our protocols draw inspiration from two-party computation~\cite{GMW87,Yao82}, and more specifically private function evaluation (PFE), where one party owns a secret circuit and part of the input, while the other party holds the remaining input. The seminal PFE protocol of Katz and Malka~\cite{KM11} uses homomorphic encryption to obliviously evaluate circuits whose topology is hidden. Mohassel and Sadeghian~\cite{MS13} and Bingöl et al.~\cite{BBKL19} achieved efficiency improvements through reduced overhead and better use of oblivious transfer extensions, respectively.
+
+Most recently, Liu, Wang, and Yu~\cite{LWY22} provided a way to repeatedly compute the same function several times under standard IND-CPA and DDH assumptions against \emph{covert adversaries}. Our \protocoltwo~draws specifically on their work. However, their protocol does not support \emph{reactive functionalities}: it cannot maintain an internal state that persists across evaluations and is kept secret from all parties. This is essential for runtime monitoring where the specification maintains state across rounds.
+
+More broadly, two-party protocols for reactive functionalities are well-understood; Hazay and Lindell~\cite{HL10} give a textbook treatment. Secret-sharing-based constructions (e.g., Shamir or arithmetic sharing) require three or more parties and are therefore inapplicable to our two-party setting, but OT-based two-party alternatives handle reactive functionalities with standard techniques---at the cost of multiple message exchanges per round~\cite{CSW20}. Our protocol avoids this multi-round interaction by reusing garbled-circuit labels across rounds, achieving a single message per round from System to Monitor. This is a practical convenience, not a fundamental barrier: the trade-off is restricting to the semi-honest model.
+
+\paragraph{Positioning summary.}
+\Cref{table:positioning} summarizes the key differences between our work and the most closely related approaches.
+
+\begin{table}[t]
+    \centering
+    \renewcommand{\arraystretch}{1.15}
+    \setlength{\tabcolsep}{4pt}
+    \begin{tabular}{|l|c|c|c|c|}
+        \hline
+        & \textbf{Ours} & \textbf{Banno+} & \textbf{Waga+} & \textbf{LWY} \\
+        \hline
+        Reactive state    & \checkmark & \checkmark & \checkmark & --- \\
+        Hidden spec       & \checkmark & --- & --- & \checkmark \\
+        Msgs/round        & 1          & $O(1)$     & $O(1)$     & $O(1)$ \\
+        Adversary model   & semi-honest & malicious & malicious & covert \\
+        Spec language      & circuits   & LTL/DFA   & STL        & circuits \\
+        \hline
+    \end{tabular}
+    \caption{Comparison of our protocol with the most closely related works.
+    ``Banno+'' refers to Banno et al.~\cite{BMMBWS22} and ``Waga+'' to Waga et al.~\cite{WMSMBBS24}.}
+    \label{table:positioning}
+\end{table}

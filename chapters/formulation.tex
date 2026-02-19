@@ -1,0 +1,182 @@
+\chapter{Problem Formulation}\label{ch:formulation}
+
+This chapter lays the groundwork for privacy-preserving monitoring. We define the parties involved, describe the ideal setting we want to emulate, and formalize what it means for a protocol to be correct and secure. The security definitions follow the simulation paradigm introduced in \cref{sec:simulation}.
+
+\section{Setting}\label{sec:setting}
+
+The setup involves two parties: the \emph{System}~(\Pc) and the \emph{Monitor}~(\Mc). Think of the System as the entity being watched---it could be a medical device, an access-control system, or any process that produces a stream of data. The Monitor is the party that checks whether that data stream satisfies some rule or policy. Both parties are assumed to be \emph{semi-honest}: they follow the agreed-upon protocol faithfully, but may afterward look at the messages they received and try to infer extra information. This is a weaker adversary model than the \emph{malicious} setting, where parties can deviate from the protocol in arbitrary ways.
+
+At each round the System produces a fixed-length data item. Formally, its output at round~$r$ is a bit-string $\sigma[r] \in \{0,1\}^s$, and we write $\sigma = \sigma[1],\dots,\sigma[\ell]$ for the full sequence of length~$\ell$. In practice, $\sigma[r]$ might encode sensor readings, event logs, or any other observable snapshot of the System at that moment. The Monitor holds a \emph{safety specification}~\cite{KKLSV02} $\phi \subseteq \left( {\{0,1\}^s} \right) ^\omega$ (other classes of monitoring specifications could also be considered~\cite{BFFR18}). In plain terms, the specification describes the set of all data streams that are considered acceptable; if the System's data ever leaves this set, the Monitor should raise an alarm. We model the specification as a state machine with initial state~$\mu[1]$. Every time a new data item $\sigma[r]$ arrives, the state is updated deterministically: $\mu[r+1] = \mupdate(\sigma[r],\mu[r])$. A function $\isbad(\sigma[r],\mu[r])$ outputs~$1$ (``bad'') if the data seen so far violates the specification, and~$0$ (``ok'') otherwise. Both $\mupdate$ and $\isbad$ are encoded together as a single Boolean circuit~$\Cc$. We call the pair of circuit and initial state $(\Cc,\mu[1])$ an \emph{initialized circuit}---it contains everything needed to begin monitoring from scratch.
+
+\section{Ideal settings}\label{sec:ideal}
+
+Before we can say what it means for a protocol to be ``secure,'' we need a gold standard to compare against. That gold standard is an \emph{ideal} world in which a perfectly trustworthy middleman---a trusted third party (TTP)---carries out the monitoring on behalf of both parties. Because the TTP is honest by assumption, neither party can learn anything it should not, and any real protocol we design must be at least as private as this ideal world. It is worth stressing, however, that even the ideal world is not a world of zero leakage. The Monitor still learns the verdict at every round, and from the sequence of verdicts it may be able to infer something about the System's data---for example, the mere fact that a violation occurred at round~$r$ reveals that the data up to that point fell outside the specification. Similarly, both parties observe how many rounds have elapsed. What the ideal world guarantees is that these inherent leakages---the ones baked into the task of monitoring itself---are the \emph{only} leakages. A secure protocol may not leak less than the ideal world, but it must not leak more.
+
+We consider two variants, depending on whether the specification itself is a secret. In the \emph{open-specification} setting, both the System and the Monitor already know the monitoring circuit~$\Cc$; the Monitor only needs to tell the TTP its starting state~$\mu[1]$. This models situations where the rules being checked are public---for example, a regulatory standard that both sides are aware of. In the \emph{hidden-specification} setting, the circuit is private to the Monitor: the System does not know \emph{what} is being checked. Here the Monitor also hands $\Cc = (\mupdate,\isbad)$ to the TTP. This models situations where revealing the specification would itself leak sensitive information---for instance, if knowing the exact compliance rule would allow the System to game it.
+
+In both variants the interaction proceeds the same way. At every round~$r$, the System sends its data $\sigma[r]$ to the TTP. The TTP evaluates the specification---computing the verdict $\tau[r] = \isbad(\mu[r],\sigma[r])$---and sends the result back to the Monitor, while internally updating its state to $\mu[r+1] = \mupdate(\mu[r],\sigma[r])$. The System never sees the verdict, and the Monitor never sees more than the single yes/no answer.
+These two settings are illustrated in \cref{fig:monitoringOpen,fig:monitoringHiding}. 
+
+\begin{figure}[t]
+    \centering
+    \begin{tikzpicture}[>=stealth, scale=0.95, transform shape]
+        % System (physician)
+        \node[physician, minimum size=1cm] (sys) at (-4,0) {};
+        \node[below=0.15cm of sys] {System};
+        % Cloud callout for x
+        \node[cloud callout, draw=gray, text=gray,
+              callout pointer width=0.4cm,
+              callout pointer segments=3,
+              callout relative pointer={(0.35,-0.3)}]
+              at (-5.2,1.2) {\scalebox{1.2}{$x$}};
+        % Cloud callout for C (System also knows the circuit)
+        \node[cloud callout, draw=gray, text=gray,
+              callout pointer width=0.4cm,
+              callout pointer segments=3,
+              callout relative pointer={(0.2,-0.35)}]
+              at (-5.2,2.4) {\scalebox{1.2}{$\Cc$}};
+
+        % Trusted Third Party (box)
+        \node[draw, rounded corners, minimum width=2.2cm, minimum height=3.8cm,
+              fill=gray!10, label={[yshift=-0.2cm]below:Trusted third party}] (ttp) at (0,0) {};
+        % Show the computation inside the TTP
+        \foreach \i/\rlabel in {1/1, 2/2, 3/3} {
+            \node[font=\scriptsize] at (0, {1.2 - 0.8*\i}) 
+                {$\Cc(\sigma[{\i}],\mu[{\i}])$};
+        }
+        \node at (0,-1.6) {$\vdots$};
+
+        % Monitor (police)
+        \node[police, minimum size=1cm, mirrored] (mon) at (4,0) {};
+        \node[below=0.15cm of mon] {Monitor};
+        % Cloud callout for phi (visible: spec is known to all)
+        \node[cloud callout, draw=gray, text=gray,
+              callout pointer width=0.4cm,
+              callout pointer segments=3,
+              callout relative pointer={(-0.2,-0.35)}]
+              at (5.2,1.2) {\scalebox{1.2}{$\phi$}};
+
+        % Arrows: System -> TTP (sigma)
+        \foreach \i in {1,2,3} {
+            \draw[->] (-3.0, {1.2 - 0.8*\i}) -- node[above, font=\scriptsize] {$\sigma[{\i}]$} (-1.3, {1.2 - 0.8*\i});
+        }
+        % Arrow: Monitor -> TTP (mu[1]) at the top
+        \draw[->, thick] (3.0, 1.4) -- node[above, font=\scriptsize] {$\mu[1]$} (1.3, 1.4);
+        % Arrows: TTP -> Monitor (tau)
+        \foreach \i in {1,2,3} {
+            \draw[->] (1.3, {1.2 - 0.8*\i}) -- node[above, font=\scriptsize] {$\tau[{\i}]$} (3.0, {1.2 - 0.8*\i});
+        }
+    \end{tikzpicture}
+    \caption{Ideal setting with a trusted third party for monitoring where the specification is \emph{not} a secret: both parties know the circuit $\Cc$.}
+    \label{fig:monitoringOpen}
+\end{figure}
+
+\begin{figure}[t]
+    \centering
+    \begin{tikzpicture}[>=stealth, scale=0.95, transform shape]
+        % System (physician)
+        \node[physician, minimum size=1cm] (sys) at (-4,0) {};
+        \node[below=0.15cm of sys] {System};
+        % Cloud callout for x
+        \node[cloud callout, draw=gray, text=gray,
+              callout pointer width=0.4cm,
+              callout pointer segments=3,
+              callout relative pointer={(0.35,-0.3)}]
+              at (-5.2,1.2) {\scalebox{1.2}{$x$}};
+
+        % Trusted Third Party (box)
+        \node[draw, rounded corners, minimum width=2.2cm, minimum height=4.4cm,
+              fill=gray!10, label={[yshift=-0.2cm]below:Trusted third party}] (ttp) at (0,0.2) {};
+        % Show the computation inside the TTP
+        \foreach \i/\rlabel in {1/1, 2/2, 3/3} {
+            \node[font=\scriptsize] at (0, {1.2 - 0.8*\i}) 
+                {$\Cc(\sigma[{\i}],\mu[{\i}])$};
+        }
+        \node at (0,-1.6) {$\vdots$};
+
+        % Monitor (police)
+        \node[police, minimum size=1cm, mirrored] (mon) at (4,0) {};
+        \node[below=0.15cm of mon] {Monitor};
+        % Cloud callout for phi
+        \node[cloud callout, draw=gray, text=gray,
+              callout pointer width=0.4cm,
+              callout pointer segments=3,
+              callout relative pointer={(-0.2,-0.35)}]
+              at (5.2,1.2) {\scalebox{1.2}{$\phi$}};
+
+        % Arrows: System -> TTP (sigma)
+        \foreach \i in {1,2,3} {
+            \draw[->] (-3.0, {1.2 - 0.8*\i}) -- node[above, font=\scriptsize] {$\sigma[{\i}]$} (-1.3, {1.2 - 0.8*\i});
+        }
+        % Arrow: Monitor -> TTP (C and mu[1]) at the top
+        \draw[->, thick] (3.0, 1.8) -- node[above, font=\scriptsize] {$\Cc$} (1.3, 1.8);
+        \draw[->, thick] (3.0, 1.2) -- node[above, font=\scriptsize] {$\mu[1]$} (1.3, 1.2);
+        % Arrows: TTP -> Monitor (tau)
+        \foreach \i in {1,2,3} {
+            \draw[->] (1.3, {1.2 - 0.8*\i}) -- node[above, font=\scriptsize] {$\tau[{\i}]$} (3.0, {1.2 - 0.8*\i});
+        }
+    \end{tikzpicture}
+    \caption{Ideal setting with a trusted third party for monitoring where the specification is a secret.}
+    \label{fig:monitoringHiding}
+\end{figure}
+
+
+\section{Monitoring protocol}\label{sec:monitoringprotocol}
+
+With the ideal world in place, we now describe what a real-world monitoring protocol looks like. A monitoring protocol is a pair of instructions $\pi= \tpl{\pi_\Pc,\pi_\Mc}$, one for each party, telling the System and the Monitor exactly what to compute and what messages to send at each step. The protocol begins with a \emph{setup phase} (round~$0$), during which the parties exchange any material they need before monitoring begins---for example, cryptographic keys or garbled circuits. After setup, monitoring proceeds in rounds: in every subsequent round~$r$, the System sends a single message to the Monitor, and the Monitor replies with either ``proceed'' (the data seen so far is acceptable) or ``terminate'' (a violation has been detected). We restrict each round to a single message because monitoring should remain lightweight and avoid multiple back-and-forth exchanges.
+
+We note that the one-message-per-round restriction is, to some extent, an idealization. In practice, protocols that rely on modular-exponentiation-based primitives can produce messages that are tens of megabytes long for even a modest circuit (see the message-size measurements in \cref{fig:locks_message_P2}). When a single ``message'' already dwarfs most network MTUs by orders of magnitude, the distinction between one logical message and several is overshadowed by the sheer cost of producing and transmitting the data. The restriction is therefore best understood as a convenient abstraction for counting communication rounds, not as a practical engineering constraint.
+
+\paragraph{Correctness.}
+A protocol is correct if, regardless of the specification or the data stream, the Monitor ends up with the same verdict it would have obtained in the ideal world. In other words, removing the TTP and running the real protocol instead should not change the answer.
+\begin{definition}[Correctness]\label{def:correctness}
+    A protocol $\pi=\tpl{\pi_\Pc,\pi_\Mc}$ is a \emph{correct monitoring protocol} if, for every initialized circuit $(\Cc,\mu[1])$, observable sequence $\sigma$, and security parameter $n$, the Monitor's output in an execution of $\pi$ agrees with the ideal-setting output on the same inputs with overwhelming probability, i.e., with probability at least $1-n^{-d}$ for every fixed $d\in\Nb$.
+\end{definition}
+The ``overwhelming probability'' qualifier accounts for the fact that the cryptographic building blocks we use are probabilistic: there is always a vanishingly small chance of failure, but that chance shrinks faster than any polynomial as the security parameter grows.
+
+\section{Security}\label{sec:security}
+
+Correctness guarantees that the protocol gives the right answer. Security guarantees that it does not give away anything \emph{else}. The core idea is straightforward: if a party could learn something by participating in the real protocol that it could not have learned in the ideal world, then the protocol is insecure.
+
+To make this precise, we use the simulation paradigm (introduced in \cref{sec:simulation}). For each party, we compare two transcripts:
+\begin{itemize}
+    \item The \textbf{real transcript}: everything the party actually sees during a run of the protocol---its own input, the random coins it flipped, and every message it received.
+    \item The \textbf{simulated transcript}: a fake transcript manufactured by an efficient algorithm (the \emph{simulator}) that has access only to the party's own input and the output it would receive in the ideal world.
+\end{itemize}
+If no efficient algorithm can reliably tell the real transcript from the simulated one, then the protocol is secure: whatever a party might try to extract from the real messages, it could equally well have fabricated on its own from the ideal-world output alone. Because the protocols are randomized, we are really comparing \emph{distributions} over transcripts, not individual transcripts. In the hidden-specification setting, this reasoning also protects the Monitor's circuit: the TTP evaluates the specification without ever showing it to the System, and a real protocol is secure if the System's real transcript is indistinguishable from one produced without knowledge of the circuit.
+
+\paragraph{Real view.}
+Formally, the \emph{view of the Monitor}, $\view_\Mc^\pi(x_M,\sigma,1^n)$, consists of the Monitor's input~$x_M$, the random bits it used, and the messages $m_1,\dots,m_\ell$ it received during protocol~$\pi$. This is the totality of information available to the Monitor.
+
+\paragraph{Ideal view.}
+The \emph{ideal view}, $\Sc^\ideal_{\Mc,\pi}(x_M,\sigma,1^n)$, is a transcript produced by a simulator~$\Sc_\Mc$ (a probabilistic polynomial-time machine) that sees only the Monitor's inputs and ideal-setting outputs---crucially, it never sees the System's private data. When the protocol is clear from context we drop $\pi$ from the subscript. The views $\view_\Pc^\pi$ and $\Sc_\Pc^\ideal$ of the System are defined analogously.
+
+We use the symbol $\indistinguishable$ to denote computational indistinguishability~\cite{BM82}. The security notion splits naturally into two definitions, one for each setting.
+
+\paragraph{Open specification.}
+When both parties already know the circuit, security means that neither party's real transcript reveals anything beyond what the ideal world would have provided. The simulator for each party must be able to produce a convincing fake transcript using only that party's input and output.
+\begin{definition}[Security without specification hiding]\label{def:security-open}
+    A protocol $\pi=(\pi_\Pc,\pi_\Mc)$ is a \emph{secure monitoring protocol without specification hiding} for a circuit~$\Cc$ if there exist probabilistic polynomial-time simulators $\Sc_\Mc$ and $\Sc_\Pc$ such that, for all initial states~$\mu[1]$, observable sequences~$\sigma$, and security parameters~$n\in\Nb$:
+    \begin{align*}
+        \set{\Sc_\Mc^\ideal(\mu[1],\sigma,1^n)}_{\mu[1],\sigma}
+            &\indistinguishable
+            \set{\view^\pi_\Mc(\mu[1],\sigma,1^n)}_{\mu[1],\sigma}, \\
+        \set{\Sc_\Pc^\ideal(\mu[1],\sigma,1^n)}_{\mu[1],\sigma}
+            &\indistinguishable
+            \set{\view^\pi_\Pc(\mu[1],\sigma,1^n)}_{\mu[1],\sigma}.
+    \end{align*}
+\end{definition}
+
+\paragraph{Hidden specification.}
+When the specification is secret, security must additionally guarantee that the System cannot learn anything about the circuit. Note that the definition below quantifies over \emph{all} possible circuits, not just a specific one---the protocol must protect every specification equally well.
+\begin{definition}[Security with specification hiding]\label{def:security-hiding}
+    A protocol $\pi=(\pi_\Pc,\pi_\Mc)$ is a \emph{secure monitoring protocol with specification hiding} if there exist probabilistic polynomial-time simulators $\Sc_\Mc$ and $\Sc_\Pc$ such that, for all initialized circuits~$(\Cc,\mu[1])$, observable sequences~$\sigma$, and security parameters~$n\in\Nb$:
+    \begin{align*}
+        \set{\Sc_\Mc^\ideal\!\bigl((\Cc,\mu[1]),\sigma,1^n\bigr)}_{(\Cc,\mu[1]),\sigma}
+            &\indistinguishable
+            \set{\view^\pi_\Mc\!\bigl((\Cc,\mu[1]),\sigma,1^n\bigr)}_{(\Cc,\mu[1]),\sigma}, \\
+        \set{\Sc_\Pc^\ideal\!\bigl((\Cc,\mu[1]),\sigma,1^n\bigr)}_{(\Cc,\mu[1]),\sigma}
+            &\indistinguishable
+            \set{\view^\pi_\Pc\!\bigl((\Cc,\mu[1]),\sigma,1^n\bigr)}_{(\Cc,\mu[1]),\sigma}.
+    \end{align*}
+\end{definition}
