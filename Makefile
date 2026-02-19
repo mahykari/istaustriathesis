@@ -7,6 +7,8 @@ SOURCE_MASTER = master
 PDFLATEX = pdflatex
 BIBTEX = bibtex
 MAKEINDEX = makeindex
+GS = gs
+PDFA_ICC = /usr/share/texlive/texmf-dist/tex/generic/colorprofiles/sRGB.icc
 
 # LaTeX auxiliary file extensions
 AUX_EXTENSIONS = aux bbl blg log out toc lof lot loa \
@@ -93,8 +95,30 @@ clean:
 cleanall: clean
 	@echo "Cleaning all generated files..."
 	@rm -f $(CLASS).pdf $(CLASS).cls
-	@rm -f $(SOURCE_MASTER).pdf
+	@rm -f $(SOURCE_MASTER).pdf $(SOURCE_MASTER)-pdfa2b.pdf
 	@echo "All generated files cleaned."
+
+# Post-process master.pdf into a PDF/A-2b compliant file via Ghostscript.
+# Requires the full build (make master) to have been run first.
+.PHONY: pdfa
+pdfa: $(SOURCE_MASTER)-pdfa2b.pdf
+
+$(SOURCE_MASTER)-pdfa2b.pdf: $(SOURCE_MASTER).pdf
+	@echo "Converting $(SOURCE_MASTER).pdf to PDF/A-2b..."
+	@cp /usr/share/ghostscript/$(shell gs --version)/lib/PDFA_def.ps /tmp/pdfa2b_def.ps
+	@sed -i "s|/ICCProfile (srgb.icc)|/ICCProfile ($(PDFA_ICC))|" /tmp/pdfa2b_def.ps
+	@sed -i "s|/Title (Title)|/Title (Privacy-Preserving Runtime Verification)|" /tmp/pdfa2b_def.ps
+	@$(GS) -dBATCH -dNOPAUSE -dNOOUTERSAVE \
+	  -sDEVICE=pdfwrite \
+	  -dCompatibilityLevel=1.7 \
+	  -dPDFA=2 \
+	  -dPDFACompatibilityPolicy=1 \
+	  -dEmbedAllFonts=true \
+	  -dSubsetFonts=true \
+	  -sColorConversionStrategy=sRGB \
+	  -sOutputFile=$@ \
+	  /tmp/pdfa2b_def.ps $<
+	@echo "PDF/A-2b output written to $@"
 
 # Help target
 .PHONY: help
@@ -106,6 +130,7 @@ help:
 	@echo "  doc            - Build only the class documentation"
 	@echo "  examples       - Build the master thesis"
 	@echo "  master         - Build the master thesis (use this for your thesis)"
+	@echo "  pdfa           - Post-process master.pdf into master-pdfa2b.pdf (PDF/A-2b, via Ghostscript)"
 	@echo "  clean          - Remove auxiliary files (keep PDFs)"
 	@echo "  cleanall       - Remove all generated files including PDFs"
 	@echo "  help           - Show this help message"
