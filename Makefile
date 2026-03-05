@@ -126,6 +126,8 @@ $(SOURCE_MASTER)-pdfa2b.pdf: $(SOURCE_MASTER).pdf
 submit: $(SOURCE_MASTER)-pdfa2b.pdf
 	cp $< $(SUBMISSION)
 	@echo "Submission copy written to $(SUBMISSION)"
+	git archive HEAD --format=zip -o $(SUBMISSION:.pdf=_src.zip)
+	@echo "Source archive written to $(SUBMISSION:.pdf=_src.zip)"
 
 # Help target
 .PHONY: help
@@ -138,7 +140,7 @@ help:
 	@echo "  examples       - Build the master thesis"
 	@echo "  master         - Build the master thesis (use this for your thesis)"
 	@echo "  pdfa           - Post-process master.pdf into master-pdfa2b.pdf (PDF/A-2b, via Ghostscript)"
-	@echo "  submit         - Copy master-pdfa2b.pdf to $(SUBMISSION)"
+	@echo "  submit         - Copy master-pdfa2b.pdf to $(SUBMISSION) and create source zip"
 	@echo "  clean          - Remove auxiliary files (keep PDFs)"
 	@echo "  cleanall       - Remove all generated files including PDFs"
 	@echo "  help           - Show this help message"
