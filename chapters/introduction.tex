@@ -1,23 +1,78 @@
 \chapter{Introduction}\label{ch:intro}
 
-Runtime verification offers scalable solutions to improve the safety and reliability of systems. 
-Unlike traditional static verification, which attempts to verify entire system models against specifications, runtime verification focuses on monitoring the behavior of a system during its execution. 
-This approach is inherently more lightweight, as it processes individual observations produced by the system rather than reasoning about the entire state space~\cite{LS09,BFFR18}.
+Ensuring that complex systems behave correctly is a central challenge in computer science.
+The two classical approaches to exhaustive verification, model checking and theorem proving, offer strong guarantees but face inherent limitations that persist despite decades of algorithmic advances.
+Model checking must explore the reachable state space of a system, which grows exponentially in the number of components; theorem proving requires substantial manual effort and domain expertise.
+Neither limitation reflects a shortcoming of particular tools; both are fundamental barriers rooted in the nature of the problems themselves.
 
-However, systems that require monitoring by a third party to ensure compliance with a specification might contain sensitive information, causing privacy concerns when traditional runtime verification approaches are used.
-Privacy is compromised if protected information about the system, or sensitive data processed by the system, is revealed to the monitor. 
-Furthermore, revealing the specification being monitored may undermine the very essence of third-party verification.
+Runtime verification (RV) takes a different, complementary angle~\cite{LS09,BFFR18,HG08}.
+Rather than reasoning about all possible behaviors of a system model, RV monitors the actual behavior of a running system.
+A \emph{monitor} observes the stream of events produced during execution and checks, step by step, whether the observed trace conforms to a given specification.
+RV analyzes only the current run and cannot provide exhaustive coverage, but it gives precise, timely verdicts at computational costs that are modest relative to the system being observed.
+For large, evolving, or deployed systems where exhaustive verification is out of reach, this is an attractive trade-off.
+
+\section{Runtime verification}\label{sec:intro-rv}
+
+The field of runtime verification, as a self-named community, grew out of the RV workshop established in 2001, which became a full conference in 2010 and has been held annually since then~\cite{BFFR18}.
+Research on monitoring techniques, however, has been around for much longer, present in other communities (testing, dynamic analysis, trace analysis) that do not always use the same name.
+RV is now widely employed in both academia and industry: before system deployment for testing, verification, and debugging, and after deployment to ensure reliability, safety, robustness, and security.
+
+A key ingredient in any RV approach is the \emph{specification language} used to describe the desired or undesired system behavior.
+The system's behavior is typically abstracted as a sequence of observable \emph{events}, forming an execution \emph{trace}, and a specification describes a set of acceptable (or unacceptable) traces.
+The most common family of specification languages is temporal logic, with linear temporal logic (LTL)~\cite{Pnu77} being the most basic and widely used variant.
+LTL allows expressing properties such as ``every request is eventually followed by a response'' using temporal operators like \emph{always} and \emph{eventually}.
+Bauer, Leucker, and Schallhart~\cite{BLS11} developed a seminal finite-trace semantics for LTL in the runtime verification setting, introducing a three-valued verdict domain (true, false, and inconclusive) that accounts for the fact that observed traces are necessarily finite prefixes of potentially infinite executions.
+Beyond temporal logic, state machines and regular expressions provide alternative, more operational specification formalisms, while signal temporal logic (STL)~\cite{MN04} extends the framework to continuous-time domains and cyber-physical systems.
+
+These specification languages can be broadly divided into two families: \emph{declarative} languages, such as temporal logics, where the user states \emph{what} should hold, and \emph{executable} languages, such as state machines, where the user directly describes \emph{how} the monitor should react to each event.
+Declarative specifications tend to be more concise and composable: two LTL formulas can be combined with a simple conjunction, while merging two automata requires a product construction.
+Executable specifications, on the other hand, yield more straightforward monitoring algorithms since they already encode the transition structure the monitor needs.
+In practice, declarative specifications are typically compiled into an executable form before monitoring begins, so the distinction affects the specification workflow more than the runtime cost.
+A further axis of variation is whether the specification language treats events as atomic symbols or as structured records that carry data.
+Propositional formalisms like standard LTL reason only about the presence or absence of events, but many real systems produce observations with parameters: a function call carries its arguments, a network packet carries its payload, a database transaction carries its values.
+Parametric extensions of temporal logics and state machines address this by introducing variables, quantification, or guards over data domains~\cite{BFFR18}, and our own specifications (described in~\cref{ch:background}) follow this pattern by using register automata that can store and compare data values.
+
+A typical RV setup consists of three components: the \emph{system under scrutiny}, the \emph{monitor}, and the \emph{instrumentation} that connects them~\cite{BFFR18}.
+The instrumentation determines which aspects of the system's execution are made visible to the monitor and how the two execute in relation to one another.
+\emph{Offline} monitoring records the execution trace in full and analyzes it after the system terminates; this is less intrusive but delays the detection of violations.
+\emph{Online} monitoring runs the monitor concurrently with the system and processes events as they arrive, enabling timely detection at the cost of tighter performance constraints.
+
+Within online monitoring, there is a further distinction in how tightly the monitor and system are coupled.
+In \emph{synchronous} monitoring, the system blocks after each event until the monitor has processed it; this guarantees that every violation is caught before the next step, but the monitoring overhead directly slows down the system.
+In \emph{asynchronous} monitoring, the system and monitor execute independently, with events buffered and forwarded without blocking; this reduces the performance impact on the system but may delay detection and, if the monitor falls behind, can introduce gaps in the analysis~\cite{BFFR18}.
+The overhead question is particularly important in safety-critical or real-time applications, where the additional latency introduced by a synchronous monitor may itself violate timing constraints.
+Sampling-based techniques that observe only a subset of events offer one way to control overhead, though they introduce uncertainty into the monitoring verdict.
+
+Monitors are rarely written by hand.
+Instead, they are typically generated by \emph{automated synthesis procedures} that take a formal specification as input and produce an executable monitor as output~\cite{BFFR18}.
+Frameworks such as MOP~\cite{CR07} have demonstrated this approach for a variety of specification languages, including temporal logics, regular expressions, and context-free grammars.
+Automated synthesis serves two purposes: it eliminates manual implementation errors in the monitor, and it provides a clear formal relationship between the specification and the monitor's behavior, which makes it possible to reason about the monitor's correctness.
+This is relevant to our setting because the monitor in our protocol operates on a Boolean circuit representation of the specification, which is itself derived from a register automaton through an automated compilation pipeline (see \cref{ch:experiments}).
+
+Not all properties, however, can be meaningfully monitored at runtime.
+The question of \emph{monitorability}, whether a given property can be checked by a monitor that processes finite prefixes of a trace, has been studied extensively~\cite{PZ06,BLS07}.
+Safety properties, which stipulate that ``nothing bad happens,'' are naturally suited to runtime monitoring: any violation of a safety property manifests as a finite prefix that cannot be extended to a correct execution~\cite{KKLSV02}.
+Our work, like much of the RV literature, focuses on safety specifications for this reason.
+
+The practical reach of runtime verification extends well beyond academic case studies~\cite{BFFR18, JLKWHSS16}.
+RV is deployed in domains ranging from software testing and hardware verification to financial systems, automotive safety, and healthcare.
+In many of these settings, the monitor is not the system's own operator but an external party (a regulator, an auditor, or a certification body) that must independently verify compliance with a given standard.
+This separation between the monitored system and the monitoring authority introduces a question that does not arise in self-monitoring: what information must the system reveal to the monitor, and what should remain hidden?
 
 \section{Motivation}
 
-Privacy and monitoring seem at odds. Monitoring typically involves verifying whether the execution trace of a system satisfies a given specification, which seemingly requires access to the system trace. Privacy, on the other hand, demands that protected information about the system remain undisclosed. Balancing these conflicting objectives presents a significant challenge, particularly in contexts where monitoring is essential but the underlying data is sensitive. This challenge arises in many real-world scenarios: a bank undergoing an audit may need to share data to demonstrate compliance; a hospital may need to report statistics to ensure adherence to healthcare standards; a self-driving car or metro system may be monitored for operational safety. In each case, sharing protected IP or client data with a third-party monitor raises concerns about privacy.
+This question has no easy answer, because monitoring and privacy pull in opposite directions.
+Monitoring requires inspecting the system's execution trace to check it against a specification, while privacy demands that sensitive details of that trace (trade secrets, personally identifiable data, proprietary system internals) remain undisclosed.
+The tension is concrete: a bank undergoing a regulatory audit may need to share transaction data to demonstrate compliance; a hospital may need to report operational statistics to meet healthcare standards; a self-driving car or metro system may be monitored for safety by an external certification body.
+In each case, the system must convince a third-party monitor of its compliance without revealing protected information.
 
 One possible solution is to allow the system to self-monitor by embedding the specification into the system and generating its own verification results. However, this approach lacks credibility in settings where third-party validation is crucial. For instance, if hospitals were entirely self-certified, the certificates would lack the impartiality needed to inspire public confidence.
 This necessitates a solution that allows third-party monitors to continuously and repeatedly verify whether a system complies with a given specification, all while obscuring the internals of the system and its data.
 
-Hiding the system and its data is just a first step, but our need for privacy might not stop there. Sometimes, one might even need to hide the specification that a system is being monitored against. 
-For motivation, we can again consider the domain of healthcare, where the runtime verification of traces satisfying specifications expressed in temporal logic has already been studied~\cite{JLKWHSS16}. 
-For instance, in the National Health Services (NHS) in England, hospital funding is tied to performance metrics, optimization of which led many hospitals to restructure their operations~\cite{Cra17,Mea14}. Unfortunately, such restructurings resulted in extreme cases like the events at Mid-Staffordshire NHS Foundation Trust, where financial targets led to patient neglect~\cite{mid2013report}. This exemplifies Goodhart's Law: \emph{``When a measure becomes a target, it ceases to be a good measure,''} or, as an ex-NHS manager put it, \emph{``hitting the target but missing the point.''} Indeed any measure has the potential to become a target when gamifications are employed to achieve that target.
+Hiding the system's data from the monitor is only one dimension of the problem.
+In some settings, the specification itself must also remain secret.
+Consider again the domain of healthcare, where runtime verification of clinical traces has already been studied~\cite{JLKWHSS16}.
+In the National Health Services (NHS) in England, hospital funding is tied to performance metrics, optimization of which led many hospitals to restructure their operations~\cite{Cra17,Mea14}. Unfortunately, such restructurings resulted in extreme cases like the events at Mid-Staffordshire NHS Foundation Trust, where financial targets led to patient neglect~\cite{mid2013report}. This exemplifies Goodhart's Law: \emph{``When a measure becomes a target, it ceases to be a good measure,''} or, as an ex-NHS manager put it, \emph{``hitting the target but missing the point.''} Indeed any measure has the potential to become a target when gamifications are employed to achieve that target.
 To avoid such distortions, it is crucial to also develop protocols for monitoring that keep both the system/data and specification private, ensuring accurate and unbiased evaluation.
 
 Recent advances have demonstrated that verification can be performed in a privacy-preserving manner spanning a variety of domains, including SAT solving~\cite{LJAPW22}, verifying resolution proofs~\cite{LAHPTW22}, matching strings against regular expressions~\cite{LWSTRP24}, and model-checking specifications described by CTL formulas~\cite{JLAP20}.
