@@ -28,7 +28,7 @@
 % Define convenience functions to use the author name and the thesis title in the PDF document properties.
 \newcommand{\authorname}{Mahyar Karimi}
 \newcommand{\thesistitle}{Privacy-Preserving Runtime Verification}
-% \newcommand{\issn}{2791-4585} % Standard ISSN of all ISTA Master's theses.
+\newcommand{\issn}{2791-4585} % Standard ISSN of all ISTA Master's theses.
 % \newcommand{\isbn}{978-0-00000-000-0} % Leave empty if no ISBN is used.
 % Please contact IST Library library@ist.ac.at if you want to register an ISBN for your thesis.
 
@@ -41,11 +41,11 @@
 Runtime verification\sep Monitoring\sep Reactive functionalities\sep Cryptographic protocols}
 \Publisher{Institute of Science and Technology Austria} % The document's publisher in the document properties.
 \Subject{Master's Thesis}                               % The document's subject in the document properties.
-\Copyright{Copyright \copyright\ 2024. All rights reserved.} % The document's copyright message in the document properties.
+\Copyright{Copyright \copyright\ 2026. All rights reserved.} % The document's copyright message in the document properties.
 \CopyrightURL{}                                         % The document's copyright URL in the document properties.
 \Copyrighted{True}
 % \ISBN{\isbn}                                            % The document's ISBN in the document properties.
-% \Journalnumber{\issn}                                   % The document's ISSN in the document properties.
+\Journalnumber{\issn}                                   % The document's ISSN in the document properties.
 \end{filecontents*}
 
 % Extended LaTeX functionality is enabled by including packages with \usepackage{...}.
@@ -107,7 +107,7 @@ Runtime verification\sep Monitoring\sep Reactive functionalities\sep Cryptograph
 \setsubtitle{} % Empty subtitle.
 % If your subtitle contains commas, enclose it with additional curvy brackets (i.e., \setsubtitle{{subtitle text}}) or define it as a macro as done with \thesistitle.
 \setdate{2026}{03}{05} % Set signing date with 3 arguments: {day}{month}{year}.
-% \setissn{\issn}
+\setissn{\issn}
 % \setisbn{\isbn} % Comment this line if no ISBN is used.
 
 % Define convenience function for an ISTA affiliation.
@@ -140,6 +140,7 @@ Runtime verification\sep Monitoring\sep Reactive functionalities\sep Cryptograph
 \addcommitteepage
 \addstatementpage
 
+\setcounter{page}{1} % Reset so Abstract begins at page i.
 \begin{abstract}
 Runtime verification offers scalable solutions to improve the safety and reliability of systems. However, systems that require verification or monitoring by a third party to ensure compliance with a specification might contain sensitive information, causing privacy concerns when usual runtime verification approaches are used. Privacy is compromised if protected information about the system, or sensitive data that is processed by the system, is revealed. In addition, revealing the specification being monitored may undermine the essence of third-party verification.
 
@@ -204,7 +205,6 @@ and evaluation were carried out by Mahyar Karimi.
 \let\cleardoublepage\relax
 
 \listoftables
-\listofalgorithms\addcontentsline{toc}{chapter}{List of Algorithms}
 \printglossary[title={List of Terms}]
 \printglossary[type=\acronymtype,title={List of Abbreviations}]
 \endgroup % End the deactivation group.

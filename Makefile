@@ -121,9 +121,12 @@ $(SOURCE_MASTER)-pdfa2b.pdf: $(SOURCE_MASTER).pdf
 	  /tmp/pdfa2b_def.ps $<
 	@echo "PDF/A-2b output written to $@"
 
-# Rename/copy the PDF/A output to the ISTA submission filename
+# Copy master.pdf directly to the ISTA submission filename.
+# pdflatex+pdfx already produces a valid PDF/A-2b file (sRGB.icc OutputIntent
+# embedded, conformance claim in XMP).  The Ghostscript post-processing step
+# strips the rich XMP metadata and produces an inferior result, so we bypass it.
 .PHONY: submit
-submit: $(SOURCE_MASTER)-pdfa2b.pdf
+submit: $(SOURCE_MASTER).pdf
 	cp $< $(SUBMISSION)
 	@echo "Submission copy written to $(SUBMISSION)"
 	git archive HEAD --format=zip -o $(SUBMISSION:.pdf=_src.zip)

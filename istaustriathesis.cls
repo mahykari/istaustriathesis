@@ -404,7 +404,7 @@ not distribute modified versions of the work.}%
   }%
 }%
 \newcommand{\istaustriathesis@graphics@logo}{%
-  \includegraphics[width=5cm]{ISTA_Logo_4c_rgb.pdf}}%
+  \includegraphics[width=5cm]{ISTA-Logo.png}}%
 \newcommand{\AddTitlePage}{%
   \thispagestyle{istaustriathesis@pagestyle@titlepage}%
   \begingroup\centering
